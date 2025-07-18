@@ -1,5 +1,5 @@
 using Microsoft.FluentUI.AspNetCore.Components;
-using PhainonDisturbutionCenter.Components;
+using PhainonDistributionCenter.Components;
 
 var builder = WebApplication.CreateBuilder(args);
 

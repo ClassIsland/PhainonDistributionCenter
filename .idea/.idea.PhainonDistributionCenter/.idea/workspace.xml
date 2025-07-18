@@ -10,7 +10,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="54324140-74aa-46ce-8703-f7b2d19574ae" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter/DbContext.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter/PhainonDistributionCenter.csproj" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.PhainonDisturbutionCenter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PhainonDisturbutionCenter/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter.sln" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDisturbutionCenter.sln" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/Components/App.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/App.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/Components/Layout/MainLayout.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Layout/MainLayout.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/Components/Layout/NavMenu.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Layout/NavMenu.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/Components/Pages/Counter.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/Counter.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/Components/Pages/Error.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/Error.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/Components/Pages/Home.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/Home.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/Components/Pages/Weather.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/Weather.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/Components/Routes.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Routes.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/Components/_Imports.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/_Imports.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/PhainonDisturbutionCenter.csproj" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Properties/launchSettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/appsettings.Development.json" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/appsettings.Development.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/appsettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/appsettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/wwwroot/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/wwwroot/app.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDisturbutionCenter/wwwroot/favicon.ico" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/wwwroot/favicon.ico" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -23,9 +42,22 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 6
-}]]></component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;HelloWRC&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:ClassIsland/PhainonDisturbutionCenter.git&quot;,
+    &quot;accountId&quot;: &quot;11447921-4416-4ec7-aff1-5d00aa6e8646&quot;
+  }
+}</component>
+  <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
   <component name="ProjectId" id="300SulK6D6FkjOc6bfLlOLelhY9" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -36,7 +68,8 @@
     ".NET 启动设置配置文件.PhainonDisturbutionCenter: http.executor": "Debug",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -48,7 +81,7 @@
 }]]></component>
   <component name="RunManager" selected=".NET 启动设置配置文件.PhainonDisturbutionCenter: http">
     <configuration name="PhainonDisturbutionCenter: IIS Express" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
-      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/PhainonDisturbutionCenter/PhainonDisturbutionCenter.csproj" />
+      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/PhainonDistributionCenter/PhainonDistributionCenter.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
       <option name="LAUNCH_PROFILE_NAME" value="IIS Express" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
@@ -63,7 +96,7 @@
       </method>
     </configuration>
     <configuration name="PhainonDisturbutionCenter: http" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
-      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/PhainonDisturbutionCenter/PhainonDisturbutionCenter.csproj" />
+      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/PhainonDistributionCenter/PhainonDistributionCenter.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
       <option name="LAUNCH_PROFILE_NAME" value="http" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
@@ -78,7 +111,7 @@
       </method>
     </configuration>
     <configuration name="PhainonDisturbutionCenter: https" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
-      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/PhainonDisturbutionCenter/PhainonDisturbutionCenter.csproj" />
+      <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/PhainonDistributionCenter/PhainonDistributionCenter.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
       <option name="LAUNCH_PROFILE_NAME" value="https" />
       <option name="USE_EXTERNAL_CONSOLE" value="0" />
@@ -100,16 +133,40 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1752763223128</updated>
-      <workItem from="1752763224693" duration="1074000" />
+      <workItem from="1752763224693" duration="2726000" />
+      <workItem from="1752800603163" duration="334000" />
     </task>
+    <task id="LOCAL-00001" summary="init">
+      <option name="closed" value="true" />
+      <created>1752764435235</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1752764435235</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="UnityCheckinConfiguration" checkUnsavedScenes="true" />
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+    <MESSAGE value="init" />
+    <option name="LAST_COMMIT_MESSAGE" value="init" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
