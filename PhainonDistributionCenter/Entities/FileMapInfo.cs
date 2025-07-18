@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using PhainonDistributionCenter.Abstractions.Entities;
 
 namespace PhainonDistributionCenter.Entities;
 
 /// <summary>
 /// 代表文件图信息
 /// </summary>
-public class FileMapInfo
+public class FileMapInfo : IObjectWithTime
 {
     /// <summary>
     /// Id
@@ -21,4 +22,7 @@ public class FileMapInfo
     /// 文件图的 PGP 签名
     /// </summary>
     public string PgpSignature { get; set; } = "";
+    
+    public DateTime CreatedTime { get; set; } = DateTime.Now;
+    public DateTime UpdatedTime { get; set; } = DateTime.Now;
 }

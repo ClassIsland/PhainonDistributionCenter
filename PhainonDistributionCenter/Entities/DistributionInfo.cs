@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using PhainonDistributionCenter.Abstractions.Entities;
 
 namespace PhainonDistributionCenter.Entities;
 
 /// <summary>
 /// 代表某个大版本中一次发布的信息。
 /// </summary>
-public class DistributionInfo
+public class DistributionInfo : IObjectWithTime
 {
     /// <summary>
     /// Id
@@ -36,4 +37,7 @@ public class DistributionInfo
     /// 当前发行版包含的子频道信息
     /// </summary>
     public IList<DistributionSubChannel> SubChannels { get; set; } = [];
+    
+    public DateTime CreatedTime { get; set; } = DateTime.Now;
+    public DateTime UpdatedTime { get; set; } = DateTime.Now;
 }

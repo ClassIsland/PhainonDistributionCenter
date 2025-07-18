@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using PhainonDistributionCenter.Abstractions.Entities;
 
 namespace PhainonDistributionCenter.Entities;
 
 /// <summary>
 /// 代表特定于某平台的发行子频道信息
 /// </summary>
-public class DistributionSubChannel
+public class DistributionSubChannel : IObjectWithTime
 {
     /// <summary>
     /// Id
@@ -45,4 +46,7 @@ public class DistributionSubChannel
     /// 当前子频道关联的文件图信息 Id
     /// </summary>
     public Guid FileMapInfoId { get; set; }
+    
+    public DateTime CreatedTime { get; set; } = DateTime.Now;
+    public DateTime UpdatedTime { get; set; } = DateTime.Now;
 }

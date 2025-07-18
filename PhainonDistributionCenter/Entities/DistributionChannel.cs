@@ -1,11 +1,12 @@
 using System.ComponentModel.DataAnnotations;
+using PhainonDistributionCenter.Abstractions.Entities;
 
 namespace PhainonDistributionCenter.Entities;
 
 /// <summary>
 /// 代表一个发行渠道
 /// </summary>
-public class DistributionChannel
+public class DistributionChannel : IObjectWithTime
 {
     /// <summary>
     /// Id
@@ -26,4 +27,7 @@ public class DistributionChannel
     /// 此发行渠道关联的发行版本信息
     /// </summary>
     public ICollection<DistributionInfo> AssociatedDistributions { get; set; } = [];
+    
+    public DateTime CreatedTime { get; set; } = DateTime.Now;
+    public DateTime UpdatedTime { get; set; } = DateTime.Now;
 }

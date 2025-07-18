@@ -1,12 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using PhainonDistributionCenter.Abstractions.Entities;
 
 namespace PhainonDistributionCenter.Entities;
 
 /// <summary>
 /// 代表一个大版本的信息
 /// </summary>
-public class VersionInfo
+public class VersionInfo : IObjectWithTime
 {
     /// <summary>
     /// Id
@@ -22,4 +23,7 @@ public class VersionInfo
     /// 版本代号，如 Khaslana
     /// </summary>
     [MaxLength(64)] public string Codename { get; set; } = "";
+    
+    public DateTime CreatedTime { get; set; } = DateTime.Now;
+    public DateTime UpdatedTime { get; set; } = DateTime.Now;
 }
