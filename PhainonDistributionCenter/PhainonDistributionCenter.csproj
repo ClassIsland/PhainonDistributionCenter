@@ -1,9 +1,10 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
     <TargetFramework>net9.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>0201ef2c-d001-4599-86f2-07b22dd0b26e</UserSecretsId>
   </PropertyGroup>
 
   <ItemGroup>
@@ -14,5 +15,6 @@
     </PackageReference>
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.12.1" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.12.1" />
+    <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0-preview.3.efcore.9.0.0" />
   </ItemGroup>
 </Project>
