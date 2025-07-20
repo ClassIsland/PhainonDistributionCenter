@@ -1,17 +1,18 @@
-@page "/DistributionChannels"
+@page "/Versions"
 @using Microsoft.FluentUI.AspNetCore.Components.Icons.Regular
 @using PhainonDistributionCenter.Components.Controls
 @using PhainonDistributionCenter.Entities
 @inject MainDbContext DbContext;
 @inject IDialogService DialogService;
-@inject ILogger<DistributionChannels> Logger;
+@inject ILogger<VersionsPage> Logger;
 @inject IToastService ToastService;
 @rendermode InteractiveServer
 
+<PageTitle>大版本</PageTitle>
 
-<h2> 发行通道</h2>
+<h2>大版本</h2>
 
-<p>管理应用的发行通道。</p>
+<p>管理应用的各个大版本。</p>
 
 <FluentButton Appearance="Appearance.Accent"
               @onclick="ButtonAddItemOnClick">
@@ -19,9 +20,11 @@
 </FluentButton>
 
 <div class="content">
-    <FluentDataGrid Items="@DbContext.DistributionChannels" Pagination="@paginationState" @ref="@dataGridRef">
-        <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
-        <PropertyColumn Property="@(p => p.Description)" Sortable="true" Title="描述" Width="*"/>
+    
+    <FluentPaginator State="@paginationState" />
+    <FluentDataGrid Items="@DbContext.VersionInfos" Pagination="@paginationState" @ref="@dataGridRef">
+        <PropertyColumn Property="@(p => p.Version)" Sortable="true" Title="版本名"/>
+        <PropertyColumn Property="@(p => p.Codename)" Sortable="true" Title="版本代号" Width="*"/>
         <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"/>
         <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
         <TemplateColumn Title="操作">
@@ -29,13 +32,15 @@
             <FluentButton @onclick="@(_ => BeginEditItem(context))">编辑</FluentButton>
         </TemplateColumn>
     </FluentDataGrid>
+    <FluentPaginator State="@paginationState" />
+    
 </div>
 
 <FluentDialog @bind-Hidden="@isEditingDialogHidden" >
-    <h4>@(isCreating ? "新建" : "编辑")发行渠道</h4>
+    <h4>@(isCreating ? "新建" : "编辑")大版本</h4>
     <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom: 2em">
-        <FluentTextField Label="名称" @bind-Value="editingChannel.Name" Required Style="width: 100%"/>
-        <FluentTextArea Label="描述" @bind-Value="editingChannel.Description" Style="width: 100%"/>
+        <FluentTextField Label="版本名" @bind-Value="editingInfo.Version" Required Style="width: 100%"/>
+        <FluentTextField Label="版本代号" @bind-Value="editingInfo.Codename" Required Style="width: 100%"/>
     </FluentStack>
     <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="ButtonEditingDialogSaveOnClick"
                   Loading="@isLoading">保存</FluentButton>
@@ -48,7 +53,7 @@
 </style>
 
 @code {
-    private FluentDataGrid<DistributionChannel> dataGridRef;
+    private FluentDataGrid<VersionInfo> dataGridRef;
     
     private bool isEditingDialogHidden = true;
 
@@ -56,7 +61,7 @@
     
     private int pageIndex = 0;
 
-    private DistributionChannel editingChannel = new();
+    private VersionInfo editingInfo = new();
 
     private bool isLoading = false;
 
@@ -67,21 +72,21 @@
 
     private void ButtonAddItemOnClick()
     {
-        editingChannel = new DistributionChannel();
+        editingInfo = new VersionInfo();
         isCreating = true;
         isEditingDialogHidden = false;
     }
 
-    private void BeginEditItem(DistributionChannel item)
+    private void BeginEditItem(VersionInfo item)
     {
-        editingChannel = item;
+        editingInfo = item;
         isCreating = false;
         isEditingDialogHidden = false;
     }
 
-    private async Task DeleteItem(DistributionChannel item)
+    private async Task DeleteItem(VersionInfo item)
     {
-        var reference = await DialogService.ShowConfirmationAsync($"确定要删除发行渠道 {item.Name} 吗？此操作无法撤销！");
+        var reference = await DialogService.ShowConfirmationAsync($"确定要删除大版本 {item.Version} 吗？此操作无法撤销！");
         if ((await reference.Result).Cancelled)
         {
             return;
@@ -89,14 +94,14 @@
 
         try
         {
-            DbContext.DistributionChannels.Remove(item);
+            DbContext.VersionInfos.Remove(item);
             await DbContext.SaveChangesAsync();
             await dataGridRef.RefreshDataAsync();
-            ToastService.ShowSuccess($"已删除发行渠道 {item.Name}");
+            ToastService.ShowSuccess($"已删除大版本 {item.Version}");
         }
         catch (Exception e)
         {
-            ToastService.ShowError($"无法删除发行渠道 {item.Name}：{e.Message}");
+            ToastService.ShowError($"无法删除大版本 {item.Version}：{e.Message}");
         }
     }
     
@@ -107,17 +112,18 @@
         {
             if (isCreating)
             {
-                await DbContext.DistributionChannels.AddAsync(editingChannel);
+                await DbContext.VersionInfos.AddAsync(editingInfo);
             }
 
+            editingInfo.UpdatedTime = DateTime.Now;
             await DbContext.SaveChangesAsync();
             await dataGridRef.RefreshDataAsync();
-            ToastService.ShowSuccess($"已保存发行渠道 {editingChannel.Name}");
+            ToastService.ShowSuccess($"已保存大版本 {editingInfo.Version}");
 
         }
         catch (Exception e)
         {
-            ToastService.ShowError($"无法保存发行渠道 {editingChannel.Name}：{e.Message}");
+            ToastService.ShowError($"无法保存大版本 {editingInfo.Version}：{e.Message}");
         }
         finally
         {
