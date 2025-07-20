@@ -1,21 +1,16 @@
 ﻿@page "/"
 @using Microsoft.EntityFrameworkCore
 
-@inject MainDbContext DbContext
+@rendermode InteractiveServer
 
 <PageTitle>主页</PageTitle>
 
 <h1>欢迎使用 PhainonDistributionCenter</h1>
 
-<p>Count: @count</p>
+<FluentButton @onclick="args => throw new Exception()" >Test Crash</FluentButton>
 
 @code {
 
-    private int count = 0;
-
-    protected override async Task OnInitializedAsync()
-    {
-        count = await DbContext.VersionInfos.CountAsync();
-    }
+    
 
 }

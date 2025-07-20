@@ -101,7 +101,7 @@
         }
         catch (Exception e)
         {
-            ToastService.ShowError($"无法删除大版本 {item.Version}：{e.Message}");
+            ToastService.ShowError($"删除大版本 {item.Version} 时发生内部错误");
         }
     }
     
@@ -123,7 +123,8 @@
         }
         catch (Exception e)
         {
-            ToastService.ShowError($"无法保存大版本 {editingInfo.Version}：{e.Message}");
+            Logger.LogError(e, $"保存大版本 {editingInfo.Version} 时发生内部错误");
+            ToastService.ShowError($"保存大版本 {editingInfo.Version} 时发生内部错误");
         }
         finally
         {
