@@ -16,7 +16,16 @@
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components" Version="4.12.1" />
     <PackageReference Include="Microsoft.FluentUI.AspNetCore.Components.Icons" Version="4.12.1" />
     <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="9.0.0-preview.3.efcore.9.0.0" />
+    <PackageReference Include="Tailwind.MSBuild" Version="1.*" Condition="'$(Configuration)'=='Release'">
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+      <PrivateAssets>all</PrivateAssets>
+    </PackageReference>
   </ItemGroup>
+
+  <PropertyGroup Label="Tailwind Properties">
+    <TailwindInputFile>$(MSBuildProjectDirectory)\Styles\app.css</TailwindInputFile>
+    <TailwindOutputFile>$(MSBuildProjectDirectory)\wwwroot\tailwind.g.css</TailwindOutputFile>
+  </PropertyGroup>
 
   <ItemGroup>
     <Folder Include="Services\" />

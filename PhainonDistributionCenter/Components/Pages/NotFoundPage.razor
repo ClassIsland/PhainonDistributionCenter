@@ -1,13 +1,24 @@
 @page "/{*route:nonfile}"
 
-<PageTitle>404</PageTitle>
-<img src="https://res.classisland.tech/stickers/1.png"
-     width="72" height="72"
-     alt="光辉矢愿_不可以看"/>
-<h1>404</h1>
-<p>找不到请求的页面，请检查链接是否有效，或您是否具有相应的访问权限。</p>
+@rendermode InteractiveServer
 
-<FluentButton Appearance="Appearance.Accent">返回首页</FluentButton>
+@inject NavigationManager NavigationManager
+
+<PageTitle>404</PageTitle>
+
+<div class="content-center text-center flex flex-col items-center">
+    <img src="/白厄_掉线.png"
+         width="72" height="72"
+         alt="白厄_掉线"/>
+    <h1>404</h1>
+    <p>找不到请求的页面，请检查链接是否有效，或您是否具有相应的访问权限。</p>
+    <FluentButton Appearance="Appearance.Accent" @onclick='_ => NavigationManager.NavigateTo("")'>返回首页</FluentButton>
+</div>
+
+<style>
+    
+</style>
+
 
 @code {
     [Parameter]

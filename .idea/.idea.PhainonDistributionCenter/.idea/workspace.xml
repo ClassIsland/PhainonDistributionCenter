@@ -11,20 +11,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="54324140-74aa-46ce-8703-f7b2d19574ae" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Controls/DistributionChannelsEditDialog.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/DistributionChannels.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/DistributionChannels.razor.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Extensions/PaginatedListExtensions.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/dataSources/2cc816a2-0e35-47f8-9c8c-87cd99ecb40a.xml" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Styles/app.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.PhainonDisturbutionCenter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PhainonDisturbutionCenter/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/ComponentModels/PaginatedList.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/ComponentModels/PaginatedList.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Components/App.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/App.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Layout/MainLayout.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Layout/MainLayout.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Layout/NavMenu.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Layout/NavMenu.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/Home.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/Home.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/NotFoundPage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/NotFoundPage.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/PhainonDistributionCenter.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/PhainonDistributionCenter.csproj" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Properties/launchSettings.json" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Properties/launchSettings.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/wwwroot/app.css" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/wwwroot/app.css" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,6 +24,14 @@
   </component>
   <component name="DpaMonitoringSettings">
     <option name="firstShow" value="false" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="CSS File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -49,6 +48,9 @@
     &quot;accountId&quot;: &quot;11447921-4416-4ec7-aff1-5d00aa6e8646&quot;
   }
 }</component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/797549af4618dd0815d795be0d7fd9a74121d8d6cb0c0adb59998c528df19e6/FluentMessageBarProvider.razor.cs" root0="FORCE_HIGHLIGHTING" />
+  </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 6
@@ -58,24 +60,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET 启动设置配置文件.PhainonDistributionCenter: MyBlazorLauncher.executor&quot;: &quot;Run&quot;,
-    &quot;.NET 启动设置配置文件.PhainonDisturbutionCenter: http.executor&quot;: &quot;Debug&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
-    &quot;附加到进程.37068:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET 启动设置配置文件.PhainonDistributionCenter: MyBlazorLauncher.executor": "Debug",
+    ".NET 启动设置配置文件.PhainonDisturbutionCenter: http.executor": "Debug",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "main",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "configurable.tailwindcss",
+    "vue.rearranger.settings.migration": "true",
+    "附加到进程.37068:PhainonDistributionCenter.executor": "Debug"
   }
-}</component>
+}]]></component>
   <component name="RunManager" selected=".NET 启动设置配置文件.PhainonDistributionCenter: MyBlazorLauncher">
     <configuration name="PhainonDistributionCenter: MyBlazorLauncher" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/PhainonDistributionCenter/PhainonDistributionCenter.csproj" />
@@ -151,6 +155,8 @@
       <workItem from="1752821707625" duration="6909000" />
       <workItem from="1752877723999" duration="482000" />
       <workItem from="1752878330529" duration="3565000" />
+      <workItem from="1752980292837" duration="7179000" />
+      <workItem from="1752993415485" duration="47000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -160,7 +166,31 @@
       <option name="project" value="LOCAL" />
       <updated>1752764435235</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="feat: 应用发行渠道管理">
+      <option name="closed" value="true" />
+      <created>1752983422531</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1752983422531</updated>
+    </task>
+    <task id="LOCAL-00003" summary="feat: 实现大版本管理页面">
+      <option name="closed" value="true" />
+      <created>1752984603808</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1752984603808</updated>
+    </task>
+    <task id="LOCAL-00004" summary="feat: 优化错误处理">
+      <option name="closed" value="true" />
+      <created>1752986654686</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1752986654686</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -182,7 +212,10 @@
   <component name="VcsManagerConfiguration">
     <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
     <MESSAGE value="init" />
-    <option name="LAST_COMMIT_MESSAGE" value="init" />
+    <MESSAGE value="feat: 应用发行渠道管理" />
+    <MESSAGE value="feat: 实现大版本管理页面" />
+    <MESSAGE value="feat: 优化错误处理" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 优化错误处理" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -201,5 +234,9 @@
         </breakpoint>
       </breakpoints>
     </breakpoint-manager>
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
