@@ -1,6 +1,5 @@
 @page "/{*route:nonfile}"
-
-@rendermode InteractiveServer
+@using System.Diagnostics
 
 @inject NavigationManager NavigationManager
 
@@ -12,7 +11,12 @@
          alt="白厄_掉线"/>
     <h1>404</h1>
     <p>找不到请求的页面，请检查链接是否有效，或您是否具有相应的访问权限。</p>
-    <FluentButton Appearance="Appearance.Accent" @onclick='_ => NavigationManager.NavigateTo("")'>返回首页</FluentButton>
+    <FluentAnchor Appearance="Appearance.Accent" Href="/">返回首页</FluentAnchor>
+    <p style="font-size: 13px; margin-top: 2em">
+        诊断信息：<br/>
+        <b>RequestId: </b><code>@RequestId</code><br/>
+        <b>Route: </b><code>/@Route</code>
+    </p>
 </div>
 
 <style>
@@ -23,4 +27,13 @@
 @code {
     [Parameter]
     public string? Route { get; set; }
+    
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    private string? RequestId { get; set; }
+    private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+
+    protected override void OnInitialized() =>
+        RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
 }
