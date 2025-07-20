@@ -9,18 +9,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="54324140-74aa-46ce-8703-f7b2d19574ae" name="更改" comment="feat: 添加对象时间属性，和分页功能">
-      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Abstractions/Entities/IObjectWithTime.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter/ComponentModels/PaginatedList.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Migrations/20250718021917_AddTimeInfo.Designer.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Migrations/20250718021917_AddTimeInfo.cs" afterDir="false" />
+    <list default="true" id="54324140-74aa-46ce-8703-f7b2d19574ae" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.PhainonDisturbutionCenter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PhainonDisturbutionCenter/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/DistributionChannel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/DistributionChannel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/DistributionInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/DistributionInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/DistributionSubChannel.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/DistributionSubChannel.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/FileMapInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/FileMapInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/VersionInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/VersionInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Migrations/MainDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Migrations/MainDbContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/Home.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/Home.razor" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -150,7 +141,7 @@
       <option name="presentableId" value="Default" />
       <updated>1752763223128</updated>
       <workItem from="1752763224693" duration="2726000" />
-      <workItem from="1752800603163" duration="4582000" />
+      <workItem from="1752800603163" duration="5440000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -176,7 +167,15 @@
       <option name="project" value="LOCAL" />
       <updated>1752804579790</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="feat: 添加对象时间属性，和分页功能">
+      <option name="closed" value="true" />
+      <created>1752805229111</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1752805229111</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

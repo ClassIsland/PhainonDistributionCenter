@@ -1,7 +1,21 @@
 ﻿@page "/"
+@using Microsoft.EntityFrameworkCore
 
-<PageTitle>Home</PageTitle>
+@inject MainDbContext DbContext
 
-<h1>Hello, world!</h1>
+<PageTitle>主页</PageTitle>
 
-Welcome to your new Fluent Blazor app.
+<h1>欢迎使用 PhainonDistributionCenter</h1>
+
+<p>Count: @count</p>
+
+@code {
+
+    private int count = 0;
+
+    protected override async Task OnInitializedAsync()
+    {
+        count = await DbContext.VersionInfos.CountAsync();
+    }
+
+}

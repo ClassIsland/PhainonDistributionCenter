@@ -10,13 +10,19 @@
     <ImportMap />
     <link rel="icon" type="image/x-icon" href="favicon.ico" />
     <HeadOutlet />
-    <FluentDesignTheme Mode="DesignThemeModes.System" OfficeColor="OfficeColor.Publisher" />
-
+    <script src="_content/Microsoft.FluentUI.AspNetCore.Components/js/loading-theme.js" type="text/javascript"></script>
+    <loading-theme storage-name="theme"></loading-theme>
 </head>
 
 <body>
-<Routes/>
-<script src="_framework/blazor.web.js"></script>
+    <FluentDesignTheme Mode="DesignThemeModes.System"  />
+    <Routes />
+    <script src="_framework/blazor.web.js"></script>
 </body>
 
 </html>
+
+@code
+{
+    public const string MESSAGES_TOP = "MESSAGES_TOP";
+}

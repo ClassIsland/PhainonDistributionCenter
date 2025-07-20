@@ -5,18 +5,21 @@
         PhainonDistributionCenter
     </FluentHeader>
     <FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
-        <NavMenu />
+        <NavMenu/>
         <FluentBodyContent Class="body-content">
             <div class="content">
+                <FluentMessageBarProvider @rendermode="InteractiveServer" Section="@App.MESSAGES_TOP"/>
                 @Body
+                <FluentDialogProvider @rendermode="InteractiveServer"/>
             </div>
         </FluentBodyContent>
     </FluentStack>
     <FluentFooter>
-        <a href="https://www.fluentui-blazor.net" target="_blank">Documentation and demos</a>
-        <FluentSpacer />
-        <a href="https://learn.microsoft.com/en-us/aspnet/core/blazor" target="_blank">About Blazor</a>
+        PhainonDistributionCenter
+        <span style="margin: 0 0 0 4px;">刻法勒永志不忘。</span>
+        <FluentSpacer/>
     </FluentFooter>
+    <FluentToastProvider MaxToastCount="10" @rendermode="InteractiveServer"/>
 </FluentLayout>
 
 <div id="blazor-error-ui" data-nosnippet>

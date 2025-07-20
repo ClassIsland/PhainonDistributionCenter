@@ -21,6 +21,8 @@ public class PaginatedList<T>(List<T> items, int count, int pageIndex, int pageS
 
     public bool HasNextPage => PageIndex < TotalPages;
 
+    public static PaginatedList<T> Empty { get; } = new PaginatedList<T>([], 0, 0, 0);
+
     public static async Task<PaginatedList<T>> CreateAsync(IQueryable<T> source, int pageIndex, int pageSize
         , bool decreasing = false, bool orderByUpdatedTime = false) 
     {

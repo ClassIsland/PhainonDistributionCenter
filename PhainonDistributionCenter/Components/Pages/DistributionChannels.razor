@@ -1,0 +1,134 @@
+@page "/DistributionChannels"
+@using Microsoft.FluentUI.AspNetCore.Components.Icons.Regular
+@using PhainonDistributionCenter.Components.Controls
+@using PhainonDistributionCenter.Entities
+@inject MainDbContext DbContext;
+@inject IDialogService DialogService;
+@inject ILogger<DistributionChannels> Logger;
+@inject IToastService ToastService;
+@rendermode InteractiveServer
+
+
+<h2> 发行通道</h2>
+
+<p>管理应用的发行通道。</p>
+
+<FluentButton Appearance="Appearance.Accent"
+              @onclick="ButtonAddItemOnClick">
+    添加
+</FluentButton>
+
+<div class="content">
+    <FluentDataGrid Items="@DbContext.DistributionChannels" Pagination="@paginationState" @ref="@dataGridRef">
+        <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
+        <PropertyColumn Property="@(p => p.Description)" Sortable="true" Title="描述" Width="*"/>
+        <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"/>
+        <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
+        <TemplateColumn Title="操作">
+            <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
+            <FluentButton @onclick="@(_ => BeginEditItem(context))">编辑</FluentButton>
+        </TemplateColumn>
+    </FluentDataGrid>
+</div>
+
+<FluentDialog @bind-Hidden="@isEditingDialogHidden" >
+    <h4>@(isCreating ? "新建" : "编辑")发行渠道</h4>
+    <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom: 2em">
+        <FluentTextField Label="名称" @bind-Value="editingChannel.Name" Required Style="width: 100%"/>
+        <FluentTextArea Label="描述" @bind-Value="editingChannel.Description" Style="width: 100%"/>
+    </FluentStack>
+    <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="ButtonEditingDialogSaveOnClick"
+                  Loading="@isLoading">保存</FluentButton>
+    <FluentButton @onclick="ButtonEditingDialogCancelOnClick">取消</FluentButton>
+        
+</FluentDialog>
+
+<style scoped>
+    
+</style>
+
+@code {
+    private FluentDataGrid<DistributionChannel> dataGridRef;
+    
+    private bool isEditingDialogHidden = true;
+
+    private bool isCreating = false;
+    
+    private int pageIndex = 0;
+
+    private DistributionChannel editingChannel = new();
+
+    private bool isLoading = false;
+
+    private PaginationState paginationState = new()
+    {
+        ItemsPerPage = 25
+    };
+
+    private void ButtonAddItemOnClick()
+    {
+        editingChannel = new DistributionChannel();
+        isCreating = true;
+        isEditingDialogHidden = false;
+    }
+
+    private void BeginEditItem(DistributionChannel item)
+    {
+        editingChannel = item;
+        isCreating = false;
+        isEditingDialogHidden = false;
+    }
+
+    private async Task DeleteItem(DistributionChannel item)
+    {
+        var reference = await DialogService.ShowConfirmationAsync($"确定要删除发行渠道 {item.Name} 吗？此操作无法撤销！");
+        if ((await reference.Result).Cancelled)
+        {
+            return;
+        }
+
+        try
+        {
+            DbContext.DistributionChannels.Remove(item);
+            await DbContext.SaveChangesAsync();
+            await dataGridRef.RefreshDataAsync();
+            ToastService.ShowSuccess($"已删除发行渠道 {item.Name}");
+        }
+        catch (Exception e)
+        {
+            ToastService.ShowError($"无法删除发行渠道 {item.Name}：{e.Message}");
+        }
+    }
+    
+    private async Task ButtonEditingDialogSaveOnClick()
+    {
+        isLoading = true;
+        try
+        {
+            if (isCreating)
+            {
+                await DbContext.DistributionChannels.AddAsync(editingChannel);
+            }
+
+            await DbContext.SaveChangesAsync();
+            await dataGridRef.RefreshDataAsync();
+            ToastService.ShowSuccess($"已保存发行渠道 {editingChannel.Name}");
+
+        }
+        catch (Exception e)
+        {
+            ToastService.ShowError($"无法保存发行渠道 {editingChannel.Name}：{e.Message}");
+        }
+        finally
+        {
+            isLoading = false;
+            isEditingDialogHidden = true;
+        }
+    }
+
+    private void ButtonEditingDialogCancelOnClick()
+    {
+        isEditingDialogHidden = true;
+    }
+
+}

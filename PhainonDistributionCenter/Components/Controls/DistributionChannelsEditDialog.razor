@@ -1,0 +1,13 @@
+@using PhainonDistributionCenter.Entities
+@implements IDialogContentComponent<PhainonDistributionCenter.Entities.DistributionChannel>
+
+
+<h3>@(IsCreating ? "添加" : "编辑")发行渠道</h3>
+
+
+
+@code {
+    [Parameter] public DistributionChannel Content { get; set; } = null!;
+    public bool IsCreating { get; set; } = false;
+    
+}
