@@ -23,6 +23,16 @@ public class FileMapInfo : IObjectWithTime
     /// </summary>
     public string PgpSignature { get; set; } = "";
     
+    /// <summary>
+    /// 文件图签名的公钥 Id
+    /// </summary>
+    public Guid PublicKeyId { get; set; }
+    
+    /// <summary>
+    /// 文件图签名的公钥
+    /// </summary>
+    public GpgPublicKey PublicKey { get; set; }
+    
     public DateTime CreatedTime { get; set; } = DateTime.Now;
     public DateTime UpdatedTime { get; set; } = DateTime.Now;
 }

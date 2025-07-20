@@ -10,7 +10,8 @@ public class MainDbContext(DbContextOptions<MainDbContext> options) : DbContext(
     public DbSet<DistributionInfo> DistributionInfos { get; set; }
     public DbSet<DistributionSubChannel> DistributionSubChannels { get; set; }
     public DbSet<FileMapInfo> FileMapInfos { get; set; }
-
+    public DbSet<GpgPublicKey> PublicKeys { get; set; }
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         
