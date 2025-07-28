@@ -1,18 +1,18 @@
-@page "/DistributionChannels"
-@using Microsoft.FluentUI.AspNetCore.Components.Icons.Regular
-@using PhainonDistributionCenter.Components.Controls
-@using PhainonDistributionCenter.Entities
 @inject MainDbContext DbContext;
 @inject IDialogService DialogService;
-@inject ILogger<DistributionChannelsPage> Logger;
+@inject ILogger<VersionsPage> Logger;
 @inject IToastService ToastService;
+
 @rendermode InteractiveServer
 
-<PageTitle>发行通道</PageTitle>
+@page "/Distributions"
+@using Microsoft.EntityFrameworkCore
+@using PhainonDistributionCenter.Entities
 
-<h2>发行通道</h2>
+<PageTitle>发行版</PageTitle>
+<h2>发行版</h2>
 
-<p>管理应用的发行通道。</p>
+<p>管理应用的各个发行版。</p>
 
 <FluentButton Appearance="Appearance.Accent"
               @onclick="ButtonAddItemOnClick">
@@ -22,9 +22,10 @@
 <div class="content">
     
     <FluentPaginator State="@paginationState" />
-    <FluentDataGrid Items="@DbContext.DistributionChannels" Pagination="@paginationState" @ref="@dataGridRef">
-        <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
-        <PropertyColumn Property="@(p => p.Description)" Sortable="true" Title="描述" Width="*"/>
+    <FluentDataGrid Items="@DbContext.DistributionInfos.Include(x => x.VersionInfo).Select(x => x)"
+                    Pagination="@paginationState" @ref="@dataGridRef">
+        <PropertyColumn Property="@(p => p.Version)" Sortable="true" Title="发行版"/>
+        <PropertyColumn Property="@(p => p.VersionInfo.Version)" Sortable="true" Title="大版本" Width="*"/>
         <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
                         IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
         <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
@@ -38,10 +39,15 @@
 </div>
 
 <FluentDialog @bind-Hidden="@isEditingDialogHidden" >
-    <h4>@(isCreating ? "新建" : "编辑")发行渠道</h4>
+    <h4>@(isCreating ? "新建" : "编辑")发行版</h4>
     <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom: 2em">
-        <FluentTextField Label="名称" @bind-Value="editingChannel.Name" Required Style="width: 100%"/>
-        <FluentTextArea Label="描述" @bind-Value="editingChannel.Description" Style="width: 100%"/>
+        <FluentTextField Label="发行版" @bind-Value="editingInfo.Version" Required Style="width: 100%"/>
+        <FluentCombobox TOption="VersionInfo" Items="@DbContext.VersionInfos" @bind-Value="@selectedVersionGuid"
+                        OptionText="@(x => x.Version)"
+                        OptionValue="@(x => x.Id.ToString())"
+                        Label="大版本"
+                        Style="width: 100%"/>
+        
     </FluentStack>
     <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="ButtonEditingDialogSaveOnClick"
                   Loading="@isLoading">保存</FluentButton>
@@ -54,7 +60,7 @@
 </style>
 
 @code {
-    private FluentDataGrid<DistributionChannel> dataGridRef;
+    private FluentDataGrid<DistributionInfo> dataGridRef;
     
     private bool isEditingDialogHidden = true;
 
@@ -62,9 +68,11 @@
     
     private int pageIndex = 0;
 
-    private DistributionChannel editingChannel = new();
+    private DistributionInfo editingInfo = new();
 
     private bool isLoading = false;
+
+    private string? selectedVersionGuid;
 
     private PaginationState paginationState = new()
     {
@@ -73,21 +81,22 @@
 
     private void ButtonAddItemOnClick()
     {
-        editingChannel = new DistributionChannel();
+        editingInfo = new DistributionInfo();
         isCreating = true;
         isEditingDialogHidden = false;
     }
 
-    private void BeginEditItem(DistributionChannel item)
+    private void BeginEditItem(DistributionInfo item)
     {
-        editingChannel = item;
+        editingInfo = item;
+        selectedVersionGuid = editingInfo.VersionInfoId.ToString();
         isCreating = false;
         isEditingDialogHidden = false;
     }
 
-    private async Task DeleteItem(DistributionChannel item)
+    private async Task DeleteItem(DistributionInfo item)
     {
-        var reference = await DialogService.ShowConfirmationAsync($"确定要删除发行渠道 {item.Name} 吗？此操作无法撤销！");
+        var reference = await DialogService.ShowConfirmationAsync($"确定要删除发行版 {item.Version} 吗？此操作无法撤销！");
         if ((await reference.Result).Cancelled)
         {
             return;
@@ -95,37 +104,45 @@
 
         try
         {
-            DbContext.DistributionChannels.Remove(item);
+            DbContext.DistributionInfos.Remove(item);
             await DbContext.SaveChangesAsync();
             await dataGridRef.RefreshDataAsync();
-            ToastService.ShowSuccess($"已删除发行渠道 {item.Name}");
+            ToastService.ShowSuccess($"已删除发行版 {item.Version}");
         }
         catch (Exception e)
         {
-            ToastService.ShowError($"删除发行渠道 {item.Name} 时发生内部错误");
+            ToastService.ShowError($"删除发行版 {item.Version} 时发生内部错误");
         }
     }
     
     private async Task ButtonEditingDialogSaveOnClick()
     {
+        if (selectedVersionGuid == null)
+        {
+            ToastService.ShowError("请完整填写字段。");
+            return;
+        }
         isLoading = true;
         try
         {
+            editingInfo.VersionInfoId = Guid.Parse(selectedVersionGuid);
+            editingInfo.VersionInfo = (await DbContext.VersionInfos.FindAsync(editingInfo.VersionInfoId))!;
+                
             if (isCreating)
             {
-                await DbContext.DistributionChannels.AddAsync(editingChannel);
+                await DbContext.DistributionInfos.AddAsync(editingInfo);
             }
 
-            editingChannel.UpdatedTime = DateTime.Now;
+            editingInfo.UpdatedTime = DateTime.Now;
             await DbContext.SaveChangesAsync();
             await dataGridRef.RefreshDataAsync();
-            ToastService.ShowSuccess($"已保存发行渠道 {editingChannel.Name}");
+            ToastService.ShowSuccess($"已保存发行版 {editingInfo.Version}");
 
         }
         catch (Exception e)
         {
-            Logger.LogError(e, $"保存发行渠道 {editingChannel.Name} 时发生内部错误");
-            ToastService.ShowError($"保存发行渠道 {editingChannel.Name} 时发生内部错误");
+            Logger.LogError(e, "保存发行版 {EditingInfoVersion} 时发生内部错误", editingInfo.Version);
+            ToastService.ShowError($"保存发行版 {editingInfo.Version} 时发生内部错误");
         }
         finally
         {

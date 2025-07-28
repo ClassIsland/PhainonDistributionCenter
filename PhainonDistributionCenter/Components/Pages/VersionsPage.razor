@@ -25,7 +25,8 @@
     <FluentDataGrid Items="@DbContext.VersionInfos" Pagination="@paginationState" @ref="@dataGridRef">
         <PropertyColumn Property="@(p => p.Version)" Sortable="true" Title="版本名"/>
         <PropertyColumn Property="@(p => p.Codename)" Sortable="true" Title="版本代号" Width="*"/>
-        <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"/>
+        <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
+                        IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
         <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
         <TemplateColumn Title="操作">
             <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
