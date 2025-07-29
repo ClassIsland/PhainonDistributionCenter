@@ -23,6 +23,8 @@ public class MainDbContext(DbContextOptions<MainDbContext> options) : DbContext(
         modelBuilder.Entity<DistributionChannel>()
             .HasMany(x => x.AssociatedDistributions)
             .WithMany(x => x.Channels);
+        modelBuilder.Entity<GpgPublicKey>()
+            .HasAlternateKey(x => x.KeyId);
         base.OnModelCreating(modelBuilder);
     }
 }

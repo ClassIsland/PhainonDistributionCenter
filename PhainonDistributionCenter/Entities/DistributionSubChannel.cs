@@ -47,6 +47,21 @@ public class DistributionSubChannel : IObjectWithTime
     /// </summary>
     public Guid FileMapInfoId { get; set; }
     
+    /// <summary>
+    /// 当前子频道关联的发行版 Id
+    /// </summary>
+    public Guid DistributionInfoId { get; set; }
+
+    /// <summary>
+    /// 当前子频道关联的发行版
+    /// </summary>
+    public DistributionInfo DistributionInfo { get; set; } = null!;
+
+    public override string ToString()
+    {
+        return $"{Os}_{Arch}_{BuildType}_{Package}";
+    }
+
     public DateTime CreatedTime { get; set; } = DateTime.Now;
     public DateTime UpdatedTime { get; set; } = DateTime.Now;
 }

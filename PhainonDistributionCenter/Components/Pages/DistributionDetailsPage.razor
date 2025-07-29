@@ -1,0 +1,125 @@
+@page "/Distributions/{id:guid}"
+@using Microsoft.EntityFrameworkCore
+@using PhainonDistributionCenter.Entities
+@inject MainDbContext DbContext;
+@inject NavigationManager NavigationManager;
+@inject ILogger<DistributionDetailsPage> Logger;
+@inject IDialogService DialogService;
+@inject IToastService ToastService;
+
+@rendermode InteractiveServer
+
+@if (DistributionInfo != null)
+{
+    <PageTitle>发行版 @DistributionInfo?.Version</PageTitle>
+
+    <h2>发行版 @DistributionInfo?.Version</h2>
+
+    <p><b>管理子频道</b></p>
+
+    <div>
+        <FluentPaginator State="@paginationState"/>
+        <FluentDataGrid Items="@DbContext.DistributionSubChannels.Where(x => x.DistributionInfo == DistributionInfo)"
+                        Pagination="@paginationState">
+           
+            <PropertyColumn Property="@(p => p.Os)" Sortable="true" Title="操作系统"/>
+            <PropertyColumn Property="@(p => p.Arch)" Sortable="true" Title="架构"/>
+            <PropertyColumn Property="@(p => p.BuildType)" Sortable="true" Title="构建类型"/>
+            <PropertyColumn Property="@(p => p.Package)" Sortable="true" Title="打包类型"/>
+            <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
+                            IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
+            <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
+            <TemplateColumn Title="操作">
+                <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
+                <FluentButton @onclick="@(_ => BeginEditItem(context))">编辑</FluentButton>
+            </TemplateColumn>
+        </FluentDataGrid>
+        <FluentPaginator State="@paginationState"/>
+    </div>
+    
+}
+else if (IsNotFound)
+{
+    <NotFoundPage/>
+}
+
+
+
+@code {
+    [Parameter] public Guid Id { get; set; }
+
+    public DistributionInfo? DistributionInfo { get; set; }
+
+    private bool IsNotFound { get; set; } = false;
+
+    private PaginationState paginationState = new()
+    {
+        ItemsPerPage = 25
+    };
+
+    private FluentDataGrid<DistributionInfo> dataGridRef;
+
+    private bool isEditingDialogHidden = true;
+
+    private bool isCreating = false;
+
+    private int pageIndex = 0;
+
+    private DistributionSubChannel editingInfo = new();
+
+    private bool isLoading = false;
+
+    private string? selectedVersionGuid;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var info = await DbContext.DistributionInfos.FindAsync(Id);
+        if (info == null)
+        {
+            IsNotFound = true;
+            // NavigationManager.NavigateTo("/404", replace:true);
+            return;
+        }
+
+        DistributionInfo = info;
+    }
+
+    private void ButtonAddItemOnClick()
+    {
+        editingInfo = new DistributionSubChannel();
+        isCreating = true;
+        DialogService.ShowPanelAsync<SubChannelEditDrawer>(editingInfo, new DialogParameters()
+        {
+            Title = "新建子频道",
+            Width = "500px"
+        });
+    }
+
+    private void BeginEditItem(DistributionSubChannel item)
+    {
+        editingInfo = item;
+        isCreating = false;
+        isEditingDialogHidden = false;
+    }
+
+    private async Task DeleteItem(DistributionSubChannel item)
+    {
+        var reference = await DialogService.ShowConfirmationAsync($"确定要删除发行版 {item} 吗？此操作无法撤销！");
+        if ((await reference.Result).Cancelled)
+        {
+            return;
+        }
+
+        try
+        {
+            DistributionInfo?.SubChannels.Remove(item);
+            await DbContext.SaveChangesAsync();
+            await dataGridRef.RefreshDataAsync();
+            ToastService.ShowSuccess($"已删除发行版 {item}");
+        }
+        catch (Exception e)
+        {
+            ToastService.ShowError($"删除发行版 {item} 时发生内部错误");
+        }
+    }
+}

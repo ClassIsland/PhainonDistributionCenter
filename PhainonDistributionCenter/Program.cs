@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
 using PhainonDistributionCenter;
 using PhainonDistributionCenter.Components;
+using PhainonDistributionCenter.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,6 +28,11 @@ builder.Services.AddDbContext<MainDbContext>(options =>
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddFluentUIComponents();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+builder.Services.AddScoped<FileMapProcessingService>();
+builder.Services.AddScoped<GpgSignatureService>();
 
 var app = builder.Build();
 
@@ -45,6 +51,14 @@ app.UseAntiforgery();
 app.MapStaticAssets();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
+
+app.MapControllers();
 
 using (var scope = app.Services.CreateScope())
 {

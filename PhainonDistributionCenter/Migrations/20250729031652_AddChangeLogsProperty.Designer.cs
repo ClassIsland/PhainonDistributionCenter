@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PhainonDistributionCenter;
 
@@ -11,9 +12,11 @@ using PhainonDistributionCenter;
 namespace PhainonDistributionCenter.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250729031652_AddChangeLogsProperty")]
+    partial class AddChangeLogsProperty
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -180,9 +183,6 @@ namespace PhainonDistributionCenter.Migrations
                     b.Property<DateTime>("CreatedTime")
                         .HasColumnType("datetime(6)");
 
-                    b.Property<long>("KeyId")
-                        .HasColumnType("bigint");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("longtext");
@@ -195,8 +195,6 @@ namespace PhainonDistributionCenter.Migrations
                         .HasColumnType("datetime(6)");
 
                     b.HasKey("Id");
-
-                    b.HasAlternateKey("KeyId");
 
                     b.ToTable("PublicKeys");
                 });

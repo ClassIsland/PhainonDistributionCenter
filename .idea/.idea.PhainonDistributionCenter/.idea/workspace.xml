@@ -11,12 +11,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="54324140-74aa-46ce-8703-f7b2d19574ae" name="更改" comment="">
-      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/DistributionsPage.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Layout/NavMenu.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Layout/NavMenu.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/DistributionChannelsPage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/DistributionChannelsPage.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/PublicKeyPage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/PublicKeyPage.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/VersionsPage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/VersionsPage.razor" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,8 +40,8 @@
 }</component>
   <component name="GithubPullRequestsUISettings">{
   &quot;selectedUrlAndAccountId&quot;: {
-    &quot;url&quot;: &quot;git@github.com:ClassIsland/PhainonDisturbutionCenter.git&quot;,
-    &quot;accountId&quot;: &quot;11447921-4416-4ec7-aff1-5d00aa6e8646&quot;
+    &quot;url&quot;: &quot;https://github.com/ClassIsland/PhainonDistributionCenter.git&quot;,
+    &quot;accountId&quot;: &quot;dabfec1b-0cef-4277-a2a7-5b34bb5f2080&quot;
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
@@ -62,27 +57,46 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;.NET 启动设置配置文件.PhainonDistributionCenter: MyBlazorLauncher.executor&quot;: &quot;Run&quot;,
-    &quot;.NET 启动设置配置文件.PhainonDisturbutionCenter: http.executor&quot;: &quot;Debug&quot;,
-    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
-    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.tailwindcss&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
-    &quot;附加到进程.37068:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET 启动设置配置文件.PhainonDistributionCenter: MyBlazorLauncher.executor": "Run",
+    ".NET 启动设置配置文件.PhainonDisturbutionCenter: http.executor": "Debug",
+    "DefaultHtmlFileTemplate": "HTML File",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "dotnet-watch.未命名.executor": "Run",
+    "git-widget-placeholder": "main",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "vcs.Git",
+    "vue.rearranger.settings.migration": "true",
+    "附加到进程.11058:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.11422:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.13212:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.13858:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.15702:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.15925:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.17660:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.25610:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.26465:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.27081:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.32066:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.37068:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.5866:PhainonDistributionCenter.executor": "Debug"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mariadb"
+    ]
   }
-}</component>
-  <component name="RunManager" selected=".NET 启动设置配置文件.PhainonDisturbutionCenter: http">
+}]]></component>
+  <component name="RunManager" selected="dotnet-watch.未命名">
     <configuration name="PhainonDistributionCenter: MyBlazorLauncher" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/PhainonDistributionCenter/PhainonDistributionCenter.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net9.0" />
@@ -143,6 +157,22 @@
         <option name="Build" />
       </method>
     </configuration>
+    <configuration name="未命名" type="RunDotNetWatch" factoryName="RunDotNetWatch">
+      <option name="exePath" value="$PROJECT_DIR$/PhainonDistributionCenter/bin/Debug/net9.0/PhainonDistributionCenter" />
+      <option name="programParameters" value="" />
+      <option name="projectFilePath" value="$PROJECT_DIR$/PhainonDistributionCenter/PhainonDistributionCenter.csproj" />
+      <option name="projectTfm" value="net9.0" />
+      <option name="watchParameters" value="" />
+      <option name="workingDirectory" value="$PROJECT_DIR$/PhainonDistributionCenter" />
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue=".NET 启动设置配置文件.PhainonDistributionCenter: MyBlazorLauncher" />
+      <item itemvalue=".NET 启动设置配置文件.PhainonDisturbutionCenter: http" />
+      <item itemvalue=".NET 启动设置配置文件.PhainonDisturbutionCenter: https" />
+      <item itemvalue=".NET 启动设置配置文件.PhainonDisturbutionCenter: IIS Express" />
+      <item itemvalue="dotnet-watch.未命名" />
+    </list>
   </component>
   <component name="TaskManager">
     <task active="true" id="Default" summary="默认任务">
@@ -161,6 +191,9 @@
       <workItem from="1752993415485" duration="47000" />
       <workItem from="1753002071793" duration="8966000" />
       <workItem from="1753060455687" duration="2942000" />
+      <workItem from="1753689736453" duration="5870000" />
+      <workItem from="1753705279040" duration="3659000" />
+      <workItem from="1753749924122" duration="13914000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -226,7 +259,23 @@
       <option name="project" value="LOCAL" />
       <updated>1753010937481</updated>
     </task>
-    <option name="localTasksCounter" value="9" />
+    <task id="LOCAL-00009" summary="feat: 实现添加发行版的功能">
+      <option name="closed" value="true" />
+      <created>1753765005422</created>
+      <option name="number" value="00009" />
+      <option name="presentableId" value="LOCAL-00009" />
+      <option name="project" value="LOCAL" />
+      <updated>1753765005422</updated>
+    </task>
+    <task id="LOCAL-00010" summary="feat: 实现添加发行版的功能">
+      <option name="closed" value="true" />
+      <created>1753765010377</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1753765010377</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -254,7 +303,8 @@
     <MESSAGE value="feat: 引入 Tailwind CSS" />
     <MESSAGE value="feat: 优化 404 外观" />
     <MESSAGE value="feat: 实现 GPG 公钥管理" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 实现 GPG 公钥管理" />
+    <MESSAGE value="feat: 实现添加发行版的功能" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 实现添加发行版的功能" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

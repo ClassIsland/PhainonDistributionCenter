@@ -1,0 +1,39 @@
+@using PhainonDistributionCenter.Entities
+@implements IDialogContentComponent<PhainonDistributionCenter.Entities.DistributionSubChannel>
+
+@rendermode InteractiveServer
+
+<div class="flex gap-2 flex-col">
+    <div>
+        <FluentCombobox TOption="string" Class="" Label="操作系统"
+                        Items="@( ["windows", "macos", "linux"])"
+                        @bind-Value="Content.Os"
+                        Width="100%"/>
+    </div>
+    <div>
+        <FluentCombobox TOption="string" Class="" Label="架构"
+                        Items="@( ["x64", "x86", "arm64"])"
+                        @bind-Value="Content.Arch"
+                        Width="100%"/>
+    </div>
+    <div>
+        <FluentCombobox TOption="string" Class="" Label="构建类型"
+                        Items="@( ["full", "selfContained", "aot"])"
+                        @bind-Value="Content.BuildType"
+                        Width="100%"/>
+    </div>
+    <div>
+        <FluentCombobox TOption="string" Class="" Label="打包类型"
+                        Items="@( ["folder", "installer", "deb", "pkg", "msix"])"
+                        @bind-Value="Content.Package"
+                        Width="100%"/>
+    </div>
+
+</div>
+
+<style>
+</style>
+
+@code {
+    [Parameter] public DistributionSubChannel Content { get; set; } = null!;
+}

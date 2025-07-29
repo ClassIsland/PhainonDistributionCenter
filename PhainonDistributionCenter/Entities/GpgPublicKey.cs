@@ -13,6 +13,11 @@ public class GpgPublicKey : IObjectWithTime
     /// </summary>
     [Key]
     public Guid Id { get; set; }
+    
+    /// <summary>
+    /// 公钥 GPG Id
+    /// </summary>
+    public long KeyId { get; set; }
 
     /// <summary>
     /// 公钥名称
