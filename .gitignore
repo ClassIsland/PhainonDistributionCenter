@@ -370,3 +370,5 @@ cipx/
 .DS_Store
 
 tailwind.g.css
+
+.idea/
