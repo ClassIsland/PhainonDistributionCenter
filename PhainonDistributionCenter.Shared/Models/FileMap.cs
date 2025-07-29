@@ -10,5 +10,5 @@ public class FileMap
     /// <summary>
     /// 文件图中包含的组件
     /// </summary>
-    public Dictionary<string, List<FileMapFile>> Components { get; set; } = new();
+    public Dictionary<string, Dictionary<string, FileMapFile>> Components { get; set; } = new();
 }

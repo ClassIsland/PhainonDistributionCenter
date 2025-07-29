@@ -6,17 +6,17 @@ namespace PhainonDistributionCenter.Shared.Models;
 public class FileMapFile
 {
     /// <summary>
-    /// 代表从根目录开始的文件路径
+    /// 文件归档下载路径
     /// </summary>
-    public string Path { get; set; } = "";
+    public string ArchiveDownloadUrl { get; set; } = "";
 
     /// <summary>
-    /// 文件下载路径
+    /// 文件归档的 SHA512 校验和
     /// </summary>
-    public string DownloadUrl { get; set; } = "";
+    public byte[] ArchiveFileSha512 { get; set; } = [];
 
     /// <summary>
-    /// 文件的 SHA512 校验和
+    /// 文件本体的 SHA512 校验和
     /// </summary>
     public byte[] FileSha512 { get; set; } = [];
 }
