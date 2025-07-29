@@ -10,7 +10,7 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Configuration.AddJsonFile("./data/appsettings.json", optional: true, reloadOnChange: true);
-builder.Services.AddDbContext<MainDbContext>(options =>
+Action<DbContextOptionsBuilder> optionsAction = options =>
 {
     var dbType = builder.Configuration["DatabaseType"];
     switch (dbType)
@@ -24,7 +24,11 @@ builder.Services.AddDbContext<MainDbContext>(options =>
         default:
             throw new InvalidOperationException($"Unsupported database type: {dbType}");
     }
-});
+};
+builder.Services.AddDbContext<MainDbContext>(optionsAction,
+    contextLifetime: ServiceLifetime.Transient,
+    optionsLifetime: ServiceLifetime.Singleton);
+builder.Services.AddDbContextFactory<MainDbContext>(optionsAction);
 
 builder.Services.AddControllers()
     .AddJsonOptions(o =>

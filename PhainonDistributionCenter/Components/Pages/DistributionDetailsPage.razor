@@ -1,47 +1,113 @@
 @page "/Distributions/{id:guid}"
+
 @using Microsoft.EntityFrameworkCore
 @using PhainonDistributionCenter.Entities
-@inject MainDbContext DbContext;
 @inject NavigationManager NavigationManager;
 @inject ILogger<DistributionDetailsPage> Logger;
 @inject IDialogService DialogService;
 @inject IToastService ToastService;
+@inject IDbContextFactory<MainDbContext> DbContextFactory;
 
 @rendermode InteractiveServer
 
-@if (DistributionInfo != null)
+@if (DistributionInfo != null && SelectedChannels != null && UiDbContext != null)
 {
     <PageTitle>发行版 @DistributionInfo?.Version</PageTitle>
 
     <h2>发行版 @DistributionInfo?.Version</h2>
-
-    <p><b>管理子频道</b></p>
-
-    <div>
-        <FluentPaginator State="@paginationState"/>
-        <FluentDataGrid Items="@DbContext.DistributionSubChannels.Where(x => x.DistributionInfo == DistributionInfo)"
-                        Pagination="@paginationState">
-           
-            <PropertyColumn Property="@(p => p.Os)" Sortable="true" Title="操作系统"/>
-            <PropertyColumn Property="@(p => p.Arch)" Sortable="true" Title="架构"/>
-            <PropertyColumn Property="@(p => p.BuildType)" Sortable="true" Title="构建类型"/>
-            <PropertyColumn Property="@(p => p.Package)" Sortable="true" Title="打包类型"/>
-            <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
-                            IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
-            <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
-            <TemplateColumn Title="操作">
-                <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
-                <FluentButton @onclick="@(_ => BeginEditItem(context))">编辑</FluentButton>
-            </TemplateColumn>
-        </FluentDataGrid>
-        <FluentPaginator State="@paginationState"/>
-    </div>
     
+    <p>@(DistributionInfo!.VersionInfo.Version) - @(DistributionInfo!.VersionInfo.Codename)</p>
+    
+    <FluentTabs Size="TabSize.Medium" Id="main-tab">
+        <FluentTab Label="子频道">
+            <div>
+                <FluentPaginator State="@paginationState"/>
+                <FluentDataGrid Items="@GetDbContext().DistributionSubChannels.Where(x => x.DistributionInfo == DistributionInfo)"
+                                @ref="dataGridRef"
+                                Pagination="@paginationState">
+
+                    <PropertyColumn Property="@(p => p.Os)" Sortable="true" Title="操作系统"/>
+                    <PropertyColumn Property="@(p => p.Arch)" Sortable="true" Title="架构"/>
+                    <PropertyColumn Property="@(p => p.BuildType)" Sortable="true" Title="构建类型"/>
+                    <PropertyColumn Property="@(p => p.Package)" Sortable="true" Title="打包类型"/>
+                    <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
+                                    IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
+                    <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
+                    <TemplateColumn Title="操作">
+                        <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
+                        <FluentButton @onclick="@(_ => BeginEditItem(context))">编辑</FluentButton>
+                    </TemplateColumn>
+                </FluentDataGrid>
+                <FluentPaginator State="@paginationState"/>
+            </div>
+        </FluentTab>
+        <FluentTab Label="发行日志">
+            <div class="flex flex-col gap-4" style="height: 100%">
+                <div class="grow">
+                    <FluentTextArea Id="changelog-editor" @bind-Value="DistributionInfo.ChangeLog"/>
+                </div>
+                <FluentButton
+                    Loading="isLoading"
+                    Class="self-start"
+                    Appearance="Appearance.Accent"
+                    OnClick="SaveDataAsync">保存</FluentButton>
+            </div>
+
+        </FluentTab>
+        <FluentTab Label="发行通道">
+            <div class="flex flex-col gap-4" style="height: 100%">
+                <div class="grow">
+                    <FluentPaginator State="@channelsPaginationState"/>
+                    <FluentDataGrid Items="@UiDbContext.DistributionChannels" Pagination="@channelsPaginationState"
+                                    TGridItem="DistributionChannel" ShowHover="true">
+                        <SelectColumn TGridItem="DistributionChannel"
+                                      SelectMode="@DataGridSelectMode.Multiple"
+                                      SelectFromEntireRow="@true"
+                                      Width="40px"
+                                      SelectedItems="@SelectedChannels"
+                                      SelectedItemsChanged="channels => SelectedChannels = channels as IList<DistributionChannel> ?? SelectedChannels"/>
+                        <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
+                        <PropertyColumn Property="@(p => p.Description)" Sortable="true" Title="描述"/>
+                        <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
+                                        IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
+                        <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
+                    </FluentDataGrid>
+                    <FluentPaginator State="@channelsPaginationState"/>
+                </div>
+                <FluentButton
+                    Loading="isLoading"
+                    Class="self-start"
+                    Appearance="Appearance.Accent"
+                    OnClick="SaveDataAsync">保存</FluentButton>
+            </div>
+        </FluentTab>
+    </FluentTabs>
 }
 else if (IsNotFound)
 {
     <NotFoundPage/>
 }
+
+<style>
+#changelog-editor {
+    height: 100%;
+    width: 100%;
+
+    
+}
+
+fluent-text-area::part(control){ 
+    height:100%;
+}
+
+#main-tab {
+    height: calc(100% - 80px);
+}
+
+fluent-tab-panel {
+    height: 100%;
+}
+</style>
 
 
 
@@ -56,8 +122,13 @@ else if (IsNotFound)
     {
         ItemsPerPage = 25
     };
+    
+    private PaginationState channelsPaginationState = new()
+    {
+        ItemsPerPage = 25
+    };
 
-    private FluentDataGrid<DistributionInfo> dataGridRef;
+    private FluentDataGrid<DistributionSubChannel> dataGridRef;
 
     private bool isEditingDialogHidden = true;
 
@@ -71,17 +142,27 @@ else if (IsNotFound)
 
     private string? selectedVersionGuid;
 
+    private MainDbContext GetDbContext() => DbContextFactory.CreateDbContext();
+
+    private MainDbContext? UiDbContext { get; set; }
+
+    private IList<DistributionChannel> SelectedChannels { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
-        var info = await DbContext.DistributionInfos.FindAsync(Id);
+        UiDbContext = await DbContextFactory.CreateDbContextAsync();
+        var info = await UiDbContext.DistributionInfos
+            .Include(x => x.VersionInfo)
+            .Include(x => x.Channels)
+            .FirstOrDefaultAsync(x => x.Id == Id);
         if (info == null)
         {
             IsNotFound = true;
             // NavigationManager.NavigateTo("/404", replace:true);
             return;
         }
-
         DistributionInfo = info;
+        SelectedChannels = DistributionInfo.Channels;
     }
 
     private void ButtonAddItemOnClick()
@@ -104,22 +185,76 @@ else if (IsNotFound)
 
     private async Task DeleteItem(DistributionSubChannel item)
     {
-        var reference = await DialogService.ShowConfirmationAsync($"确定要删除发行版 {item} 吗？此操作无法撤销！");
-        if ((await reference.Result).Cancelled)
+        var reference = await DialogService.ShowConfirmationAsync($"确定要删除子频道 {item} 吗？此操作无法撤销！");
+        if ((await reference.Result).Cancelled || DistributionInfo == null)
         {
             return;
         }
 
         try
         {
-            DistributionInfo?.SubChannels.Remove(item);
-            await DbContext.SaveChangesAsync();
+            var dbContext = GetDbContext();
+            dbContext.Entry(DistributionInfo).State = EntityState.Modified;
+            DistributionInfo.SubChannels.Remove(item);
+            dbContext.DistributionSubChannels.Remove(item);
+            await dbContext.SaveChangesAsync();
             await dataGridRef.RefreshDataAsync();
-            ToastService.ShowSuccess($"已删除发行版 {item}");
+            ToastService.ShowSuccess($"已删除子频道 {item}");
         }
         catch (Exception e)
         {
-            ToastService.ShowError($"删除发行版 {item} 时发生内部错误");
+            Logger.LogError(e, "删除子频道 {} 时发生内部错误", item);
+            ToastService.ShowError($"删除子频道 {item} 时发生内部错误");
         }
     }
+
+
+    private async Task SaveDataAsync()
+    {
+        if (DistributionInfo == null)
+        {
+            return;
+        }
+
+        try
+        {
+            isLoading = true;
+            var dbContext = UiDbContext;
+            DistributionInfo.Channels.Clear();
+            await dbContext!.SaveChangesAsync();
+            foreach (var channel in SelectedChannels)
+            {
+                DistributionInfo.Channels.Add(channel);
+            }
+            await dbContext.SaveChangesAsync();
+            ToastService.ShowSuccess($"保存成功。");
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "保存时发生错误");
+            ToastService.ShowError("保存发行版信息时发生内部错误。");
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    private void UpdateChannelSelection((DistributionChannel Item, bool Selected) obj)
+    {
+        if (SelectedChannels == null)
+        {
+            return;
+        }
+        Logger.LogInformation("{} {} {}", obj.Selected, SelectedChannels.Count, obj.Item);
+        if (!obj.Selected && !SelectedChannels.Contains(obj.Item))
+        {
+            SelectedChannels.Add(obj.Item);
+        }
+        else
+        {
+            SelectedChannels.Remove(obj.Item);
+        }
+    }
+
 }

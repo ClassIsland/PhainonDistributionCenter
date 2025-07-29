@@ -11,9 +11,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="54324140-74aa-46ce-8703-f7b2d19574ae" name="更改" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/dataSources/56ac9a61-2609-44a8-9b2b-c36cf6a38df6.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/dataSources/56ac9a61-2609-44a8-9b2b-c36cf6a38df6.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/DistributionDetailsPage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/DistributionDetailsPage.razor" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Controllers/Distribution/DistributionInfosController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Controllers/Distribution/DistributionInfosController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Services/GpgSignatureService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Services/GpgSignatureService.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/DistributionInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/DistributionInfo.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Program.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -68,7 +71,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
     "RunOnceActivity.git.unshallow": "true",
-    "dotnet-watch.未命名.executor": "Run",
+    "dotnet-watch.未命名.executor": "Debug",
     "git-widget-placeholder": "main",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
@@ -78,6 +81,8 @@
     "nodejs_package_manager_path": "npm",
     "settings.editor.selected.configurable": "vcs.Git",
     "vue.rearranger.settings.migration": "true",
+    "附加到进程.104165:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.104821:PhainonDistributionCenter.executor": "Debug",
     "附加到进程.11058:PhainonDistributionCenter.executor": "Debug",
     "附加到进程.11422:PhainonDistributionCenter.executor": "Debug",
     "附加到进程.13212:PhainonDistributionCenter.executor": "Debug",
@@ -197,7 +202,8 @@
       <workItem from="1753060455687" duration="2942000" />
       <workItem from="1753689736453" duration="5870000" />
       <workItem from="1753705279040" duration="3659000" />
-      <workItem from="1753749924122" duration="16312000" />
+      <workItem from="1753749924122" duration="21449000" />
+      <workItem from="1753776792397" duration="4459000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -303,7 +309,15 @@
       <option name="project" value="LOCAL" />
       <updated>1753766263157</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="feat: 实现公钥管理">
+      <option name="closed" value="true" />
+      <created>1753767750967</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1753767750967</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -350,6 +364,19 @@
           <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
           <option name="timeStamp" value="3" />
         </breakpoint>
+        <line-breakpoint enabled="true" type="DotNet Breakpoints">
+          <url>file://$PROJECT_DIR$/PhainonDistributionCenter/Controllers/Distribution/DistributionInfosController.cs</url>
+          <line>24</line>
+          <properties documentPath="$PROJECT_DIR$/PhainonDistributionCenter/Controllers/Distribution/DistributionInfosController.cs" containingFunctionPresentation="方法 'AddDistribution'">
+            <startOffsets>
+              <option value="1058" />
+            </startOffsets>
+            <endOffsets>
+              <option value="1059" />
+            </endOffsets>
+          </properties>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>

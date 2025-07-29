@@ -37,6 +37,7 @@ public class DistributionInfosController(
 
         var distributionInfo = new DistributionInfo()
         {
+            Id = Guid.NewGuid(),
             Version = version,
             ChangeLog = body.ChangeLog,
             Channels = [],
@@ -53,8 +54,11 @@ public class DistributionInfosController(
                         FailedSubChannel = subChannel
                     },$"子频道 {subChannel} 的文件图签名不正确"));
             }
+
+            DbContext.Entry(keyInfo).State = EntityState.Unchanged;
             distributionInfo.SubChannels.Add(new DistributionSubChannel()
             {
+                Id = Guid.NewGuid(),
                 Os = subChannel.Os,
                 Arch = subChannel.Arch,
                 BuildType = subChannel.BuildType,
@@ -64,7 +68,8 @@ public class DistributionInfosController(
                 {
                     PublicKey = keyInfo,
                     PgpSignature = subChannel.FileMapSignature,
-                    ContentJson = subChannel.FileMap
+                    ContentJson = subChannel.FileMap,
+                    PublicKeyId = keyInfo.Id
                 }
             });
             

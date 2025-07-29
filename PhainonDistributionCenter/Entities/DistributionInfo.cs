@@ -21,7 +21,7 @@ public class DistributionInfo : IObjectWithTime
     /// <summary>
     /// 此发行版发布的发行渠道
     /// </summary>
-    public ICollection<DistributionChannel> Channels { get; set; } = [];
+    public IList<DistributionChannel> Channels { get; set; } = [];
 
     /// <summary>
     /// 此发行版的发行日志
