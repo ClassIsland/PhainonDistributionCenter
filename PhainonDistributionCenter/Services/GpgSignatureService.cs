@@ -41,14 +41,16 @@ public class GpgSignatureService(MainDbContext dbContext, ILogger<GpgSignatureSe
 
     public async Task<GpgPublicKey> AddPublicKeyAsync(string name, string publicKey)
     {
-        var keys = new EncryptionKeys(publicKey);
-
-        var key = keys.PublicKeys.FirstOrDefault();
+        using var stream = new MemoryStream(Encoding.UTF8.GetBytes(publicKey));
+        await using var decodeStream = PgpUtilities.GetDecoderStream(stream);
+        var pgpPub = new PgpPublicKeyRing(decodeStream);
+        var key = pgpPub.GetPublicKey();
         if (key == null)
         {
             throw new InvalidOperationException("请提供有效的密钥。");
         }
 
+        Logger.LogInformation("KeyId: {}", key.KeyId);
         var keyInfo = new GpgPublicKey()
         {
             KeyId = key.KeyId,

@@ -28,7 +28,7 @@ public class DistributionInfosController(
             return BadRequest(new Result(StatusCodes.AddDistributionInvalidVersion, "无效的版本名"));
         }
 
-        var versionInfo = await DbContext.VersionInfos.FirstOrDefaultAsync(x => x.Version == version);
+        var versionInfo = await DbContext.VersionInfos.FirstOrDefaultAsync(x => x.Version == primaryVersion);
         if (versionInfo == null)
         {
             return BadRequest(new Result(StatusCodes.AddDistributionPrimaryVersionNotFound,

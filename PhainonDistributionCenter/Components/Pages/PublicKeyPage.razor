@@ -1,10 +1,12 @@
 @page "/PublicKey"
 @using PhainonDistributionCenter.Entities
+@using PhainonDistributionCenter.Services
 
 @inject MainDbContext DbContext;
 @inject IDialogService DialogService;
 @inject ILogger<VersionsPage> Logger;
 @inject IToastService ToastService;
+@inject GpgSignatureService GpgSignatureService;
 
 @rendermode InteractiveServer
 
@@ -12,7 +14,7 @@
 <h2>公钥</h2>
 
 
-<p>管理应用的各个 GPG 公钥。</p>
+<p>管理应用的各个 GPG 公钥。只有使用添加到此处的公钥关联的私钥签名的文件图，才被允许添加到发行版中。</p>
 
 <FluentButton Appearance="Appearance.Accent"
               @onclick="ButtonAddItemOnClick">
@@ -24,6 +26,8 @@
     <FluentPaginator State="@paginationState" />
     <FluentDataGrid Items="@DbContext.PublicKeys" Pagination="@paginationState" @ref="@dataGridRef">
         <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
+        <PropertyColumn Property="@(p => p.KeyId)" Title="公钥 ID" Format="X2"
+                        IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
         <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
                         IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
         <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
@@ -41,6 +45,7 @@
     <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom: 2em">
         <FluentTextField Label="名称" @bind-Value="editingInfo.Name" Required Style="width: 100%"/>
         <FluentTextArea Label="公钥内容" @bind-Value="editingInfo.PublicKey" Required Style="width: 100%"
+                        ReadOnly="!isCreating"
                         Resize="TextAreaResize.Vertical"/>
     </FluentStack>
     <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="ButtonEditingDialogSaveOnClick"
@@ -113,7 +118,7 @@
         {
             if (isCreating)
             {
-                await DbContext.PublicKeys.AddAsync(editingInfo);
+                editingInfo = await GpgSignatureService.AddPublicKeyAsync(editingInfo.Name, editingInfo.PublicKey);
             }
 
             editingInfo.UpdatedTime = DateTime.Now;
@@ -124,7 +129,7 @@
         }
         catch (Exception e)
         {
-            Logger.LogError(e, $"保存 GPG 公钥 {editingInfo.Name} 时发生内部错误");
+            Logger.LogError(e, "保存 GPG 公钥 {EditingInfoName} 时发生内部错误", editingInfo.Name);
             ToastService.ShowError($"保存 GPG 公钥 {editingInfo.Name} 时发生内部错误");
         }
         finally

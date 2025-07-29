@@ -12,6 +12,8 @@
   <component name="ChangeListManager">
     <list default="true" id="54324140-74aa-46ce-8703-f7b2d19574ae" name="更改" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Controllers/Distribution/DistributionInfosController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Controllers/Distribution/DistributionInfosController.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Services/GpgSignatureService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Services/GpgSignatureService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -45,7 +47,7 @@
   }
 }</component>
   <component name="HighlightingSettingsPerFile">
-    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/SourcesCache/797549af4618dd0815d795be0d7fd9a74121d8d6cb0c0adb59998c528df19e6/FluentMessageBarProvider.razor.cs" root0="FORCE_HIGHLIGHTING" />
+    <setting file="file://$APPLICATION_CONFIG_DIR$/resharper-host/DecompilerCache/decompiler/252591c17e9946729622325df3bfe16f1daa00/fc/6816d20d/ControllerEndpointRouteBuilderExtensions.cs" root0="FORCE_HIGHLIGHTING" />
     <setting file="file://$PROJECT_DIR$/PhainonDistributionCenter/package-lock.json" root0="SKIP_HIGHLIGHTING" />
   </component>
   <component name="MetaFilesCheckinStateConfiguration" checkMetaFiles="true" />
@@ -88,6 +90,8 @@
     "附加到进程.27081:PhainonDistributionCenter.executor": "Debug",
     "附加到进程.32066:PhainonDistributionCenter.executor": "Debug",
     "附加到进程.37068:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.47594:PhainonDistributionCenter.executor": "Debug",
+    "附加到进程.48285:PhainonDistributionCenter.executor": "Debug",
     "附加到进程.5866:PhainonDistributionCenter.executor": "Debug"
   },
   "keyToStringList": {
@@ -193,7 +197,7 @@
       <workItem from="1753060455687" duration="2942000" />
       <workItem from="1753689736453" duration="5870000" />
       <workItem from="1753705279040" duration="3659000" />
-      <workItem from="1753749924122" duration="13914000" />
+      <workItem from="1753749924122" duration="16312000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -275,7 +279,31 @@
       <option name="project" value="LOCAL" />
       <updated>1753765010377</updated>
     </task>
-    <option name="localTasksCounter" value="11" />
+    <task id="LOCAL-00011" summary="feat: 实现添加发行版的功能">
+      <option name="closed" value="true" />
+      <created>1753765031747</created>
+      <option name="number" value="00011" />
+      <option name="presentableId" value="LOCAL-00011" />
+      <option name="project" value="LOCAL" />
+      <updated>1753765031747</updated>
+    </task>
+    <task id="LOCAL-00012" summary="feat: 实现公钥管理">
+      <option name="closed" value="true" />
+      <created>1753765557413</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1753765557413</updated>
+    </task>
+    <task id="LOCAL-00013" summary="feat: 实现公钥管理">
+      <option name="closed" value="true" />
+      <created>1753766263157</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1753766263157</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -304,7 +332,8 @@
     <MESSAGE value="feat: 优化 404 外观" />
     <MESSAGE value="feat: 实现 GPG 公钥管理" />
     <MESSAGE value="feat: 实现添加发行版的功能" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 实现添加发行版的功能" />
+    <MESSAGE value="feat: 实现公钥管理" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 实现公钥管理" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
