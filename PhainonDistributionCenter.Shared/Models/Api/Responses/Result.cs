@@ -1,6 +1,6 @@
 using PhainonDistributionCenter.Shared.Enums.Api;
 
-namespace PhainonDistributionCenter.Shared.Models.Api;
+namespace PhainonDistributionCenter.Shared.Models.Api.Responses;
 
 /// <summary>
 /// 代表请求的结果

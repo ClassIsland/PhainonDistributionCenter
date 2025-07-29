@@ -41,7 +41,7 @@ builder.Services.AddFluentUIComponents();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddScoped<FileMapProcessingService>();
+builder.Services.AddScoped<FileRepoProcessingService>();
 builder.Services.AddScoped<GpgSignatureService>();
 
 var app = builder.Build();

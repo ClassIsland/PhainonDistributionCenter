@@ -11,12 +11,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="54324140-74aa-46ce-8703-f7b2d19574ae" name="更改" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/dataSources/56ac9a61-2609-44a8-9b2b-c36cf6a38df6.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/dataSources/56ac9a61-2609-44a8-9b2b-c36cf6a38df6.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter.Shared/Models/FileRepo.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter.Shared/Models/FileRepoItem.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/FileRepoEntry.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.PhainonDistributionCenter/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/DistributionDetailsPage.razor" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Components/Pages/DistributionDetailsPage.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter.Shared/Models/AddDistributionInfoRequest.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter.Shared/Models/Api/Requests/AddDistributionInfoRequest.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter.Shared/Models/Api/Result.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter.Shared/Models/Api/Responses/Result.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Controllers/Distribution/DistributionInfosController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Controllers/Distribution/DistributionInfosController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/DistributionInfo.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Entities/DistributionInfo.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Program.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Program.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/MainDbContext.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/MainDbContext.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Migrations/MainDbContextModelSnapshot.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Migrations/MainDbContextModelSnapshot.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/PhainonDistributionCenter/Services/FileMapProcessingService.cs" beforeDir="false" afterPath="$PROJECT_DIR$/PhainonDistributionCenter/Services/FileMapProcessingService.cs" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -62,49 +66,49 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    ".NET 启动设置配置文件.PhainonDistributionCenter: MyBlazorLauncher.executor": "Run",
-    ".NET 启动设置配置文件.PhainonDisturbutionCenter: http.executor": "Debug",
-    "DefaultHtmlFileTemplate": "HTML File",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "dotnet-watch.未命名.executor": "Debug",
-    "git-widget-placeholder": "main",
-    "list.type.of.created.stylesheet": "CSS",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "vcs.Git",
-    "vue.rearranger.settings.migration": "true",
-    "附加到进程.104165:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.104821:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.11058:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.11422:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.13212:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.13858:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.15702:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.15925:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.17660:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.25610:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.26465:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.27081:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.32066:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.37068:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.47594:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.48285:PhainonDistributionCenter.executor": "Debug",
-    "附加到进程.5866:PhainonDistributionCenter.executor": "Debug"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;.NET 启动设置配置文件.PhainonDistributionCenter: MyBlazorLauncher.executor&quot;: &quot;Run&quot;,
+    &quot;.NET 启动设置配置文件.PhainonDisturbutionCenter: http.executor&quot;: &quot;Debug&quot;,
+    &quot;DefaultHtmlFileTemplate&quot;: &quot;HTML File&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;dotnet-watch.未命名.executor&quot;: &quot;Debug&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;main&quot;,
+    &quot;list.type.of.created.stylesheet&quot;: &quot;CSS&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;vcs.Git&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
+    &quot;附加到进程.104165:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.104821:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.11058:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.11422:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.13212:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.13858:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.15702:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.15925:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.17660:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.25610:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.26465:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.27081:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.32066:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.37068:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.47594:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.48285:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;,
+    &quot;附加到进程.5866:PhainonDistributionCenter.executor&quot;: &quot;Debug&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mariadb"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mariadb&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RunManager" selected="dotnet-watch.未命名">
     <configuration name="PhainonDistributionCenter: MyBlazorLauncher" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/PhainonDistributionCenter/PhainonDistributionCenter.csproj" />
@@ -203,7 +207,8 @@
       <workItem from="1753689736453" duration="5870000" />
       <workItem from="1753705279040" duration="3659000" />
       <workItem from="1753749924122" duration="21449000" />
-      <workItem from="1753776792397" duration="4459000" />
+      <workItem from="1753776792397" duration="6165000" />
+      <workItem from="1753788457262" duration="4468000" />
     </task>
     <task id="LOCAL-00001" summary="init">
       <option name="closed" value="true" />
@@ -317,7 +322,23 @@
       <option name="project" value="LOCAL" />
       <updated>1753767750967</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="feat: 完成发行版信息管理">
+      <option name="closed" value="true" />
+      <created>1753781364631</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1753781364631</updated>
+    </task>
+    <task id="LOCAL-00016" summary="feat: 优化文件图数据结构">
+      <option name="closed" value="true" />
+      <created>1753781472523</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1753781472523</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -347,7 +368,9 @@
     <MESSAGE value="feat: 实现 GPG 公钥管理" />
     <MESSAGE value="feat: 实现添加发行版的功能" />
     <MESSAGE value="feat: 实现公钥管理" />
-    <option name="LAST_COMMIT_MESSAGE" value="feat: 实现公钥管理" />
+    <MESSAGE value="feat: 完成发行版信息管理" />
+    <MESSAGE value="feat: 优化文件图数据结构" />
+    <option name="LAST_COMMIT_MESSAGE" value="feat: 优化文件图数据结构" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -364,19 +387,6 @@
           <properties exception="System.Threading.ThreadAbortException" breakIfHandledByOtherCode="false" displayValue="System.Threading.ThreadAbortException" />
           <option name="timeStamp" value="3" />
         </breakpoint>
-        <line-breakpoint enabled="true" type="DotNet Breakpoints">
-          <url>file://$PROJECT_DIR$/PhainonDistributionCenter/Controllers/Distribution/DistributionInfosController.cs</url>
-          <line>24</line>
-          <properties documentPath="$PROJECT_DIR$/PhainonDistributionCenter/Controllers/Distribution/DistributionInfosController.cs" containingFunctionPresentation="方法 'AddDistribution'">
-            <startOffsets>
-              <option value="1058" />
-            </startOffsets>
-            <endOffsets>
-              <option value="1059" />
-            </endOffsets>
-          </properties>
-          <option name="timeStamp" value="4" />
-        </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
   </component>

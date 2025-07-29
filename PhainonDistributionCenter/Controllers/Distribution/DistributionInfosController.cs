@@ -4,6 +4,8 @@ using PhainonDistributionCenter.Entities;
 using PhainonDistributionCenter.Services;
 using PhainonDistributionCenter.Shared.Models;
 using PhainonDistributionCenter.Shared.Models.Api;
+using PhainonDistributionCenter.Shared.Models.Api.Requests;
+using PhainonDistributionCenter.Shared.Models.Api.Responses;
 using StatusCodes = PhainonDistributionCenter.Shared.Enums.Api.StatusCodes;
 
 namespace PhainonDistributionCenter.Controllers.Distribution;
@@ -12,13 +14,13 @@ namespace PhainonDistributionCenter.Controllers.Distribution;
 [Route("api/v1/distribution/")]
 public class DistributionInfosController(
     MainDbContext dbContext,
-    FileMapProcessingService fileMapProcessingService,
+    FileRepoProcessingService fileRepoProcessingService,
     GpgSignatureService gpgSignatureService) : ControllerBase
 {
     private GpgSignatureService SignatureService { get; } = gpgSignatureService;
     private MainDbContext DbContext { get; } = dbContext;
     
-    private FileMapProcessingService FileMapProcessingService { get; } = fileMapProcessingService;
+    private FileRepoProcessingService FileRepoProcessingService { get; } = fileRepoProcessingService;
 
     [HttpPost("{primaryVersion}/{version}")]
     public async Task<IActionResult> AddDistribution(string primaryVersion, string version, [FromBody] AddDistributionInfoRequest body)

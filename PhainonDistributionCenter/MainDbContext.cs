@@ -11,6 +11,7 @@ public class MainDbContext(DbContextOptions<MainDbContext> options) : DbContext(
     public DbSet<DistributionSubChannel> DistributionSubChannels { get; set; }
     public DbSet<FileMapInfo> FileMapInfos { get; set; }
     public DbSet<GpgPublicKey> PublicKeys { get; set; }
+    public DbSet<FileRepoEntry> FileRepoEntries { get; set; }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {

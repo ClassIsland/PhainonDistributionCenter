@@ -1,7 +1,6 @@
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 
-namespace PhainonDistributionCenter.Shared.Models;
+namespace PhainonDistributionCenter.Shared.Models.Api.Requests;
 
 /// <summary>
 /// 代表添加发布信息的 api 请求体。
