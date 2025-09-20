@@ -29,6 +29,6 @@ public class GpgPublicKey : IObjectWithTime
     /// </summary>
     public string PublicKey { get; set; } = "";
     
-    public DateTime CreatedTime { get; set; } = DateTime.Now;
-    public DateTime UpdatedTime { get; set; } = DateTime.Now;
+    public DateTimeOffset CreatedTime { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset UpdatedTime { get; set; } = DateTimeOffset.UtcNow;
 }

@@ -24,6 +24,6 @@ public class VersionInfo : IObjectWithTime
     /// </summary>
     [MaxLength(64)] public string Codename { get; set; } = "";
     
-    public DateTime CreatedTime { get; set; } = DateTime.Now;
-    public DateTime UpdatedTime { get; set; } = DateTime.Now;
+    public DateTimeOffset CreatedTime { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset UpdatedTime { get; set; } = DateTimeOffset.UtcNow;
 }

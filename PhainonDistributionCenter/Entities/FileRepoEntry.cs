@@ -18,6 +18,6 @@ public class FileRepoEntry : IObjectWithTime
 
     public string ArchiveDownloadUrl { get; set; } = "";
     
-    public DateTime CreatedTime { get; } = DateTime.Now;
-    public DateTime UpdatedTime { get; } = DateTime.Now;
+    public DateTimeOffset CreatedTime { get; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset UpdatedTime { get; } = DateTimeOffset.UtcNow;
 }

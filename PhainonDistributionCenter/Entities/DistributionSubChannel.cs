@@ -62,6 +62,6 @@ public class DistributionSubChannel : IObjectWithTime
         return $"{Os}_{Arch}_{BuildType}_{Package}";
     }
 
-    public DateTime CreatedTime { get; set; } = DateTime.Now;
-    public DateTime UpdatedTime { get; set; } = DateTime.Now;
+    public DateTimeOffset CreatedTime { get; set; } = DateTimeOffset.UtcNow;
+    public DateTimeOffset UpdatedTime { get; set; } = DateTimeOffset.UtcNow;
 }

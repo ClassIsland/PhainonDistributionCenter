@@ -121,7 +121,7 @@
                 editingInfo = await GpgSignatureService.AddPublicKeyAsync(editingInfo.Name, editingInfo.PublicKey);
             }
 
-            editingInfo.UpdatedTime = DateTime.Now;
+            editingInfo.UpdatedTime = DateTimeOffset.UtcNow;
             await DbContext.SaveChangesAsync();
             await dataGridRef.RefreshDataAsync();
             ToastService.ShowSuccess($"已保存 GPG 公钥 {editingInfo.Name}");

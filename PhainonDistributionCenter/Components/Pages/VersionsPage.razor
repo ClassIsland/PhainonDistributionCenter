@@ -116,7 +116,7 @@
                 await DbContext.VersionInfos.AddAsync(editingInfo);
             }
 
-            editingInfo.UpdatedTime = DateTime.Now;
+            editingInfo.UpdatedTime = DateTimeOffset.UtcNow;
             await DbContext.SaveChangesAsync();
             await dataGridRef.RefreshDataAsync();
             ToastService.ShowSuccess($"已保存大版本 {editingInfo.Version}");

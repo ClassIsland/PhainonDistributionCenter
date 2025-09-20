@@ -15,11 +15,11 @@ Action<DbContextOptionsBuilder> optionsAction = options =>
     var dbType = builder.Configuration["DatabaseType"];
     switch (dbType)
     {
-        case "mysql":
-            options.UseMySql(
+        case "pgsql":
+            options.UseNpgsql(
                 builder.Configuration.GetConnectionString(
                     builder.Environment.IsDevelopment() ? "Development" : "Production"
-                ),ServerVersion.Parse("8.0.0-mysql"));
+                ));
             break;
         default:
             throw new InvalidOperationException($"Unsupported database type: {dbType}");

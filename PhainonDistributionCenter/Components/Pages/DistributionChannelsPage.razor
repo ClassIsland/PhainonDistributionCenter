@@ -116,7 +116,7 @@
                 await DbContext.DistributionChannels.AddAsync(editingChannel);
             }
 
-            editingChannel.UpdatedTime = DateTime.Now;
+            editingChannel.UpdatedTime = DateTimeOffset.UtcNow;
             await DbContext.SaveChangesAsync();
             await dataGridRef.RefreshDataAsync();
             ToastService.ShowSuccess($"已保存发行渠道 {editingChannel.Name}");

@@ -26,6 +26,8 @@ public class MainDbContext(DbContextOptions<MainDbContext> options) : DbContext(
             .WithMany(x => x.Channels);
         modelBuilder.Entity<GpgPublicKey>()
             .HasAlternateKey(x => x.KeyId);
+        modelBuilder.Entity<FileRepoEntry>().Property(e => e.FileSha512)
+            .HasColumnType("bytea");
         base.OnModelCreating(modelBuilder);
     }
 }
