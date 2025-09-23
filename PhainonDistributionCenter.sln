@@ -7,7 +7,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhainonDistributionCenter",
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhainonDistributionCenter.Shared", "PhainonDistributionCenter.Shared\PhainonDistributionCenter.Shared.csproj", "{850794DC-A261-45A5-BDA4-387C505796F2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Mikhail", "Mikhail\Mikhail.csproj", "{C3C3725E-C316-4BF3-8885-A2CDC490B7E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhainonDistributionCenter.Client", "PhainonDistributionCenter.Client\PhainonDistributionCenter.Client.csproj", "{FA43A77B-129E-43E7-B3E3-44C366402C90}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -26,9 +26,9 @@ Global
 		{850794DC-A261-45A5-BDA4-387C505796F2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{850794DC-A261-45A5-BDA4-387C505796F2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{850794DC-A261-45A5-BDA4-387C505796F2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C3C3725E-C316-4BF3-8885-A2CDC490B7E4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C3C3725E-C316-4BF3-8885-A2CDC490B7E4}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C3C3725E-C316-4BF3-8885-A2CDC490B7E4}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C3C3725E-C316-4BF3-8885-A2CDC490B7E4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FA43A77B-129E-43E7-B3E3-44C366402C90}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FA43A77B-129E-43E7-B3E3-44C366402C90}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FA43A77B-129E-43E7-B3E3-44C366402C90}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FA43A77B-129E-43E7-B3E3-44C366402C90}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
