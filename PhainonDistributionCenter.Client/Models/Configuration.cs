@@ -21,4 +21,14 @@ public class Configuration
     /// </summary>
     public string Name { get; set; } = "";
 
+    /// <summary>
+    /// 文件仓库根，结尾要有“/”
+    /// </summary>
+    public string FileRepoRoot { get; set; } = "";
+    
+    /// <summary>
+    /// S3 桶的文件仓库键根，结尾要有“/”
+    /// </summary>
+    public string BucketKeyRoot { get; set; } = "";
+
 }

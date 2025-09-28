@@ -23,7 +23,8 @@ public class DistributionInfosController(
     private FileRepoProcessingService FileRepoProcessingService { get; } = fileRepoProcessingService;
 
     [HttpPost("{primaryVersion}/{version}")]
-    public async Task<IActionResult> AddDistribution(string primaryVersion, string version, [FromBody] AddDistributionInfoRequest body)
+    public async Task<IActionResult> AddDistribution([FromRoute] string primaryVersion, [FromRoute] string version, 
+        [FromBody] AddDistributionInfoRequest body)
     {
         if (!Version.TryParse(primaryVersion, out _) || !Version.TryParse(version, out _))
         {

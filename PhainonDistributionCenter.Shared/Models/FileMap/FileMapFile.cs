@@ -11,11 +11,6 @@ public class FileMapFile
     public string ArchiveDownloadUrl { get; set; } = "";
 
     /// <summary>
-    /// 文件归档的 SHA512 校验和
-    /// </summary>
-    public byte[] ArchiveFileSha512 { get; set; } = [];
-
-    /// <summary>
     /// 文件本体的 SHA512 校验和
     /// </summary>
     public byte[] FileSha512 { get; set; } = [];

@@ -19,6 +19,21 @@ public class DistributionInfo : IObjectWithTime
     [MaxLength(32)] public string Version { get; set; } = "";
 
     /// <summary>
+    /// 友好版本号，如 2.0-Khaslana Release 1
+    /// </summary>
+    [MaxLength(64)] public string FriendlyVersion { get; set; } = "";
+    
+    /// <summary>
+    /// 友好短版本号，如 2.0-Khaslana R1
+    /// </summary>
+    [MaxLength(64)] public string FriendlyVersionShort { get; set; } = "";
+
+    /// <summary>
+    /// 此发行版是否已启用
+    /// </summary>
+    public bool IsEnabled { get; set; } = false;
+
+    /// <summary>
     /// 此发行版发布的发行渠道
     /// </summary>
     public IList<DistributionChannel> Channels { get; set; } = [];

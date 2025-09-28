@@ -19,6 +19,23 @@
     <p>@(DistributionInfo!.VersionInfo.Version) - @(DistributionInfo!.VersionInfo.Codename)</p>
     
     <FluentTabs Size="TabSize.Medium" Id="main-tab">
+        <FluentTab Label="基本">
+            <div class="grid property-grid col-end-1 gap-4 p-2" style="">
+                <FluentCheckbox Label="已激活" @bind-Value="DistributionInfo.IsEnabled"
+                                Class="col-span-2"/>
+                <FluentTextField Label="版本号" @bind-Value="DistributionInfo.Version"/>
+                <FluentTextField Label="友好版本名称" @bind-Value="DistributionInfo.FriendlyVersion"/>
+                <FluentTextField Label="友好版本名称（短）" @bind-Value="DistributionInfo.FriendlyVersionShort"/>
+                
+                <div class="col-span-2 flex">
+                    <FluentButton
+                        Loading="isLoading"
+                        Class="self-start"
+                        Appearance="Appearance.Accent"
+                        OnClick="SaveDataAsync">保存</FluentButton>
+                </div>
+            </div>
+        </FluentTab>
         <FluentTab Label="子频道">
             <div>
                 <FluentPaginator State="@paginationState"/>
@@ -92,8 +109,6 @@ else if (IsNotFound)
 #changelog-editor {
     height: 100%;
     width: 100%;
-
-    
 }
 
 fluent-text-area::part(control){ 
@@ -106,6 +121,14 @@ fluent-text-area::part(control){
 
 fluent-tab-panel {
     height: 100%;
+}
+
+.property-grid{
+    grid-template-columns: 20% 80%;
+}
+
+.property-grid > :nth-child(1n) {
+    text-align: right;
 }
 </style>
 

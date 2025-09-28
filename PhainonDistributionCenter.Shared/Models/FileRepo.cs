@@ -8,7 +8,7 @@ namespace PhainonDistributionCenter.Shared.Models;
 public class FileRepo
 {
     /// <summary>
-    /// 文件仓库的内容
+    /// 文件仓库的内容，键为文件哈希（base64）
     /// </summary>
-    public List<FileRepoItem> Items { get; set; } = [];
+    public Dictionary<string, FileRepoItem> Items { get; set; } = [];
 }
