@@ -1,0 +1,41 @@
+@page "/Account/AccessDenied"
+@using System.Diagnostics
+
+@inject NavigationManager NavigationManager
+
+<PageTitle>403</PageTitle>
+
+<div class="content-center text-center flex flex-col items-center">
+    <img src="/白厄_掉线.png"
+         width="72" height="72"
+         alt="白厄_掉线"/>
+    <h1>403</h1>
+    <p>您不具有访问此资源的权限。</p>
+    <div class="flex gap-2">
+        <FluentAnchor Href="/">返回首页</FluentAnchor>
+        <FluentAnchor Appearance="Appearance.Accent" Href="/auth/logout">切换账号</FluentAnchor>
+    </div>
+    <p style="font-size: 13px; margin-top: 2em">
+        诊断信息：<br/>
+        <b>RequestId: </b><code>@RequestId</code><br/>
+    </p>
+</div>
+
+<style>
+    
+</style>
+
+
+@code {
+    [Parameter]
+    public string? Route { get; set; }
+    
+    [CascadingParameter]
+    private HttpContext? HttpContext { get; set; }
+
+    private string? RequestId { get; set; }
+    private bool ShowRequestId => !string.IsNullOrEmpty(RequestId);
+
+    protected override void OnInitialized() =>
+        RequestId = Activity.Current?.Id ?? HttpContext?.TraceIdentifier;
+}

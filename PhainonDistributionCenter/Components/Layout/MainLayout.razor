@@ -13,7 +13,9 @@
         <AuthorizeView>
             <Authorized>
                 <div class="flex items-center gap-2">
-                    <span >@(user?.Identity?.Name)</span>
+                    <FluentPersona Name="@(user?.Identity?.Name)"
+                                   Image="@(user?.Claims.FirstOrDefault(x => x.Type == "urn:github:avatar_url")?.Value)"
+                                   ImageSize="32px"/>
                     <span>|</span>
                     <FluentAnchor Href="/auth/logout" Appearance="Appearance.Hypertext"
                                   Style="--accent-foreground-rest: var(--fill-color); color: var(--fill-color) !important;">登出</FluentAnchor>

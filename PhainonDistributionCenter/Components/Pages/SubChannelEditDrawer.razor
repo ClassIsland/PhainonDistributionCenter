@@ -1,9 +1,10 @@
 @using Microsoft.AspNetCore.Authorization
 @using PhainonDistributionCenter.Entities
+@using PhainonDistributionCenter.Security
 @implements IDialogContentComponent<PhainonDistributionCenter.Entities.DistributionSubChannel>
 
 @rendermode InteractiveServer
-@attribute [Authorize]
+@attribute [Authorize(Policy = Policies.IsOrgMemberPolicyName)]
 
 <div class="flex gap-2 flex-col">
     <div>

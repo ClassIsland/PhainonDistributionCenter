@@ -3,12 +3,13 @@
 @using Microsoft.FluentUI.AspNetCore.Components.Icons.Regular
 @using PhainonDistributionCenter.Components.Controls
 @using PhainonDistributionCenter.Entities
+@using PhainonDistributionCenter.Security
 @inject MainDbContext DbContext;
 @inject IDialogService DialogService;
 @inject ILogger<DistributionChannelsPage> Logger;
 @inject IToastService ToastService;
 @rendermode InteractiveServer
-@attribute [Authorize]
+@attribute [Authorize(Policy = Policies.IsOrgMemberPolicyName)]
 
 <PageTitle>发行通道</PageTitle>
 

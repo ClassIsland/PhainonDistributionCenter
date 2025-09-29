@@ -3,12 +3,13 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using PhainonDistributionCenter.Entities
+@using PhainonDistributionCenter.Security
 @inject NavigationManager NavigationManager;
 @inject ILogger<DistributionDetailsPage> Logger;
 @inject IDialogService DialogService;
 @inject IToastService ToastService;
 @inject IDbContextFactory<MainDbContext> DbContextFactory;
-@attribute [Authorize]
+@attribute [Authorize(Policy = Policies.IsOrgMemberPolicyName)]
 
 @rendermode InteractiveServer
 

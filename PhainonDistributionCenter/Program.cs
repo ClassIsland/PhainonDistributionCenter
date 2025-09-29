@@ -1,3 +1,4 @@
+using System.Security.Claims;
 using System.Text.Json.Serialization;
 using AspNet.Security.OAuth.GitHub;
 using Microsoft.AspNetCore.Authentication;
@@ -5,8 +6,10 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
+using Octokit;
 using PhainonDistributionCenter;
 using PhainonDistributionCenter.Components;
+using PhainonDistributionCenter.Security;
 using PhainonDistributionCenter.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -61,8 +64,69 @@ builder.Services.AddAuthentication(options =>
         options.ClientSecret = builder.Configuration["GitHub:ClientSecret"] ?? "";
         options.ClientId = builder.Configuration["GitHub:ClientId"] ?? "";
         options.Scope.Add("user:email");
-    });
+        options.Scope.Add("read:org");
+        options.Events.OnCreatingTicket = async context =>
+        {
+            var accessToken = context.AccessToken;
+            if (string.IsNullOrEmpty(accessToken))
+            {
+                context.Fail("Could not retrieve access token from GitHub.");
+                return;
+            }
 
+            try
+            {
+                // 2. 创建并验证 Octokit 客户端
+                var github = new GitHubClient(new ProductHeaderValue("PhainonDistributionCenter"))
+                    {
+                        Credentials = new Credentials(accessToken)
+                    };
+
+                var user = await github.User.Current();
+                // 3. 使用 Octokit 获取用户组织
+                var orgs = await github.Organization.GetAllForCurrent();
+
+                var targetOrg = builder.Configuration["GitHub:Organization"];
+                if (string.IsNullOrEmpty(targetOrg))
+                {
+                    context.Fail("Target GitHub organization is not configured.");
+                    return;
+                }
+                
+                // 4. 检查成员资格
+                var isMember = orgs?.Any(o => o.Login.Equals(targetOrg, StringComparison.OrdinalIgnoreCase)) ?? false;
+
+                if (!string.IsNullOrEmpty(user.AvatarUrl))
+                {
+                    var avatarClaim = new Claim("urn:github:avatar_url", user.AvatarUrl, ClaimValueTypes.String,
+                        context.Options.ClaimsIssuer);
+                    context.Identity?.AddClaim(avatarClaim);
+                }
+                if (isMember)
+                {
+                    var orgClaim = new Claim("urn:github:org", targetOrg, ClaimValueTypes.String, context.Options.ClaimsIssuer);
+                    context.Identity?.AddClaim(orgClaim);
+                }
+                else
+                {
+                    context.Fail($"User is not a member of the '{targetOrg}' organization.");
+                }
+            }
+            catch (Exception ex)
+            {
+                context.Fail(ex);
+            }
+        };
+    });
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy(Policies.IsOrgMemberPolicyName, policy =>
+    {
+        policy.AddAuthenticationSchemes(GitHubAuthenticationDefaults.AuthenticationScheme);
+        policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
+        policy.RequireClaim("urn:github:org", builder.Configuration["GitHub:Organization"] ?? "");
+    }); 
+});
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddScoped<FileRepoProcessingService>();

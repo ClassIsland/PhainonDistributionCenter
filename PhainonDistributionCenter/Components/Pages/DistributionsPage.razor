@@ -4,12 +4,13 @@
 @inject IToastService ToastService;
 
 @rendermode InteractiveServer
-@attribute [Authorize]
+@attribute [Authorize(Policy = Policies.IsOrgMemberPolicyName)]
 
 @page "/Distributions"
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using PhainonDistributionCenter.Entities
+@using PhainonDistributionCenter.Security
 
 <PageTitle>发行版</PageTitle>
 <h2>发行版</h2>

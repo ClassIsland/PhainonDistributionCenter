@@ -1,6 +1,7 @@
 @page "/PublicKey"
 @using Microsoft.AspNetCore.Authorization
 @using PhainonDistributionCenter.Entities
+@using PhainonDistributionCenter.Security
 @using PhainonDistributionCenter.Services
 
 @inject MainDbContext DbContext;
@@ -8,7 +9,7 @@
 @inject ILogger<VersionsPage> Logger;
 @inject IToastService ToastService;
 @inject GpgSignatureService GpgSignatureService;
-@attribute [Authorize]
+@attribute [Authorize(Policy = Policies.IsOrgMemberPolicyName)]
 
 @rendermode InteractiveServer
 
