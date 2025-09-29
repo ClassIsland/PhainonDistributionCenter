@@ -1,0 +1,27 @@
+<div class="app-logo"></div>
+
+<style scoped>
+     .app-logo {
+          width: 36px;
+          height: 36px;
+          display: inline-block;
+          background-repeat: no-repeat;
+          background-position: center;
+          background-size: contain;
+          /* 使用图片作为 mask（注意兼容：webkit 前缀） */
+          -webkit-mask-image: url('Icon_Coreflame_Worldbearing.png');
+          -webkit-mask-repeat: no-repeat;
+          -webkit-mask-position: center;
+          -webkit-mask-size: contain;
+
+          mask-image: url('Icon_Coreflame_Worldbearing.png');
+          mask-repeat: no-repeat;
+          mask-position: center;
+          mask-size: contain;
+          background-color: var(--fill-color);
+     }
+</style>
+
+@code {
+    
+}

@@ -1,5 +1,6 @@
 ﻿@using System.Security.Claims
 @using Microsoft.AspNetCore.Components.Authorization
+@using PhainonDistributionCenter.Components.Controls
 @inherits LayoutComponentBase
 @inject IHostEnvironment Env
 @inject AuthenticationStateProvider AuthenticationStateProvider
@@ -7,9 +8,12 @@
 
 <FluentLayout>
     <FluentHeader>
-        PhainonDistributionCenter
+        <div class="flex items-center gap-2">
+            <AppLogo/>
+            PhainonDistributionCenter
+        </div>
         <FluentSpacer/>
-        
+
         <AuthorizeView>
             <Authorized>
                 <div class="flex items-center gap-2">
