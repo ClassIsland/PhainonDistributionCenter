@@ -1,5 +1,6 @@
 @page "/Distributions/{id:guid}"
 
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using PhainonDistributionCenter.Entities
 @inject NavigationManager NavigationManager;
@@ -7,6 +8,7 @@
 @inject IDialogService DialogService;
 @inject IToastService ToastService;
 @inject IDbContextFactory<MainDbContext> DbContextFactory;
+@attribute [Authorize]
 
 @rendermode InteractiveServer
 

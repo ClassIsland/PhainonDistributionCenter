@@ -1,9 +1,28 @@
-﻿@inherits LayoutComponentBase
+﻿@using System.Security.Claims
+@using Microsoft.AspNetCore.Components.Authorization
+@inherits LayoutComponentBase
 @inject IHostEnvironment Env
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
 
 <FluentLayout>
     <FluentHeader>
         PhainonDistributionCenter
+        <FluentSpacer/>
+        
+        <AuthorizeView>
+            <Authorized>
+                <div class="flex items-center gap-2">
+                    <span >@(user?.Identity?.Name)</span>
+                    <span>|</span>
+                    <FluentAnchor Href="/auth/logout" Appearance="Appearance.Hypertext"
+                                  Style="--accent-foreground-rest: var(--fill-color); color: var(--fill-color) !important;">登出</FluentAnchor>
+                </div>
+            </Authorized>
+            <NotAuthorized>
+                <FluentAnchor Href="/Account/Login" Appearance="Appearance.Stealth">登录</FluentAnchor>
+            </NotAuthorized>
+        </AuthorizeView>
     </FluentHeader>
     <FluentStack Class="main" Orientation="Orientation.Horizontal" Width="100%">
         <NavMenu/>
@@ -28,3 +47,21 @@
     <a href="." class="reload">Reload</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code
+{
+    private IEnumerable<System.Security.Claims.Claim> claims = [];
+
+    private ClaimsPrincipal? user = null;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var authState = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+        user = authState.User;
+
+        if (user.Identity is { IsAuthenticated: true })
+        {
+            claims = user.Claims;
+        }
+    }
+}

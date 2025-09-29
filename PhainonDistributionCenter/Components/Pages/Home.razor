@@ -1,6 +1,12 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.EntityFrameworkCore
 @inject MainDbContext DbContext;
+
+@inject AuthenticationStateProvider AuthenticationStateProvider
+
+@attribute [Authorize]
 
 @rendermode InteractiveServer
 

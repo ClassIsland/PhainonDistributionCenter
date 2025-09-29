@@ -4,8 +4,10 @@
 @inject IToastService ToastService;
 
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 @page "/Distributions"
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.EntityFrameworkCore
 @using PhainonDistributionCenter.Entities
 

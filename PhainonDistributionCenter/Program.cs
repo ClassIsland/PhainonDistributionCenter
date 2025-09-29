@@ -1,4 +1,8 @@
 using System.Text.Json.Serialization;
+using AspNet.Security.OAuth.GitHub;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
 using PhainonDistributionCenter;
@@ -40,6 +44,26 @@ builder.Services.AddRazorComponents()
 builder.Services.AddFluentUIComponents();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+builder.Services.AddAuthentication(options =>
+    {
+        options.DefaultScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+        options.DefaultChallengeScheme = GitHubAuthenticationDefaults.AuthenticationScheme;
+    })
+    .AddCookie(options =>
+    {
+        options.LoginPath = "/Account/Login";
+        options.LogoutPath = "/auth/logout";
+    })
+    .AddGitHub(options =>
+    {
+        options.CallbackPath = "/auth/callback/github";
+        options.AccessDeniedPath = "/Error";
+        options.ClientSecret = builder.Configuration["GitHub:ClientSecret"] ?? "";
+        options.ClientId = builder.Configuration["GitHub:ClientId"] ?? "";
+        options.Scope.Add("user:email");
+    });
+
+builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddScoped<FileRepoProcessingService>();
 builder.Services.AddScoped<GpgSignatureService>();
@@ -56,11 +80,15 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAntiforgery();
 
+app.UseRouting();
 app.MapStaticAssets();
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
+app.MapDefaultControllerRoute();
 
 if (app.Environment.IsDevelopment())
 {
@@ -69,6 +97,16 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapControllers();
+app.MapGet("/Account/Login", context =>
+{
+    return context.ChallengeAsync(GitHubAuthenticationDefaults.AuthenticationScheme, new AuthenticationProperties { RedirectUri = "/" });
+});
+
+app.MapGet("/auth/logout", async context =>
+{
+    await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
+    context.Response.Redirect("/");
+});
 
 using (var scope = app.Services.CreateScope())
 {

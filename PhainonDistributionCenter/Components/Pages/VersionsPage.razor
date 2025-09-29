@@ -1,4 +1,5 @@
 @page "/Versions"
+@using Microsoft.AspNetCore.Authorization
 @using Microsoft.FluentUI.AspNetCore.Components.Icons.Regular
 @using PhainonDistributionCenter.Components.Controls
 @using PhainonDistributionCenter.Entities
@@ -7,6 +8,7 @@
 @inject ILogger<VersionsPage> Logger;
 @inject IToastService ToastService;
 @rendermode InteractiveServer
+@attribute [Authorize]
 
 <PageTitle>大版本</PageTitle>
 

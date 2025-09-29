@@ -34,7 +34,7 @@ namespace PhainonDistributionCenter.Migrations
 
                     b.HasIndex("ChannelsId");
 
-                    b.ToTable("DistributionChannelDistributionInfo");
+                    b.ToTable("DistributionChannelDistributionInfo", (string)null);
                 });
 
             modelBuilder.Entity("PhainonDistributionCenter.Entities.DistributionChannel", b =>
@@ -60,7 +60,7 @@ namespace PhainonDistributionCenter.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("DistributionChannels");
+                    b.ToTable("DistributionChannels", (string)null);
                 });
 
             modelBuilder.Entity("PhainonDistributionCenter.Entities.DistributionInfo", b =>
@@ -104,7 +104,7 @@ namespace PhainonDistributionCenter.Migrations
 
                     b.HasIndex("VersionInfoId");
 
-                    b.ToTable("DistributionInfos");
+                    b.ToTable("DistributionInfos", (string)null);
                 });
 
             modelBuilder.Entity("PhainonDistributionCenter.Entities.DistributionSubChannel", b =>
@@ -151,7 +151,7 @@ namespace PhainonDistributionCenter.Migrations
 
                     b.HasIndex("FileMapInfoId");
 
-                    b.ToTable("DistributionSubChannels");
+                    b.ToTable("DistributionSubChannels", (string)null);
                 });
 
             modelBuilder.Entity("PhainonDistributionCenter.Entities.FileMapInfo", b =>
@@ -181,7 +181,7 @@ namespace PhainonDistributionCenter.Migrations
 
                     b.HasIndex("PublicKeyId");
 
-                    b.ToTable("FileMapInfos");
+                    b.ToTable("FileMapInfos", (string)null);
                 });
 
             modelBuilder.Entity("PhainonDistributionCenter.Entities.FileRepoEntry", b =>
@@ -205,7 +205,7 @@ namespace PhainonDistributionCenter.Migrations
 
                     b.HasKey("FileSha512");
 
-                    b.ToTable("FileRepoEntries");
+                    b.ToTable("FileRepoEntries", (string)null);
                 });
 
             modelBuilder.Entity("PhainonDistributionCenter.Entities.GpgPublicKey", b =>
@@ -235,7 +235,7 @@ namespace PhainonDistributionCenter.Migrations
 
                     b.HasAlternateKey("KeyId");
 
-                    b.ToTable("PublicKeys");
+                    b.ToTable("PublicKeys", (string)null);
                 });
 
             modelBuilder.Entity("PhainonDistributionCenter.Entities.VersionInfo", b =>
@@ -262,7 +262,7 @@ namespace PhainonDistributionCenter.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("VersionInfos");
+                    b.ToTable("VersionInfos", (string)null);
                 });
 
             modelBuilder.Entity("DistributionChannelDistributionInfo", b =>
