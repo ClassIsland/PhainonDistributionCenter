@@ -1,4 +1,5 @@
 ﻿@inherits LayoutComponentBase
+@inject IHostEnvironment Env
 
 <FluentLayout>
     <FluentHeader>
@@ -15,9 +16,9 @@
         </FluentBodyContent>
     </FluentStack>
     <FluentFooter>
-        PhainonDistributionCenter
         <span style="margin: 0 0 0 4px;">刻法勒永志不忘。</span>
         <FluentSpacer/>
+        <span style="font-weight: bold">@(Env.EnvironmentName)</span>
     </FluentFooter>
     <FluentToastProvider MaxToastCount="10" @rendermode="InteractiveServer"/>
 </FluentLayout>
