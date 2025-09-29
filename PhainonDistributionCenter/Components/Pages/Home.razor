@@ -1,13 +1,89 @@
 ﻿@page "/"
 @using Microsoft.EntityFrameworkCore
+@inject MainDbContext DbContext;
 
 @rendermode InteractiveServer
 
 <PageTitle>主页</PageTitle>
 
-<h1>欢迎使用 PhainonDistributionCenter</h1>
+<div class="flex gap-1 flex-col">
+    
+    <h1>欢迎回来</h1>
 
-<FluentButton @onclick="args => throw new Exception()" >Test Crash</FluentButton>
+    <p>欢迎访问：<b>PhainonDistributionCenter</b> —— 流水线构建的终点，ClassIsland 分发的起点。</p>
+
+    <div class="grid grid-cols-4 gap-1 cards-group" >
+        <FluentCard>
+            <div class="card-content">
+                <div class="flex flex-row items-center gap-1">
+                    <FluentIcon Value="@(new Icons.Regular.Size20.Tag())"></FluentIcon>
+                    <span>总发行版数量</span>
+                </div>
+                <span class="accent-number">@DbContext.DistributionInfos.Count()</span>
+                <FluentAnchor Href="/Distributions" Appearance="Appearance.Hypertext">查看发行版</FluentAnchor>
+            </div>
+        </FluentCard> 
+        
+        <FluentCard>
+            <div class="card-content">
+                <div class="flex flex-row items-center gap-1">
+                    <FluentIcon Value="@(new Icons.Regular.Size20.Apps())"></FluentIcon>
+                    <span>总大版本数量</span>
+                </div>
+                <span class="accent-number">@DbContext.VersionInfos.Count()</span>
+                <FluentAnchor Href="/Versions" Appearance="Appearance.Hypertext">管理大版本</FluentAnchor>
+            </div>
+        </FluentCard> 
+        <FluentCard>
+            <div class="card-content">
+                <div class="flex flex-row items-center gap-1">
+                    <FluentIcon Value="@(new Icons.Regular.Size20.ArrowDownload())"></FluentIcon>
+                    <span>总下载次数</span>
+                </div>
+                <span class="accent-number">0</span>
+            </div>
+        </FluentCard> 
+        <FluentCard>
+            <div class="card-content">
+                <div class="flex flex-row items-center gap-1">
+                    <FluentIcon Value="@(new Icons.Regular.Size20.DocumentFolder())"></FluentIcon>
+                    <span>文件仓库文件数</span>
+                </div>
+                <span class="accent-number">@DbContext.FileRepoEntries.Count()</span>
+            </div>
+        </FluentCard> 
+    </div>
+
+    <h3 style="margin-top: 8px;">快速访问</h3>
+    
+    <p>快速浏览您的工作。</p>
+    
+    <div class="flex items-center flex-col">
+        <img src="白厄_再见.png" alt="白厄_再见"
+             width="510" height="510"
+             style="width: 80px; height: 80px"/>
+        <p>太棒了，所有工作都已完成！</p>
+    </div>
+</div>
+
+<style scoped>
+    .accent-number {
+        font-size: 36px;
+        color: var(--accent-foreground-rest);
+        font-weight: bold;
+        font-family: consolas, monospace;
+        margin-top: 4px;
+        margin-bottom: -4px;
+        height: 32px;
+    }
+    
+    .card-content {
+        display: flex;
+        flex-direction: column;
+        row-gap: 12px;
+        justify-self: start;
+    }
+</style>
 
 @code {
 
