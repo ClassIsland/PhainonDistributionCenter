@@ -1,0 +1,174 @@
+@page "/AccessTokens"
+@using System.Security.Claims
+@using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
+@using PhainonDistributionCenter.Entities
+@using PhainonDistributionCenter.Security
+@using PhainonDistributionCenter.Services
+
+@attribute [Authorize(Policy = Policies.IsOrgMemberPolicyName)]
+@rendermode InteractiveServer
+
+@inject MainDbContext DbContext;
+@inject IDialogService DialogService;
+@inject ILogger<AccessTokensPage> Logger;
+@inject IToastService ToastService;
+@inject AccessTokenService AccessTokenService;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
+
+<PageTitle>访问令牌</PageTitle>
+<h2>访问令牌</h2>
+
+<p>管理外部应用用于读写本应用的访问令牌。</p>
+
+<FluentButton Appearance="Appearance.Accent"
+              @onclick="ButtonAddItemOnClick">
+    创建令牌
+</FluentButton>
+
+<div class="content">
+    <FluentMessageBar Title="已创建访问令牌" Intent="@MessageIntent.Success" Style="color: var(--fill-color)"
+                      Visible="_isTokenVisible">
+        请复制以下令牌内容，并妥善保管。这是您唯一能看到此令牌的机会。<br/>
+        <code>@(_token)</code>
+    </FluentMessageBar>
+
+    <FluentPaginator State="@_paginationState"/>
+    <FluentDataGrid Items="@DbContext.AccessTokens" Pagination="@_paginationState" @ref="@_dataGridRef">
+        <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
+        <TemplateColumn Sortable="false" Title="已启用">
+            <FluentCheckbox Disabled Value="context.IsActive"/>
+        </TemplateColumn>  
+        <PropertyColumn Property="@(p => p.CreatorName)" Sortable="true" Title="创建者" Width="*"/>
+        <PropertyColumn Property="@(p => p.ExpireTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="失效时间"/>
+        <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
+                        IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
+        <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
+        <TemplateColumn Title="操作">
+            <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
+            <FluentButton @onclick="@(_ => BeginEditItem(context))">编辑</FluentButton>
+        </TemplateColumn>
+    </FluentDataGrid>
+    <FluentPaginator State="@_paginationState"/>
+
+</div>
+
+<FluentDialog @bind-Hidden="@_isEditingDialogHidden" >
+    <h4>@(_isCreating ? "新建" : "编辑")访问令牌</h4>
+    <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom: 2em">
+        <FluentTextField Label="名称" @bind-Value="_editingInfo.Name" Required Style="width: 100%"/>
+        <FluentCheckbox Label="已启用" @bind-Value="_editingInfo.IsActive" Style="width: 100%"/>
+    </FluentStack>
+    <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="ButtonEditingDialogSaveOnClick"
+                  Loading="@_isLoading">保存</FluentButton>
+    <FluentButton @onclick="ButtonEditingDialogCancelOnClick">取消</FluentButton>
+        
+</FluentDialog>
+
+<style scoped>
+    
+</style>
+
+@code {
+    private FluentDataGrid<AccessTokenInfo> _dataGridRef;
+
+    private string _token;
+    
+    private bool _isTokenVisible;
+    
+    private bool _isEditingDialogHidden = true;
+
+    private bool _isCreating = false;
+    
+    private int _pageIndex = 0;
+
+    private AccessTokenInfo _editingInfo = new();
+
+    private bool _isLoading = false;
+
+    private PaginationState _paginationState = new()
+    {
+        ItemsPerPage = 25
+    };
+
+    private void ButtonAddItemOnClick()
+    {
+        _editingInfo = new AccessTokenInfo()
+        {
+            IsActive = true
+        };
+        _isCreating = true;
+        _isEditingDialogHidden = false;
+    }
+
+    private void BeginEditItem(AccessTokenInfo item)
+    {
+        _editingInfo = item;
+        _isCreating = false;
+        _isEditingDialogHidden = false;
+    }
+
+    private async Task DeleteItem(AccessTokenInfo item)
+    {
+        var reference = await DialogService.ShowConfirmationAsync($"确定要删除访问令牌 {item.Name} 吗？此操作无法撤销！");
+        if ((await reference.Result).Cancelled)
+        {
+            return;
+        }
+
+        try
+        {
+            DbContext.AccessTokens.Remove(item);
+            await DbContext.SaveChangesAsync();
+            await _dataGridRef.RefreshDataAsync();
+            ToastService.ShowSuccess($"已删除访问令牌 {item.Name}");
+        }
+        catch (Exception e)
+        {
+            ToastService.ShowError($"删除访问令牌 {item.Name} 时发生内部错误");
+        }
+    }
+    
+    private async Task ButtonEditingDialogSaveOnClick()
+    {
+        _isLoading = true;
+        try
+        {
+            if (_isCreating)
+            {
+                var authInfo = await AuthenticationStateProvider.GetAuthenticationStateAsync();
+                var uid = int.Parse(authInfo.User.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value);
+                var name = authInfo.User.Claims.First(x => x.Type == ClaimTypes.Name).Value;
+                var (token, info) = await AccessTokenService.GenerateTokenAsync(uid, name, _editingInfo.Name, DateTimeOffset.UtcNow + TimeSpan.FromDays(90));
+                _editingInfo = info;
+                _token = token;
+                _isTokenVisible = true;
+            }
+            else
+            {
+                _editingInfo.UpdatedTime = DateTimeOffset.UtcNow;
+                await DbContext.SaveChangesAsync();
+            }
+
+            await _dataGridRef.RefreshDataAsync();
+            ToastService.ShowSuccess($"已保存访问令牌 {_editingInfo.Name}");
+
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, $"保存访问令牌 {_editingInfo.Name} 时发生内部错误");
+            ToastService.ShowError($"保存访问令牌 {_editingInfo.Name} 时发生内部错误");
+        }
+        finally
+        {
+            _isLoading = false;
+            _isEditingDialogHidden = true;
+        }
+    }
+
+    private void ButtonEditingDialogCancelOnClick()
+    {
+        _isEditingDialogHidden = true;
+    }
+
+}

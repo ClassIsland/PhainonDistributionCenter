@@ -1,6 +1,8 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhainonDistributionCenter.Entities;
+using PhainonDistributionCenter.Security.AuthenticationHandlers;
 using PhainonDistributionCenter.Services;
 using PhainonDistributionCenter.Shared.Models;
 using PhainonDistributionCenter.Shared.Models.Api;
@@ -12,6 +14,7 @@ namespace PhainonDistributionCenter.Controllers.Distribution;
 
 [ApiController]
 [Route("api/v1/distribution/")]
+[Authorize(AuthenticationSchemes = TokenAuthenticationHandler.SchemeName)]
 public class DistributionInfosController(
     MainDbContext dbContext,
     FileRepoProcessingService fileRepoProcessingService,

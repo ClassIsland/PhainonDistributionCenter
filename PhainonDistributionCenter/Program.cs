@@ -3,13 +3,13 @@ using System.Text.Json.Serialization;
 using AspNet.Security.OAuth.GitHub;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Octokit;
 using PhainonDistributionCenter;
 using PhainonDistributionCenter.Components;
 using PhainonDistributionCenter.Security;
+using PhainonDistributionCenter.Security.AuthenticationHandlers;
 using PhainonDistributionCenter.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -117,20 +117,23 @@ builder.Services.AddAuthentication(options =>
                 context.Fail(ex);
             }
         };
+    })
+    .AddScheme<TokenOptions, TokenAuthenticationHandler>(TokenAuthenticationHandler.SchemeName, options =>
+    {
+        
     });
-builder.Services.AddAuthorization(options =>
-{
-    options.AddPolicy(Policies.IsOrgMemberPolicyName, policy =>
+builder.Services.AddAuthorizationBuilder()
+    .AddPolicy(Policies.IsOrgMemberPolicyName, policy =>
     {
         policy.AddAuthenticationSchemes(GitHubAuthenticationDefaults.AuthenticationScheme);
         policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
         policy.RequireClaim("urn:github:org", builder.Configuration["GitHub:Organization"] ?? "");
-    }); 
-});
+    });
 builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddScoped<FileRepoProcessingService>();
 builder.Services.AddScoped<GpgSignatureService>();
+builder.Services.AddScoped<AccessTokenService>();
 
 var app = builder.Build();
 
@@ -157,7 +160,10 @@ app.MapDefaultControllerRoute();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(options =>
+    {
+        
+    });
 }
 
 app.MapControllers();

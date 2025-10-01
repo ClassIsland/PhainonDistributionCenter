@@ -270,6 +270,10 @@ publishAppCommand.SetAction(async result =>
     var httpClient = new HttpClient()
     {
         BaseAddress = new Uri(endpoint),
+        DefaultRequestHeaders =
+        {
+            { "X-PDC-Token", token }
+        }
     };
     var fileRepoDiff = await httpClient.PostAsJsonAsync("api/v1/fileMaps/diff", repo);
     var uploadingFileSha512 = await fileRepoDiff.Content.ReadFromJsonAsync<Result<List<string>>>();

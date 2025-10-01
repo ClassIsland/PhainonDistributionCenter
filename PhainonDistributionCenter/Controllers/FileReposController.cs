@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using PhainonDistributionCenter.Security.AuthenticationHandlers;
 using PhainonDistributionCenter.Services;
 using PhainonDistributionCenter.Shared.Models;
 using PhainonDistributionCenter.Shared.Models.Api.Responses;
@@ -8,6 +10,7 @@ namespace PhainonDistributionCenter.Controllers;
 
 [ApiController]
 [Route("api/v1/fileMaps/")]
+[Authorize(AuthenticationSchemes = TokenAuthenticationHandler.SchemeName)]
 public class FileReposController(FileRepoProcessingService fileRepoProcessingService) : ControllerBase
 {
     private FileRepoProcessingService FileRepoProcessingService { get; } = fileRepoProcessingService;

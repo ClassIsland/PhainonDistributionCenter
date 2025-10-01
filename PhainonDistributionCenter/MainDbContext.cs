@@ -15,6 +15,8 @@ public class MainDbContext(DbContextOptions<MainDbContext> options) : DbContext(
     public DbSet<FileMapInfo> FileMapInfos { get; set; }
     public DbSet<GpgPublicKey> PublicKeys { get; set; }
     public DbSet<FileRepoEntry> FileRepoEntries { get; set; }
+
+    public DbSet<AccessTokenInfo> AccessTokens { get; set; }
     
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
@@ -31,6 +33,7 @@ public class MainDbContext(DbContextOptions<MainDbContext> options) : DbContext(
             .HasAlternateKey(x => x.KeyId);
         modelBuilder.Entity<FileRepoEntry>().Property(e => e.FileSha512)
             .HasColumnType("bytea");
+        modelBuilder.Entity<AccessTokenInfo>().HasAlternateKey(x => x.TokenHash);
         base.OnModelCreating(modelBuilder);
     }
 }
