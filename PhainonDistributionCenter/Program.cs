@@ -167,16 +167,6 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapControllers();
-app.MapGet("/Account/Login", context =>
-{
-    return context.ChallengeAsync(GitHubAuthenticationDefaults.AuthenticationScheme, new AuthenticationProperties { RedirectUri = "/" });
-});
-
-app.MapGet("/auth/logout", async context =>
-{
-    await context.SignOutAsync(CookieAuthenticationDefaults.AuthenticationScheme);
-    context.Response.Redirect("/");
-});
 
 using (var scope = app.Services.CreateScope())
 {

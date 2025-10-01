@@ -16,4 +16,14 @@ public class FileMap
     /// 文件图变量列表
     /// </summary>
     public Dictionary<string, string> Variables { get; set; } = [];
+
+    /// <summary>
+    /// 文件图包含的内容整体下载链接
+    /// </summary>
+    public string ArchiveUrl { get; set; } = "";
+
+    /// <summary>
+    /// 文件图包含的内容整体的压缩包的校验和
+    /// </summary>
+    public byte[] ArchiveSha512 { get; set; } = [];
 }

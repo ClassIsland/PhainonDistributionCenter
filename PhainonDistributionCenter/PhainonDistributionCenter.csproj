@@ -40,8 +40,4 @@
   <ItemGroup>
     <ProjectReference Include="..\PhainonDistributionCenter.Shared\PhainonDistributionCenter.Shared.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Components\Pages\Auth\" />
-  </ItemGroup>
 </Project>

@@ -1,8 +1,6 @@
 @page "/Account/AccessDenied"
 @using System.Diagnostics
 
-@inject NavigationManager NavigationManager
-
 <PageTitle>403</PageTitle>
 
 <div class="content-center text-center flex flex-col items-center">
@@ -13,7 +11,7 @@
     <p>您不具有访问此资源的权限。</p>
     <div class="flex gap-2">
         <FluentAnchor Href="/">返回首页</FluentAnchor>
-        <FluentAnchor Appearance="Appearance.Accent" Href="/auth/logout">切换账号</FluentAnchor>
+        <FluentAnchor Appearance="Appearance.Accent" Href="/auth/logout">登出</FluentAnchor>
     </div>
     <p style="font-size: 13px; margin-top: 2em">
         诊断信息：<br/>
