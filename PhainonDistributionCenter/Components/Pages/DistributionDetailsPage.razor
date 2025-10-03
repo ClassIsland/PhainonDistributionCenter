@@ -26,7 +26,13 @@
             <div class="grid property-grid col-end-1 gap-4 p-2" style="">
                 <FluentCheckbox Label="已激活" @bind-Value="DistributionInfo.IsEnabled"
                                 Class="col-span-2"/>
-                <FluentTextField Label="版本号" @bind-Value="DistributionInfo.Version"/>
+                <p class="fluent-input-label text-start items-end">版本号</p>
+                <div class="flex items-end">
+                    <FluentNumberField @bind-Value="DistributionInfo.VersionMajor"/>.
+                    <FluentNumberField @bind-Value="DistributionInfo.VersionMinor"/>.
+                    <FluentNumberField @bind-Value="DistributionInfo.VersionBuild"/>.
+                    <FluentNumberField @bind-Value="DistributionInfo.VersionRevision"/>
+                </div>
                 <FluentTextField Label="友好版本名称" @bind-Value="DistributionInfo.FriendlyVersion"/>
                 <FluentTextField Label="友好版本名称（短）" @bind-Value="DistributionInfo.FriendlyVersionShort"/>
                 
@@ -131,7 +137,7 @@ fluent-tab-panel {
 }
 
 .property-grid > :nth-child(1n) {
-    text-align: right;
+    /*text-align: right;*/
 }
 </style>
 
@@ -247,6 +253,10 @@ fluent-tab-panel {
             isLoading = true;
             var dbContext = UiDbContext;
             DistributionInfo.Channels.Clear();
+            DistributionInfo.Version = new Version(DistributionInfo.VersionMajor,
+                DistributionInfo.VersionMinor,
+                DistributionInfo.VersionBuild,
+                DistributionInfo.VersionRevision).ToString();
             await dbContext!.SaveChangesAsync();
             foreach (var channel in SelectedChannels)
             {

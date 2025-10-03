@@ -19,6 +19,26 @@ public class DistributionInfo : IObjectWithTime
     [MaxLength(32)] public string Version { get; set; } = "";
 
     /// <summary>
+    /// 版本号Major（X.x.x.x）
+    /// </summary>
+    public int VersionMajor { get; set; } = 0;
+    
+    /// <summary>
+    /// 版本号Minor（x.X.x.x）
+    /// </summary>
+    public int VersionMinor { get; set; } = 0;
+    
+    /// <summary>
+    /// 版本号Build（x.x.X.x）
+    /// </summary>
+    public int VersionBuild { get; set; } = 0;
+    
+    /// <summary>
+    /// 版本号Revision（x.x.x.X）
+    /// </summary>
+    public int VersionRevision { get; set; } = 0;
+
+    /// <summary>
     /// 友好版本号，如 2.0-Khaslana Release 1
     /// </summary>
     [MaxLength(64)] public string FriendlyVersion { get; set; } = "";

@@ -29,7 +29,7 @@ public class DistributionInfosController(
     public async Task<IActionResult> AddDistribution([FromRoute] string primaryVersion, [FromRoute] string version, 
         [FromBody] AddDistributionInfoRequest body)
     {
-        if (!Version.TryParse(primaryVersion, out _) || !Version.TryParse(version, out _))
+        if (!Version.TryParse(primaryVersion, out _) || !Version.TryParse(version, out var version2))
         {
             return BadRequest(new Result(StatusCodes.AddDistributionInvalidVersion, "无效的版本名"));
         }
@@ -45,6 +45,10 @@ public class DistributionInfosController(
         {
             Id = Guid.NewGuid(),
             Version = version,
+            VersionMajor = version2.Major,
+            VersionMinor = version2.Minor,
+            VersionBuild = version2.Build,
+            VersionRevision = version2.Revision,
             ChangeLog = body.ChangeLog,
             Channels = [],
             VersionInfo = versionInfo
