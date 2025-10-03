@@ -36,7 +36,7 @@
     <FluentPaginator State="@_paginationState"/>
     <FluentDataGrid Items="@DbContext.AccessTokens" Pagination="@_paginationState" @ref="@_dataGridRef">
         <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
-        <TemplateColumn Sortable="false" Title="已启用">
+        <TemplateColumn Sortable="false" Title="已启用" Width="100px">
             <FluentCheckbox Disabled Value="context.IsActive"/>
         </TemplateColumn>  
         <PropertyColumn Property="@(p => p.CreatorName)" Sortable="true" Title="创建者" Width="*"/>

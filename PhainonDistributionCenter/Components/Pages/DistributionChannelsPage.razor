@@ -1,5 +1,7 @@
 @page "/DistributionChannels"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.EntityFrameworkCore
+@using Microsoft.EntityFrameworkCore.Internal
 @using Microsoft.FluentUI.AspNetCore.Components.Icons.Regular
 @using PhainonDistributionCenter.Components.Controls
 @using PhainonDistributionCenter.Entities
@@ -27,13 +29,20 @@
     <FluentPaginator State="@paginationState" />
     <FluentDataGrid Items="@DbContext.DistributionChannels" Pagination="@paginationState" @ref="@dataGridRef">
         <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
-        <PropertyColumn Property="@(p => p.Description)" Sortable="true" Title="描述" Width="*"/>
+        <PropertyColumn Property="@(p => p.Description)" Sortable="true" Title="描述" />
+        <TemplateColumn Title="已启用" Width="100px">
+            <FluentCheckbox Disabled Value="@context.IsEnabled"/>
+        </TemplateColumn>
+        <TemplateColumn Title="默认" Width="100px">
+            <FluentCheckbox Disabled Value="@context.IsDefault"/>
+        </TemplateColumn>
         <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
                         IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
         <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
         <TemplateColumn Title="操作">
             <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
             <FluentButton @onclick="@(_ => BeginEditItem(context))">编辑</FluentButton>
+            <FluentButton @onclick="@(_ => SetAsDefault(context))" Disabled="context.IsDefault">设为默认</FluentButton>
         </TemplateColumn>
     </FluentDataGrid>
     <FluentPaginator State="@paginationState" />
@@ -41,9 +50,10 @@
 </div>
 
 <FluentDialog @bind-Hidden="@isEditingDialogHidden" >
-    <h4>@(isCreating ? "新建" : "编辑")发行渠道</h4>
+    <h4>@(isCreating ? "新建" : "编辑")发行通道</h4>
     <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom: 2em">
         <FluentTextField Label="名称" @bind-Value="editingChannel.Name" Required Style="width: 100%"/>
+        <FluentCheckbox @bind-Value="@editingChannel.IsEnabled">已启用</FluentCheckbox>
         <FluentTextArea Label="描述" @bind-Value="editingChannel.Description" Style="width: 100%"/>
     </FluentStack>
     <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="ButtonEditingDialogSaveOnClick"
@@ -90,7 +100,7 @@
 
     private async Task DeleteItem(DistributionChannel item)
     {
-        var reference = await DialogService.ShowConfirmationAsync($"确定要删除发行渠道 {item.Name} 吗？此操作无法撤销！");
+        var reference = await DialogService.ShowConfirmationAsync($"确定要删除发行通道 {item.Name} 吗？此操作无法撤销！");
         if ((await reference.Result).Cancelled)
         {
             return;
@@ -101,11 +111,11 @@
             DbContext.DistributionChannels.Remove(item);
             await DbContext.SaveChangesAsync();
             await dataGridRef.RefreshDataAsync();
-            ToastService.ShowSuccess($"已删除发行渠道 {item.Name}");
+            ToastService.ShowSuccess($"已删除发行通道 {item.Name}");
         }
         catch (Exception e)
         {
-            ToastService.ShowError($"删除发行渠道 {item.Name} 时发生内部错误");
+            ToastService.ShowError($"删除发行通道 {item.Name} 时发生内部错误");
         }
     }
     
@@ -122,19 +132,42 @@
             editingChannel.UpdatedTime = DateTimeOffset.UtcNow;
             await DbContext.SaveChangesAsync();
             await dataGridRef.RefreshDataAsync();
-            ToastService.ShowSuccess($"已保存发行渠道 {editingChannel.Name}");
+            ToastService.ShowSuccess($"已保存发行通道 {editingChannel.Name}");
 
         }
         catch (Exception e)
         {
-            Logger.LogError(e, $"保存发行渠道 {editingChannel.Name} 时发生内部错误");
-            ToastService.ShowError($"保存发行渠道 {editingChannel.Name} 时发生内部错误");
+            Logger.LogError(e, "保存发行通道 {} 时发生内部错误", editingChannel.Name);
+            ToastService.ShowError($"保存发行通道 {editingChannel.Name} 时发生内部错误");
         }
         finally
         {
             isLoading = false;
             isEditingDialogHidden = true;
         }
+    }
+
+    private async Task SetAsDefault(DistributionChannel item)
+    {
+        isLoading = true;
+        try
+        {
+            await DbContext.DistributionChannels
+                .Where(x => x.IsDefault)
+                .ExecuteUpdateAsync(x => x.SetProperty(p => p.IsDefault, false));
+            item.IsDefault = true;
+            await DbContext.SaveChangesAsync();
+            DbContext.ChangeTracker.Clear(); 
+            await dataGridRef.RefreshDataAsync();
+            ToastService.ShowSuccess($"已将发行通道 {item.Name} 设为默认通道");
+        }
+        catch (Exception e)
+        {
+            Logger.LogError(e, "在将 {} 设为默认通道时发生异常", item.Name);
+            ToastService.ShowError($"在将 {item.Name} 设为默认通道时发生内部异常");
+        }
+
+        isLoading = false;
     }
 
     private void ButtonEditingDialogCancelOnClick()
