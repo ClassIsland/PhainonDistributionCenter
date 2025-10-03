@@ -48,6 +48,11 @@ public class AddDistributionInfoRequest
         public string FileMap { get; set; } = null!;
 
         /// <summary>
+        /// 下载归档文件名，仅用于打包流程
+        /// </summary>
+        public string ArchiveName { get; set; } = "";
+
+        /// <summary>
         /// 当前子频道的文件图签名
         /// </summary>
         public string FileMapSignature { get; set; } = null!;

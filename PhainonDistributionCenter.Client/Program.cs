@@ -159,16 +159,16 @@ publishAppCommand.SetAction(async result =>
     
     Console.WriteLine($"Version: {version}");
 
-    const string pattern = @"^out_app_([^_]+)_([^_]+)_([^_]+)_([^_]+)$";
+    var pattern = $@"^{config.Name}_app_([^_]+)_([^_]+)_([^_]+)_([^_]+)$";
     var regex = new Regex(pattern, RegexOptions.Compiled);
-    var subChannels = Directory.GetDirectories(root.FullName)
+    var subChannels = Directory.GetFiles(root.FullName)
         .Select(Path.GetFileName)
         .Where(x => x != "repo")
         .OfType<string>()
-        .Where(x => regex.Match(x).Success)
+        .Where(x => regex.Match(Path.GetFileNameWithoutExtension(x)).Success)
         .Select(x =>
         {
-            var match = regex.Match(x);
+            var match = regex.Match(Path.GetFileNameWithoutExtension(x));
             return new
             {
                 Name = x,
@@ -177,9 +177,12 @@ publishAppCommand.SetAction(async result =>
                 Arch = match.Groups[2].Value,
                 BuildType = match.Groups[3].Value,
                 Package = match.Groups[4].Value,
+                IsArchive = false,
+                Request = new AddDistributionInfoRequest.DistributionSubChannel()
             };
         })
         .ToList();
+    
     Console.WriteLine($"Found {subChannels.Count} subchannels");
     foreach (var channel in subChannels)
     {
@@ -200,61 +203,79 @@ publishAppCommand.SetAction(async result =>
     using var sha512 = SHA512.Create();
     foreach (var channel in subChannels)
     {
-        var reqChannel = new AddDistributionInfoRequest.DistributionSubChannel();
+        var reqChannel = channel.Request;
         Console.WriteLine($"[SC/{channel.Name}] Begin processing");
         reqChannel.Os = channel.Os;
         reqChannel.Arch = channel.Arch;
         reqChannel.BuildType = channel.BuildType;
         reqChannel.Package = channel.Package;
-        var fileMap = 
-            JsonSerializer.Deserialize<FileMap>(File.OpenRead(Path.Combine(channel.FullPath, "files.json")));
+        var isFolder = channel.Package == "folder";
+        var extractedPath = Path.Combine(root.FullName, Path.GetFileNameWithoutExtension(channel.FullPath));
+        await using var archive = File.OpenRead(channel.FullPath);
+        if (isFolder)
+        {
+            ZipFile.ExtractToDirectory(archive,
+                extractedPath);
+        }
+
+        var fileMap = isFolder ? JsonSerializer.Deserialize<FileMap>(File.OpenRead(Path.Combine(extractedPath, "files.json"))) :
+            new FileMap();
         if (fileMap == null)
         {
             continue;
         }
-        foreach (var (id, component) in fileMap.Components)
+
+        if (isFolder)
         {
-            Console.WriteLine($"[SC/{channel.Name}/{id}] Begin processing");
-            var compRoot = Path.Combine(channel.FullPath, VariableStringHelpers.ExpandString(component.Root, config.Variables));
-            Console.WriteLine($"[SC/{channel.Name}/{id}] Root: {compRoot}");
-            foreach (var (path, fileInfo) in component.Files)
+            foreach (var (id, component) in fileMap.Components)
             {
-                var sha512Base64 = Convert.ToBase64String(fileInfo.FileSha512);
-                if (repo.Items.ContainsKey(sha512Base64))
+                Console.WriteLine($"[SC/{channel.Name}/{id}] Begin processing");
+                var compRoot = Path.Combine(extractedPath, VariableStringHelpers.ExpandString(component.Root, config.Variables));
+                Console.WriteLine($"[SC/{channel.Name}/{id}] Root: {compRoot}");
+                foreach (var (path, fileInfo) in component.Files)
                 {
-                    continue;
-                }
+                    var sha512Base64 = Convert.ToBase64String(fileInfo.FileSha512);
+                    if (repo.Items.ContainsKey(sha512Base64))
+                    {
+                        continue;
+                    }
 
-                var sha512Hex = Convert.ToHexStringLower(fileInfo.FileSha512);
-                var fileName = Path.GetFileName(path);
-                
-                var dirPath = Path.Combine(repoPath, sha512Hex[..2]);
-                if (!Directory.Exists(dirPath))
-                {
-                    Directory.CreateDirectory(dirPath);
-                }
+                    var sha512Hex = Convert.ToHexStringLower(fileInfo.FileSha512);
+                    var fileName = Path.GetFileName(path);
+                    
+                    var dirPath = Path.Combine(repoPath, sha512Hex[..2]);
+                    if (!Directory.Exists(dirPath))
+                    {
+                        Directory.CreateDirectory(dirPath);
+                    }
 
-                var rawPath = Path.Combine(compRoot, path);
-                var compressedPath = Path.Combine(dirPath, sha512Hex);
-                await using (var compressStream = File.Create(compressedPath))
-                {
-                    await using var rawStream = File.OpenRead(rawPath);
-                    await using var compressor = new GZipStream(compressStream, CompressionMode.Compress);
-                    rawStream.CopyTo(compressor);
-                }
-                await using var compressedFileStream = File.OpenRead(compressedPath);
-                var compressedHash = sha512.ComputeHash(compressedFileStream);
+                    var rawPath = Path.Combine(compRoot, path);
+                    var compressedPath = Path.Combine(dirPath, sha512Hex);
+                    await using (var compressStream = File.Create(compressedPath))
+                    {
+                        await using var rawStream = File.OpenRead(rawPath);
+                        await using var compressor = new GZipStream(compressStream, CompressionMode.Compress);
+                        rawStream.CopyTo(compressor);
+                    }
+                    await using var compressedFileStream = File.OpenRead(compressedPath);
+                    var compressedHash = sha512.ComputeHash(compressedFileStream);
 
-                repo.Items.Add(sha512Base64, new FileRepoItem()
-                {
-                    FileSha512 = fileInfo.FileSha512,
-                    ArchiveDownloadUrl = config.FileRepoRoot + $"{sha512Hex[..2]}/{sha512Hex}",
-                    ArchiveSha512 = compressedHash,
-                    FileName = fileName
-                });
-                Console.WriteLine($"[SC/{channel.Name}/{id}] Added file {fileName} (SHA512='{sha512Base64}')");
+                    repo.Items.Add(sha512Base64, new FileRepoItem()
+                    {
+                        FileSha512 = fileInfo.FileSha512,
+                        ArchiveDownloadUrl = config.FileRepoRoot + $"{sha512Hex[..2]}/{sha512Hex}",
+                        ArchiveSha512 = compressedHash,
+                        FileName = fileName
+                    });
+                    Console.WriteLine($"[SC/{channel.Name}/{id}] Added file {fileName} (SHA512='{sha512Base64}')");
+                }
             }
         }
+
+        Console.WriteLine($"[SC/{channel.Name}] Generating archive info...");
+        fileMap.ArchiveSha512 = sha512.ComputeHash(archive);
+        fileMap.ArchiveUrl = VariableStringHelpers.ExpandString(config.ArchiveRoot, config.Variables) +
+                             Path.GetFileName(channel.FullPath);
         Console.WriteLine($"[SC/{channel.Name}] Signing FileMap...");
         var fileMapJson = reqChannel.FileMap = JsonSerializer.Serialize(fileMap);
         reqChannel.FileMapSignature = DetachedSignatureProcessor.CreateSignature(fileMapJson, signingKey, signingKeyPs);
@@ -310,7 +331,7 @@ publishAppCommand.SetAction(async result =>
         var putRequest = new PutObjectRequest()
         {
             BucketName = s3Bucket,
-            Key = config.BucketKeyRoot + $"{sha512Hex[..2]}/{sha512Hex}",
+            Key = VariableStringHelpers.ExpandString(config.BucketKeyRoot, config.Variables) + $"{sha512Hex[..2]}/{sha512Hex}",
             FilePath = compressedPath
         };
         var rsp = await client.PutObjectAsync(putRequest);
@@ -320,6 +341,20 @@ publishAppCommand.SetAction(async result =>
     rsp2.EnsureSuccessStatusCode();
     
     Console.WriteLine("SUCCESSFULLY uploaded file repo");
+    
+    Console.WriteLine("Uploading subchannel packages...");
+    foreach (var channel in subChannels)
+    {
+        Console.WriteLine($"[SC/{channel.Name}] Uploading {channel.FullPath}");
+        var putRequest = new PutObjectRequest()
+        {
+            BucketName = s3Bucket,
+            Key = VariableStringHelpers.ExpandString(config.ArchiveBucketKeyRoot, config.Variables) + Path.GetFileName(channel.FullPath),
+            FilePath = channel.FullPath
+        };
+        var rsp = await client.PutObjectAsync(putRequest);
+        Console.WriteLine($"[SC/{channel.Name}] SUCCESSFULLY Uploaded {channel.FullPath}");
+    }
 
     var rsp3 = await httpClient.PostAsJsonAsync($"api/v1/distribution/{primaryVersion}/{version}", request);
     rsp3.EnsureSuccessStatusCode();

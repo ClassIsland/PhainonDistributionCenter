@@ -27,8 +27,18 @@ public class Configuration
     public string FileRepoRoot { get; set; } = "";
     
     /// <summary>
+    /// 下载归档根，结尾要有“/”
+    /// </summary>
+    public string ArchiveRoot { get; set; } = "";
+    
+    /// <summary>
     /// S3 桶的文件仓库键根，结尾要有“/”
     /// </summary>
     public string BucketKeyRoot { get; set; } = "";
+    
+    /// <summary>
+    /// S3 桶的下载归档键根，结尾要有“/”
+    /// </summary>
+    public string ArchiveBucketKeyRoot { get; set; } = "";
 
 }

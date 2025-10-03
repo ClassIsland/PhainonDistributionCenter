@@ -40,4 +40,9 @@
   <ItemGroup>
     <ProjectReference Include="..\PhainonDistributionCenter.Shared\PhainonDistributionCenter.Shared.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <_ContentIncludedByDefault Remove="wwwroot\ErrorStatic\5xx.html" />
+    <_ContentIncludedByDefault Remove="wwwroot\ErrorStatic\style.css" />
+  </ItemGroup>
 </Project>
