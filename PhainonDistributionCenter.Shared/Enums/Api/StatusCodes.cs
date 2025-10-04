@@ -36,4 +36,13 @@ public enum StatusCodes
 
     #endregion
 
+    #region DistributionsController
+
+    /// <summary>
+    /// 找不到符合要求的发行版信息
+    /// </summary>
+    NoDistributionsFound = 3001,
+
+    #endregion
+
 }
