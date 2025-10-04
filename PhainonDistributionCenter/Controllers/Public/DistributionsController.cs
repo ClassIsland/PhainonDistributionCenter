@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhainonDistributionCenter.Shared.Models.Api.Responses;
+using PhainonDistributionCenter.Shared.Models.Api.Responses.Distribution;
 using PhainonDistributionCenter.Shared.Models.Client;
 using StatusCodes = PhainonDistributionCenter.Shared.Enums.Api.StatusCodes;
 
@@ -32,35 +33,55 @@ public class DistributionsController(MainDbContext dbContext, ILogger<Distributi
         return Ok(new Result<DistributionMetadata>(StatusCodes.Success, metadata));
     }
 
-    [HttpGet("latest/{channelId:guid}/{subChannel}")]
-    public async Task<IActionResult> GetLatestDistributionInfoMin([FromRoute] Guid channelId, [FromRoute] string subChannel)
+    [HttpGet("latest/{channelId:guid}")]
+    public async Task<IActionResult> GetLatestDistributionInfoMin([FromRoute] Guid channelId)
     {
         var latest = await DbContext.DistributionInfos
             .Include(x => x.Channels)
-            .Include(x => x.SubChannels)
-            .ThenInclude(x => x.FileMapInfo)
             .Where(x => x.IsEnabled 
-                        && x.Channels.Any(y => y.Id == channelId)
-                        && x.SubChannels.Any(y => y.Os + "_" + y.Arch + "_" + y.BuildType + "_" + y.Package == subChannel))
+                        && x.Channels.Any(y => y.Id == channelId))
             .OrderByDescending(x => x.VersionMajor)
             .ThenByDescending(x => x.VersionMinor)
             .ThenByDescending(x => x.VersionBuild)
             .ThenByDescending(x => x.VersionRevision)
-            .Include(x => x.VersionInfo)
+            .ThenByDescending(x => x.CreatedTime)
             .FirstOrDefaultAsync();
         if (latest == null)
         {
-            return NotFound(new Result(StatusCodes.NoDistributionsFound, $"找不到频道 {channelId}/{subChannel} 上符合要求的最新发行版"));
+            return NotFound(new Result(StatusCodes.NoDistributionsAvailable, $"找不到频道 {channelId}/ 上符合要求的最新发行版"));
         }
+        
+        return Ok(new Result<LatestDistributionInfoMinResponse>(StatusCodes.Success, new LatestDistributionInfoMinResponse
+        {
+            DistributionId = latest.Id,
+            Version = latest.Version
+        })); 
+    }
 
-        var subChannelInfo = latest.SubChannels.First(y => $"{y.Os}_{y.Arch}_{y.BuildType}_{y.Package}" == subChannel);
+    [HttpGet("{id:guid}/{subChannelId}")]
+    public async Task<IActionResult> GetDistributionInfoClient([FromRoute] Guid id, [FromRoute] string subChannelId)
+    {
+        var info = await DbContext.DistributionInfos
+            .Include(x => x.SubChannels)
+            .ThenInclude(x => x.FileMapInfo)
+            .Where(x => x.Id == id && x.IsEnabled &&
+                        x.SubChannels.Any(y =>
+                            y.Os + "_" + y.Arch + "_" + y.BuildType + "_" + y.Package == subChannelId))
+            .Include(x => x.VersionInfo)
+            .FirstOrDefaultAsync();
+        if (info == null)
+        {
+            return NotFound(new Result(StatusCodes.DistributionNotFound, $"找不到分发信息 {id}/{subChannelId} "));
+        }
+        
+        var subChannelInfo = info.SubChannels.First(y => $"{y.Os}_{y.Arch}_{y.BuildType}_{y.Package}" == subChannelId);
         
         return Ok(new Result<DistributionInfoClient>(StatusCodes.Success, new DistributionInfoClient
         {
-            FriendlyVersion = latest.FriendlyVersion,
-            FriendlyVersionShort = latest.FriendlyVersionShort,
-            Version = latest.Version,
-            ChangeLog = latest.ChangeLog,
+            FriendlyVersion = info.FriendlyVersion,
+            FriendlyVersionShort = info.FriendlyVersionShort,
+            Version = info.Version,
+            ChangeLog = info.ChangeLog,
             SubChannel = $"{subChannelInfo.Os}_{subChannelInfo.Arch}_{subChannelInfo.BuildType}_{subChannelInfo.Package}",
             FileMapJson = subChannelInfo.FileMapInfo.ContentJson,
             FileMapSignature = subChannelInfo.FileMapInfo.PgpSignature

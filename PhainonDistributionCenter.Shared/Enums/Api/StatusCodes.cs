@@ -39,9 +39,14 @@ public enum StatusCodes
     #region DistributionsController
 
     /// <summary>
+    /// 对应的通道上没有符合要求的发行版信息
+    /// </summary>
+    NoDistributionsAvailable = 3001,
+    
+    /// <summary>
     /// 找不到符合要求的发行版信息
     /// </summary>
-    NoDistributionsFound = 3001,
+    DistributionNotFound = 3002,
 
     #endregion
 
