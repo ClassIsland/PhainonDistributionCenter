@@ -252,13 +252,14 @@ fluent-tab-panel {
         {
             isLoading = true;
             var dbContext = UiDbContext;
+            var selected = SelectedChannels.ToList();
             DistributionInfo.Channels.Clear();
             DistributionInfo.Version = new Version(DistributionInfo.VersionMajor,
                 DistributionInfo.VersionMinor,
                 DistributionInfo.VersionBuild,
                 DistributionInfo.VersionRevision).ToString();
             await dbContext!.SaveChangesAsync();
-            foreach (var channel in SelectedChannels)
+            foreach (var channel in selected)
             {
                 DistributionInfo.Channels.Add(channel);
             }
