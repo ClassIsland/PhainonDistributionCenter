@@ -260,11 +260,13 @@ publishAppCommand.SetAction(async result =>
                     await using var compressedFileStream = File.OpenRead(compressedPath);
                     var compressedHash = sha512.ComputeHash(compressedFileStream);
 
+                    fileInfo.ArchiveDownloadUrl = config.FileRepoRoot + $"{sha512Hex[..2]}/{sha512Hex}";
+                    fileInfo.ArchiveSha512 = compressedHash;
                     repo.Items.Add(sha512Base64, new FileRepoItem()
                     {
                         FileSha512 = fileInfo.FileSha512,
-                        ArchiveDownloadUrl = config.FileRepoRoot + $"{sha512Hex[..2]}/{sha512Hex}",
-                        ArchiveSha512 = compressedHash,
+                        ArchiveDownloadUrl = fileInfo.ArchiveDownloadUrl,
+                        ArchiveSha512 = fileInfo.ArchiveSha512,
                         FileName = fileName
                     });
                     Console.WriteLine($"[SC/{channel.Name}/{id}] Added file {fileName} (SHA512='{sha512Base64}')");
