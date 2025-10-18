@@ -5,6 +5,9 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>0201ef2c-d001-4599-86f2-07b22dd0b26e</UserSecretsId>
+
+    <TailwindInputFile>$(MSBuildProjectDirectory)\Styles\app.css</TailwindInputFile>
+    <TailwindOutputFile>$(MSBuildProjectDirectory)\wwwroot\tailwind.g.css</TailwindOutputFile>
   </PropertyGroup>
 
   <ItemGroup>

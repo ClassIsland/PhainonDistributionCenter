@@ -13,7 +13,7 @@ using PhainonDistributionCenter.Security.AuthenticationHandlers;
 using PhainonDistributionCenter.Services;
 
 var builder = WebApplication.CreateBuilder(args);
-
+var migrateMode = builder.Configuration["migrate"] == "true";
 // Add services to the container.
 
 builder.Configuration.AddJsonFile("./data/appsettings.json", optional: true, reloadOnChange: true);
@@ -167,6 +167,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.MapControllers();
+var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
 using (var scope = app.Services.CreateScope())
 {
@@ -174,6 +175,21 @@ using (var scope = app.Services.CreateScope())
     if (app.Environment.IsDevelopment())
     {
         db.Database.Migrate();
+    }
+    
+    if (migrateMode)
+    {
+        db.Database.Migrate();
+
+        logger.LogInformation("已完成数据库迁移，应用即将退出");
+        return;
+    }
+    
+    var migrations = await db.Database.GetPendingMigrationsAsync();
+    if (migrations.Any())
+    {
+        logger.LogWarning("数据库未迁移，请在运行应用前先完成数据库迁移。使用参数 --migrate=true 进行数据库迁移");
+        return;
     }
 }
 
