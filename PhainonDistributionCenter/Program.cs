@@ -1,8 +1,10 @@
+using System.Net;
 using System.Security.Claims;
 using System.Text.Json.Serialization;
 using AspNet.Security.OAuth.GitHub;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.FluentUI.AspNetCore.Components;
 using Octokit;
@@ -143,10 +145,17 @@ if (!app.Environment.IsDevelopment())
     app.UseExceptionHandler("/Error", createScopeForErrors: true);
     // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
+    app.UseForwardedHeaders(new ForwardedHeadersOptions()
+    {
+        ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor,
+        KnownProxies =
+        {
+            IPAddress.Parse("127.0.0.1")
+        }
+    });
 }
 
 app.UseHttpsRedirection();
-
 
 app.UseRouting();
 app.MapStaticAssets();
