@@ -1,5 +1,8 @@
 {
   "devDependencies": {
     "tailwindcss": "^4.1.11"
+  },
+  "scripts": {
+    "css:build": "tailwindcss -i ./Styles/app.css -o ./wwwroot/tailwind.g.css --minify"
   }
 }

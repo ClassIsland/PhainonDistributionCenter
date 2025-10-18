@@ -5,9 +5,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <UserSecretsId>0201ef2c-d001-4599-86f2-07b22dd0b26e</UserSecretsId>
-
-    <TailwindInputFile>$(MSBuildProjectDirectory)\Styles\app.css</TailwindInputFile>
-    <TailwindOutputFile>$(MSBuildProjectDirectory)\wwwroot\tailwind.g.css</TailwindOutputFile>
+    
   </PropertyGroup>
 
   <ItemGroup>
@@ -29,16 +27,11 @@
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="9.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="9.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="9.0.3" />
-    <PackageReference Include="Tailwind.MSBuild" Version="1.*" Condition="'$(Configuration)'=='Release'">
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      <PrivateAssets>all</PrivateAssets>
-    </PackageReference>
   </ItemGroup>
 
-  <PropertyGroup Label="Tailwind Properties">
-    <TailwindInputFile>$(MSBuildProjectDirectory)\Styles\app.css</TailwindInputFile>
-    <TailwindOutputFile>$(MSBuildProjectDirectory)\wwwroot\tailwind.g.css</TailwindOutputFile>
-  </PropertyGroup>
+  <Target Name="Tailwind" BeforeTargets="Build">
+    <Exec Command="npm run css:build"/>
+  </Target>
 
   <ItemGroup>
     <ProjectReference Include="..\PhainonDistributionCenter.Shared\PhainonDistributionCenter.Shared.csproj" />
