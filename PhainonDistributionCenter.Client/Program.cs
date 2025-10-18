@@ -240,7 +240,7 @@ publishAppCommand.SetAction(async result =>
                         continue;
                     }
 
-                    var sha512Hex = Convert.ToHexStringLower(fileInfo.FileSha512);
+                    var sha512Hex = Convert.ToHexString(fileInfo.FileSha512).ToLower();
                     var fileName = Path.GetFileName(path);
                     
                     var dirPath = Path.Combine(repoPath, sha512Hex[..2]);
@@ -326,7 +326,7 @@ publishAppCommand.SetAction(async result =>
 
     foreach (var (_, file) in repoDetermined.Items)
     {
-        var sha512Hex = Convert.ToHexStringLower(file.FileSha512); 
+        var sha512Hex = Convert.ToHexString(file.FileSha512).ToLower(); 
         var dirPath = Path.Combine(repoPath, sha512Hex[..2]);
         var compressedPath = Path.Combine(dirPath, sha512Hex);
         Console.WriteLine($"Uploading {file.FileName} ({compressedPath})");
@@ -345,18 +345,18 @@ publishAppCommand.SetAction(async result =>
     Console.WriteLine("SUCCESSFULLY uploaded file repo");
     
     Console.WriteLine("Uploading subchannel packages...");
-    foreach (var channel in subChannels)
-    {
-        Console.WriteLine($"[SC/{channel.Name}] Uploading {channel.FullPath}");
-        var putRequest = new PutObjectRequest()
-        {
-            BucketName = s3Bucket,
-            Key = VariableStringHelpers.ExpandString(config.ArchiveBucketKeyRoot, config.Variables) + Path.GetFileName(channel.FullPath),
-            FilePath = channel.FullPath
-        };
-        var rsp = await client.PutObjectAsync(putRequest);
-        Console.WriteLine($"[SC/{channel.Name}] SUCCESSFULLY Uploaded {channel.FullPath}");
-    }
+    // foreach (var channel in subChannels)
+    // {
+    //     Console.WriteLine($"[SC/{channel.Name}] Uploading {channel.FullPath}");
+    //     var putRequest = new PutObjectRequest()
+    //     {
+    //         BucketName = s3Bucket,
+    //         Key = VariableStringHelpers.ExpandString(config.ArchiveBucketKeyRoot, config.Variables) + Path.GetFileName(channel.FullPath),
+    //         FilePath = channel.FullPath
+    //     };
+    //     var rsp = await client.PutObjectAsync(putRequest);
+    //     Console.WriteLine($"[SC/{channel.Name}] SUCCESSFULLY Uploaded {channel.FullPath}");
+    // }
 
     var rsp3 = await httpClient.PostAsJsonAsync($"api/v1/distribution/{primaryVersion}/{version}", request);
     rsp3.EnsureSuccessStatusCode();
