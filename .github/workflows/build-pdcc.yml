@@ -1,0 +1,90 @@
+name: Build PDCC
+on:
+  push:
+
+jobs:
+  build_app:
+    runs-on: windows-latest  # For a list of available runner types, refer to
+    # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+    env:
+      artifact_name: out_app_${{ matrix.os }}_${{ matrix.arch }}
+      arch: ${{ matrix.arch }}
+    strategy:
+      matrix:
+        arch: ['x64', 'x86', 'arm64']
+        os: ['win', 'linux']
+        exclude:
+          - arch: x86
+            os: linux
+    name: Build_${{ matrix.os }}_${{ matrix.arch }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: List files
+        run: ls
+      
+      # Install the .NET Core workload
+      - name: Install .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 8.0.x
+
+      - name: Build application
+        env:
+          is_release: ${{ startsWith(github.ref, 'refs/tags/') }}
+          arch: ${{ matrix.arch }}
+          os: ${{ matrix.os }}
+        run: |
+          ls
+          pwsh -ep Bypass -c ./tools/release-gen/publish-pdcc.ps1 $env:os $env:arch
+      - name: Upload Unsigned APP to artifacts
+        id: upload-unsigned-artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ env.artifact_name }}
+          path: |
+            ./out/*.zip
+            ./out/*.appx
+
+  publish:
+    runs-on: windows-latest
+    name: Publish
+    if: ${{ startsWith(github.ref, 'refs/tags/') }}
+    needs: [ build_app ]
+    concurrency:
+      group: "publish-public"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+          submodules: recursive
+
+      - name: Get commit hash
+        uses: prompt/actions-commit-hash@v3
+        id: commit
+        with:
+          prefix: "${{ github.event.inputs.release_tag }}+"
+
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: ./out_artifacts
+
+      - name: Process Artifacts
+        run: pwsh -ep bypass ./tools/release-gen/proc-artifacts.ps1
+
+      - name: Generate SHA256
+        run: pwsh -ep bypass ./tools/release-gen/gen-hash.ps1 ./out
+
+      - name: Upload APP to release
+        uses: ncipollo/release-action@v1
+        with:
+          artifacts: "./out/*.zip,./out/*.appx"
+          draft: true
+          bodyFile: ./out/checksums.md
+          token: ${{ secrets.GITHUB_TOKEN }}
