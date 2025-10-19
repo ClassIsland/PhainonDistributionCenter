@@ -324,20 +324,25 @@ publishAppCommand.SetAction(async result =>
         ServiceURL = s3Endpoint
     });
 
-    foreach (var (_, file) in repoDetermined.Items)
+    await Parallel.ForEachAsync(repoDetermined.Items, new ParallelOptions()
     {
-        var sha512Hex = Convert.ToHexString(file.FileSha512).ToLower(); 
+        MaxDegreeOfParallelism = 8
+    }, async (pair, cancellationToken) =>
+    {
+        var (_, file) = pair;
+        var sha512Hex = Convert.ToHexString(file.FileSha512).ToLower();
         var dirPath = Path.Combine(repoPath, sha512Hex[..2]);
         var compressedPath = Path.Combine(dirPath, sha512Hex);
         Console.WriteLine($"Uploading {file.FileName} ({compressedPath})");
         var putRequest = new PutObjectRequest()
         {
             BucketName = s3Bucket,
-            Key = VariableStringHelpers.ExpandString(config.BucketKeyRoot, config.Variables) + $"{sha512Hex[..2]}/{sha512Hex}",
+            Key = VariableStringHelpers.ExpandString(config.BucketKeyRoot, config.Variables) +
+                  $"{sha512Hex[..2]}/{sha512Hex}",
             FilePath = compressedPath
         };
-        var rsp = await client.PutObjectAsync(putRequest);
-    }
+        var rsp = await client.PutObjectAsync(putRequest, cancellationToken);
+    });
 
     var rsp2 = await httpClient.PostAsJsonAsync("api/v1/fileMaps/upload", repoDetermined);
     rsp2.EnsureSuccessStatusCode();
@@ -345,18 +350,21 @@ publishAppCommand.SetAction(async result =>
     Console.WriteLine("SUCCESSFULLY uploaded file repo");
     
     Console.WriteLine("Uploading subchannel packages...");
-    // foreach (var channel in subChannels)
-    // {
-    //     Console.WriteLine($"[SC/{channel.Name}] Uploading {channel.FullPath}");
-    //     var putRequest = new PutObjectRequest()
-    //     {
-    //         BucketName = s3Bucket,
-    //         Key = VariableStringHelpers.ExpandString(config.ArchiveBucketKeyRoot, config.Variables) + Path.GetFileName(channel.FullPath),
-    //         FilePath = channel.FullPath
-    //     };
-    //     var rsp = await client.PutObjectAsync(putRequest);
-    //     Console.WriteLine($"[SC/{channel.Name}] SUCCESSFULLY Uploaded {channel.FullPath}");
-    // }
+    await Parallel.ForEachAsync(subChannels, new ParallelOptions()
+    {
+        MaxDegreeOfParallelism = 4
+    }, async (channel, cancellationToken) =>
+    {
+        Console.WriteLine($"[SC/{channel.Name}] Uploading {channel.FullPath}");
+        var putRequest = new PutObjectRequest()
+        {
+            BucketName = s3Bucket,
+            Key = VariableStringHelpers.ExpandString(config.ArchiveBucketKeyRoot, config.Variables) + Path.GetFileName(channel.FullPath),
+            FilePath = channel.FullPath
+        };
+        var rsp = await client.PutObjectAsync(putRequest, cancellationToken);
+        Console.WriteLine($"[SC/{channel.Name}] SUCCESSFULLY Uploaded {channel.FullPath}");
+    });
 
     var rsp3 = await httpClient.PostAsJsonAsync($"api/v1/distribution/{primaryVersion}/{version}", request);
     rsp3.EnsureSuccessStatusCode();
