@@ -327,7 +327,7 @@ publishAppCommand.SetAction(async result =>
 
     await Parallel.ForEachAsync(repoDetermined.Items, new ParallelOptions()
     {
-        MaxDegreeOfParallelism = 8
+        MaxDegreeOfParallelism = 16
     }, async (pair, cancellationToken) =>
     {
         var (_, file) = pair;
@@ -353,7 +353,7 @@ publishAppCommand.SetAction(async result =>
     Console.WriteLine("Uploading subchannel packages...");
     await Parallel.ForEachAsync(subChannels, new ParallelOptions()
     {
-        MaxDegreeOfParallelism = 4
+        MaxDegreeOfParallelism = 16
     }, async (channel, cancellationToken) =>
     {
         Console.WriteLine($"[SC/{channel.Name}] Uploading {channel.FullPath}");
