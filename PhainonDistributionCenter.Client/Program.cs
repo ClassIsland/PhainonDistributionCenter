@@ -235,12 +235,14 @@ publishAppCommand.SetAction(async result =>
                 foreach (var (path, fileInfo) in component.Files)
                 {
                     var sha512Base64 = Convert.ToBase64String(fileInfo.FileSha512);
-                    if (repo.Items.ContainsKey(sha512Base64))
+                    var sha512Hex = Convert.ToHexString(fileInfo.FileSha512).ToLower();
+                    fileInfo.ArchiveDownloadUrl = config.FileRepoRoot + $"{sha512Hex[..2]}/{sha512Hex}";
+                    if (repo.Items.TryGetValue(sha512Base64, out var existed))
                     {
+                        fileInfo.ArchiveSha512 = existed.ArchiveSha512;
                         continue;
                     }
 
-                    var sha512Hex = Convert.ToHexString(fileInfo.FileSha512).ToLower();
                     var fileName = Path.GetFileName(path);
                     
                     var dirPath = Path.Combine(repoPath, sha512Hex[..2]);
@@ -260,7 +262,6 @@ publishAppCommand.SetAction(async result =>
                     await using var compressedFileStream = File.OpenRead(compressedPath);
                     var compressedHash = sha512.ComputeHash(compressedFileStream);
 
-                    fileInfo.ArchiveDownloadUrl = config.FileRepoRoot + $"{sha512Hex[..2]}/{sha512Hex}";
                     fileInfo.ArchiveSha512 = compressedHash;
                     repo.Items.Add(sha512Base64, new FileRepoItem()
                     {
