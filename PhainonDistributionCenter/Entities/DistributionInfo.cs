@@ -72,6 +72,26 @@ public class DistributionInfo : IObjectWithTime
     /// 此发行版关联的版本信息 Id
     /// </summary>
     public Guid VersionInfoId { get; set; }
+    
+    /// <summary>
+    /// 更新到此版本所需最低版本号Major（X.x.x.x）
+    /// </summary>
+    public int MinVersionMajor { get; set; } = 0;
+    
+    /// <summary>
+    /// 更新到此版本所需最低版本号Minor（x.X.x.x）
+    /// </summary>
+    public int MinVersionMinor { get; set; } = 0;
+    
+    /// <summary>
+    /// 更新到此版本所需最低版本号Build（x.x.X.x）
+    /// </summary>
+    public int MinVersionBuild { get; set; } = 0;
+    
+    /// <summary>
+    /// 更新到此版本所需最低版本号Revision（x.x.x.X）
+    /// </summary>
+    public int MinVersionRevision { get; set; } = 0;
 
     /// <summary>
     /// 当前发行版包含的子频道信息

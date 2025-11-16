@@ -1,0 +1,50 @@
+@page "/OrgSettings"
+@using Microsoft.AspNetCore.Authorization
+@using PhainonDistributionCenter.Security
+@using PhainonDistributionCenter.Services
+
+@inject OrganizationSettingsService OrganizationSettingsService;
+@inject IToastService ToastService;
+@attribute [Authorize(Policy = Policies.IsOrgMemberPolicyName)]
+
+@rendermode InteractiveServer
+
+<PageTitle>设置</PageTitle>
+
+<h2>设置</h2>
+
+<p>管理此应用的各个设置。</p>
+
+<div class="flex flex-col gap-2 items-start">
+    <FluentTextField Label="默认最低版本" @bind-Value='_defaultMinVersion'></FluentTextField>
+
+    <div>
+        <FluentButton Appearance="Appearance.Accent"
+                      @onclick="@(async _ => await SaveAsync())">保存</FluentButton>
+    </div>
+</div>
+
+@code {
+    private string _defaultMinVersion = "0.0.0.0";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var general = await OrganizationSettingsService.GetSettingsByCategory("general");
+        _defaultMinVersion = general.GetValueOrDefault("MinVersion") ?? "0.0.0.0";
+        await base.OnInitializedAsync();
+    }
+
+    private async Task SaveAsync()
+    {
+        try
+        {
+            await OrganizationSettingsService.SetOrganizationSettings("MinVersion", "general", _defaultMinVersion);
+            await OrganizationSettingsService.DbContext.SaveChangesAsync();
+            ToastService.ShowSuccess("设置保存成功。");
+        }
+        catch (Exception e)
+        {
+            ToastService.ShowError("保存设置时发生内部错误。");
+        }
+    }
+}

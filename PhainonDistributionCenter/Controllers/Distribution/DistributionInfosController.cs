@@ -18,9 +18,11 @@ namespace PhainonDistributionCenter.Controllers.Distribution;
 public class DistributionInfosController(
     MainDbContext dbContext,
     FileRepoProcessingService fileRepoProcessingService,
-    GpgSignatureService gpgSignatureService) : ControllerBase
+    GpgSignatureService gpgSignatureService,
+    OrganizationSettingsService organizationSettingsService) : ControllerBase
 {
     private GpgSignatureService SignatureService { get; } = gpgSignatureService;
+    private OrganizationSettingsService OrganizationSettingsService { get; } = organizationSettingsService;
     private MainDbContext DbContext { get; } = dbContext;
     
     private FileRepoProcessingService FileRepoProcessingService { get; } = fileRepoProcessingService;
@@ -41,6 +43,9 @@ public class DistributionInfosController(
                 $"找不到请求的大版本 {primaryVersion}"));
         }
 
+        var minVersionDefault = Version.TryParse(await OrganizationSettingsService.GetSettings("MinVersion"), out var r)
+            ? r
+            : new Version(0, 0, 0, 0);
         var distributionInfo = new DistributionInfo()
         {
             Id = Guid.NewGuid(),
@@ -51,7 +56,11 @@ public class DistributionInfosController(
             VersionRevision = version2.Revision,
             ChangeLog = body.ChangeLog,
             Channels = [],
-            VersionInfo = versionInfo
+            VersionInfo = versionInfo,
+            MinVersionMajor = minVersionDefault.Major,
+            MinVersionMinor = minVersionDefault.Minor,
+            MinVersionBuild = minVersionDefault.Build,
+            MinVersionRevision = minVersionDefault.Revision
         };
         foreach (var subChannel in body.SubChannels)
         {

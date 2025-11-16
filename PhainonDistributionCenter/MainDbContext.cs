@@ -18,6 +18,8 @@ public class MainDbContext(DbContextOptions<MainDbContext> options) : DbContext(
 
     public DbSet<AccessTokenInfo> AccessTokens { get; set; }
     
+    public DbSet<OrganizationSettings> OrganizationSettings { get; set; }
+    
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         

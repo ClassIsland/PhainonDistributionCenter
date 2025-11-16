@@ -136,6 +136,7 @@ builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddScoped<FileRepoProcessingService>();
 builder.Services.AddScoped<GpgSignatureService>();
 builder.Services.AddScoped<AccessTokenService>();
+builder.Services.AddScoped<OrganizationSettingsService>();
 
 var app = builder.Build();
 

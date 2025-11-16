@@ -35,6 +35,13 @@
                 </div>
                 <FluentTextField Label="友好版本名称" @bind-Value="DistributionInfo.FriendlyVersion"/>
                 <FluentTextField Label="友好版本名称（短）" @bind-Value="DistributionInfo.FriendlyVersionShort"/>
+                <p class="fluent-input-label text-start items-end">升级所需最低版本号</p>
+                <div class="flex items-end">
+                    <FluentNumberField @bind-Value="DistributionInfo.MinVersionMajor"/>.
+                    <FluentNumberField @bind-Value="DistributionInfo.MinVersionMinor"/>.
+                    <FluentNumberField @bind-Value="DistributionInfo.MinVersionBuild"/>.
+                    <FluentNumberField @bind-Value="DistributionInfo.MinVersionRevision"/>
+                </div>
                 
                 <div class="col-span-2 flex">
                     <FluentButton

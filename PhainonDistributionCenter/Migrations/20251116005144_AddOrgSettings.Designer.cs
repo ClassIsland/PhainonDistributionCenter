@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using PhainonDistributionCenter;
@@ -11,9 +12,11 @@ using PhainonDistributionCenter;
 namespace PhainonDistributionCenter.Migrations
 {
     [DbContext(typeof(MainDbContext))]
-    partial class MainDbContextModelSnapshot : ModelSnapshot
+    [Migration("20251116005144_AddOrgSettings")]
+    partial class AddOrgSettings
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,18 +139,6 @@ namespace PhainonDistributionCenter.Migrations
 
                     b.Property<bool>("IsEnabled")
                         .HasColumnType("boolean");
-
-                    b.Property<int>("MinVersionBuild")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("MinVersionMajor")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("MinVersionMinor")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("MinVersionRevision")
-                        .HasColumnType("integer");
 
                     b.Property<DateTimeOffset>("UpdatedTime")
                         .HasColumnType("timestamp with time zone");

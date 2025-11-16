@@ -34,12 +34,20 @@ public class DistributionsController(MainDbContext dbContext, ILogger<Distributi
     }
 
     [HttpGet("latest/{channelId:guid}")]
-    public async Task<IActionResult> GetLatestDistributionInfoMin([FromRoute] Guid channelId)
+    public async Task<IActionResult> GetLatestDistributionInfoMin([FromRoute] Guid channelId, [FromQuery] string? appVersion)
     {
+        if (!Version.TryParse(appVersion ?? "0.0.0.0", out var version))
+        {
+            return BadRequest(new Result(StatusCodes.DistributionInvalidClientVersionCode, $"客户端版本 {appVersion} 无效。"));
+        }
         var latest = await DbContext.DistributionInfos
             .Include(x => x.Channels)
             .Where(x => x.IsEnabled 
-                        && x.Channels.Any(y => y.Id == channelId))
+                        && x.Channels.Any(y => y.Id == channelId) 
+                        && x.MinVersionMajor <= version.Major
+                        && x.MinVersionMinor <= version.Minor
+                        && x.MinVersionBuild <= version.Build
+                        && x.MinVersionRevision <= version.Revision)
             .OrderByDescending(x => x.VersionMajor)
             .ThenByDescending(x => x.VersionMinor)
             .ThenByDescending(x => x.VersionBuild)

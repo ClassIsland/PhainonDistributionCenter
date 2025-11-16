@@ -47,6 +47,10 @@ public enum StatusCodes
     /// 找不到符合要求的发行版信息
     /// </summary>
     DistributionNotFound = 3002,
+    /// <summary>
+    /// 无效的客户端版本
+    /// </summary>
+    DistributionInvalidClientVersionCode = 3003,
 
     #endregion
 
