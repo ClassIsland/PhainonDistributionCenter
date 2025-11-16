@@ -1,15 +1,18 @@
 @page "/DistributionChannels"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.EntityFrameworkCore
 @using Microsoft.EntityFrameworkCore.Internal
 @using Microsoft.FluentUI.AspNetCore.Components.Icons.Regular
 @using PhainonDistributionCenter.Components.Controls
 @using PhainonDistributionCenter.Entities
+@using PhainonDistributionCenter.Extensions
 @using PhainonDistributionCenter.Security
 @inject MainDbContext DbContext;
 @inject IDialogService DialogService;
 @inject ILogger<DistributionChannelsPage> Logger;
 @inject IToastService ToastService;
+@inject AuthenticationStateProvider AuthenticationStateProvider;
 @rendermode InteractiveServer
 @attribute [Authorize(Policy = Policies.IsOrgMemberPolicyName)]
 
@@ -18,49 +21,61 @@
 <h2>发行通道</h2>
 
 <p>管理应用的发行通道。</p>
+<AuthorizeView>
+    <Authorized Context="authContext">
+        @if (authContext.User.CanWrite())
+        {
+            <FluentButton Appearance="Appearance.Accent"
+                              @onclick="ButtonAddItemOnClick">
+                    添加
+            </FluentButton>
+        }
 
-<FluentButton Appearance="Appearance.Accent"
-              @onclick="ButtonAddItemOnClick">
-    添加
-</FluentButton>
+        <div class="content">
 
-<div class="content">
-    
-    <FluentPaginator State="@paginationState" />
-    <FluentDataGrid Items="@DbContext.DistributionChannels" Pagination="@paginationState" @ref="@dataGridRef">
-        <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
-        <PropertyColumn Property="@(p => p.Description)" Sortable="true" Title="描述" />
-        <TemplateColumn Title="已启用" Width="100px">
-            <FluentCheckbox Disabled Value="@context.IsEnabled"/>
-        </TemplateColumn>
-        <TemplateColumn Title="默认" Width="100px">
-            <FluentCheckbox Disabled Value="@context.IsDefault"/>
-        </TemplateColumn>
-        <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
-                        IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
-        <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
-        <TemplateColumn Title="操作">
-            <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
-            <FluentButton @onclick="@(_ => BeginEditItem(context))">编辑</FluentButton>
-            <FluentButton @onclick="@(_ => SetAsDefault(context))" Disabled="context.IsDefault">设为默认</FluentButton>
-        </TemplateColumn>
-    </FluentDataGrid>
-    <FluentPaginator State="@paginationState" />
-    
-</div>
+            <FluentPaginator State="@paginationState"/>
+            <FluentDataGrid Items="@DbContext.DistributionChannels" Pagination="@paginationState" @ref="@dataGridRef">
+                <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
+                <PropertyColumn Property="@(p => p.Description)" Sortable="true" Title="描述"/>
+                <TemplateColumn Title="已启用" Width="100px">
+                    <FluentCheckbox Disabled Value="@context.IsEnabled"/>
+                </TemplateColumn>
+                <TemplateColumn Title="默认" Width="100px">
+                    <FluentCheckbox Disabled Value="@context.IsDefault"/>
+                </TemplateColumn>
+                <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
+                                IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
+                <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
+                @if (authContext.User.CanWrite())
+                {
+                    <TemplateColumn Title="操作">
+                        <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
+                        <FluentButton @onclick="@(_ => BeginEditItem(context))">编辑</FluentButton>
+                        <FluentButton @onclick="@(_ => SetAsDefault(context))" Disabled="context.IsDefault">设为默认</FluentButton>
+                    </TemplateColumn>
+                }
+            </FluentDataGrid>
+            <FluentPaginator State="@paginationState"/>
 
-<FluentDialog @bind-Hidden="@isEditingDialogHidden" >
-    <h4>@(isCreating ? "新建" : "编辑")发行通道</h4>
-    <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom: 2em">
-        <FluentTextField Label="名称" @bind-Value="editingChannel.Name" Required Style="width: 100%"/>
-        <FluentCheckbox @bind-Value="@editingChannel.IsEnabled">已启用</FluentCheckbox>
-        <FluentTextArea Label="描述" @bind-Value="editingChannel.Description" Style="width: 100%"/>
-    </FluentStack>
-    <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="ButtonEditingDialogSaveOnClick"
-                  Loading="@isLoading">保存</FluentButton>
-    <FluentButton @onclick="ButtonEditingDialogCancelOnClick">取消</FluentButton>
-        
-</FluentDialog>
+        </div>
+
+        @if (authContext.User.CanWrite())
+        {
+            <FluentDialog @bind-Hidden="@isEditingDialogHidden">
+                <h4>@(isCreating ? "新建" : "编辑")发行通道</h4>
+                <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom: 2em">
+                    <FluentTextField Label="名称" @bind-Value="editingChannel.Name" Required Style="width: 100%"/>
+                    <FluentCheckbox @bind-Value="@editingChannel.IsEnabled">已启用</FluentCheckbox>
+                    <FluentTextArea Label="描述" @bind-Value="editingChannel.Description" Style="width: 100%"/>
+                </FluentStack>
+                <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="ButtonEditingDialogSaveOnClick"
+                              Loading="@isLoading">保存</FluentButton>
+                <FluentButton @onclick="ButtonEditingDialogCancelOnClick">取消</FluentButton>
+
+            </FluentDialog>
+        }
+    </Authorized>
+</AuthorizeView>
 
 <style scoped>
     

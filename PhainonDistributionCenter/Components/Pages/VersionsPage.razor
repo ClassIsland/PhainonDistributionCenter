@@ -1,8 +1,10 @@
 @page "/Versions"
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.FluentUI.AspNetCore.Components.Icons.Regular
 @using PhainonDistributionCenter.Components.Controls
 @using PhainonDistributionCenter.Entities
+@using PhainonDistributionCenter.Extensions
 @using PhainonDistributionCenter.Security
 @inject MainDbContext DbContext;
 @inject IDialogService DialogService;
@@ -17,40 +19,52 @@
 
 <p>管理应用的各个大版本。</p>
 
-<FluentButton Appearance="Appearance.Accent"
-              @onclick="ButtonAddItemOnClick">
-    添加
-</FluentButton>
+<AuthorizeView>
+    <Authorized Context="authContext">
+        @if (authContext.User.CanWrite())
+        {
+            <FluentButton Appearance="Appearance.Accent"
+                          @onclick="ButtonAddItemOnClick">
+                添加
+            </FluentButton>
+        }
+        <div class="content">
 
-<div class="content">
-    
-    <FluentPaginator State="@paginationState" />
-    <FluentDataGrid Items="@DbContext.VersionInfos" Pagination="@paginationState" @ref="@dataGridRef">
-        <PropertyColumn Property="@(p => p.Version)" Sortable="true" Title="版本名"/>
-        <PropertyColumn Property="@(p => p.Codename)" Sortable="true" Title="版本代号" Width="*"/>
-        <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
-                        IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
-        <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
-        <TemplateColumn Title="操作">
-            <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
-            <FluentButton @onclick="@(_ => BeginEditItem(context))">编辑</FluentButton>
-        </TemplateColumn>
-    </FluentDataGrid>
-    <FluentPaginator State="@paginationState" />
-    
-</div>
+            <FluentPaginator State="@paginationState"/>
+            <FluentDataGrid Items="@DbContext.VersionInfos" Pagination="@paginationState" @ref="@dataGridRef">
+                <PropertyColumn Property="@(p => p.Version)" Sortable="true" Title="版本名"/>
+                <PropertyColumn Property="@(p => p.Codename)" Sortable="true" Title="版本代号" Width="*"/>
+                <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
+                                IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
+                <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
+                @if (authContext.User.CanWrite())
+                {
+                    <TemplateColumn Title="操作">
+                        <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
+                        <FluentButton @onclick="@(_ => BeginEditItem(context))">编辑</FluentButton>
+                    </TemplateColumn>
+                }
+            </FluentDataGrid>
+            <FluentPaginator State="@paginationState"/>
 
-<FluentDialog @bind-Hidden="@isEditingDialogHidden" >
-    <h4>@(isCreating ? "新建" : "编辑")大版本</h4>
-    <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom: 2em">
-        <FluentTextField Label="版本名" @bind-Value="editingInfo.Version" Required Style="width: 100%"/>
-        <FluentTextField Label="版本代号" @bind-Value="editingInfo.Codename" Required Style="width: 100%"/>
-    </FluentStack>
-    <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="ButtonEditingDialogSaveOnClick"
-                  Loading="@isLoading">保存</FluentButton>
-    <FluentButton @onclick="ButtonEditingDialogCancelOnClick">取消</FluentButton>
-        
-</FluentDialog>
+        </div>
+
+        @if (authContext.User.CanWrite())
+        {
+            <FluentDialog @bind-Hidden="@isEditingDialogHidden">
+                <h4>@(isCreating ? "新建" : "编辑")大版本</h4>
+                <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom: 2em">
+                    <FluentTextField Label="版本名" @bind-Value="editingInfo.Version" Required Style="width: 100%"/>
+                    <FluentTextField Label="版本代号" @bind-Value="editingInfo.Codename" Required Style="width: 100%"/>
+                </FluentStack>
+                <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="ButtonEditingDialogSaveOnClick"
+                              Loading="@isLoading">保存</FluentButton>
+                <FluentButton @onclick="ButtonEditingDialogCancelOnClick">取消</FluentButton>
+
+            </FluentDialog>
+        }
+    </Authorized>
+</AuthorizeView>
 
 <style scoped>
     

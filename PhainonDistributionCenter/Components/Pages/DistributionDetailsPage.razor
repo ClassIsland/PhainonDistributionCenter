@@ -1,8 +1,10 @@
 @page "/Distributions/{id:guid}"
 
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.EntityFrameworkCore
 @using PhainonDistributionCenter.Entities
+@using PhainonDistributionCenter.Extensions
 @using PhainonDistributionCenter.Security
 @inject NavigationManager NavigationManager;
 @inject ILogger<DistributionDetailsPage> Logger;
@@ -15,106 +17,124 @@
 
 @if (DistributionInfo != null && SelectedChannels != null && UiDbContext != null)
 {
-    <PageTitle>发行版 @DistributionInfo?.Version</PageTitle>
+    <AuthorizeView>
+        <Authorized Context="authContext">
+            
+            <PageTitle>发行版 @DistributionInfo?.Version</PageTitle>
 
-    <h2>发行版 @DistributionInfo?.Version</h2>
-    
-    <p>@(DistributionInfo!.VersionInfo.Version) - @(DistributionInfo!.VersionInfo.Codename)</p>
-    
-    <FluentTabs Size="TabSize.Medium" Id="main-tab">
-        <FluentTab Label="基本">
-            <div class="grid property-grid col-end-1 gap-4 p-2" style="">
-                <FluentCheckbox Label="已激活" @bind-Value="DistributionInfo.IsEnabled"
-                                Class="col-span-2"/>
-                <p class="fluent-input-label text-start items-end">版本号</p>
-                <div class="flex items-end">
-                    <FluentNumberField @bind-Value="DistributionInfo.VersionMajor"/>.
-                    <FluentNumberField @bind-Value="DistributionInfo.VersionMinor"/>.
-                    <FluentNumberField @bind-Value="DistributionInfo.VersionBuild"/>.
-                    <FluentNumberField @bind-Value="DistributionInfo.VersionRevision"/>
-                </div>
-                <FluentTextField Label="友好版本名称" @bind-Value="DistributionInfo.FriendlyVersion"/>
-                <FluentTextField Label="友好版本名称（短）" @bind-Value="DistributionInfo.FriendlyVersionShort"/>
-                <p class="fluent-input-label text-start items-end">升级所需最低版本号</p>
-                <div class="flex items-end">
-                    <FluentNumberField @bind-Value="DistributionInfo.MinVersionMajor"/>.
-                    <FluentNumberField @bind-Value="DistributionInfo.MinVersionMinor"/>.
-                    <FluentNumberField @bind-Value="DistributionInfo.MinVersionBuild"/>.
-                    <FluentNumberField @bind-Value="DistributionInfo.MinVersionRevision"/>
-                </div>
-                
-                <div class="col-span-2 flex">
-                    <FluentButton
-                        Loading="isLoading"
-                        Class="self-start"
-                        Appearance="Appearance.Accent"
-                        OnClick="SaveDataAsync">保存</FluentButton>
-                </div>
-            </div>
-        </FluentTab>
-        <FluentTab Label="子频道">
-            <div>
-                <FluentPaginator State="@paginationState"/>
-                <FluentDataGrid Items="@GetDbContext().DistributionSubChannels.Where(x => x.DistributionInfo == DistributionInfo)"
-                                @ref="dataGridRef"
-                                Pagination="@paginationState">
+            <h2>发行版 @DistributionInfo?.Version</h2>
+            
+            <p>@(DistributionInfo!.VersionInfo.Version) - @(DistributionInfo!.VersionInfo.Codename)</p>
+            
+            <FluentTabs Size="TabSize.Medium" Id="main-tab">
+                <FluentTab Label="基本">
+                    <div class="grid property-grid col-end-1 gap-4 p-2" style="">
+                        <FluentCheckbox Label="已激活" @bind-Value="DistributionInfo.IsEnabled"
+                                        Class="col-span-2" Disabled="!authContext.User.CanWrite()"/>
+                        <p class="fluent-input-label text-start items-end">版本号</p>
+                        <div class="flex items-end">
+                            <FluentNumberField @bind-Value="DistributionInfo.VersionMajor" Disabled="!authContext.User.CanWrite()"/>.
+                            <FluentNumberField @bind-Value="DistributionInfo.VersionMinor" Disabled="!authContext.User.CanWrite()"/>.
+                            <FluentNumberField @bind-Value="DistributionInfo.VersionBuild" Disabled="!authContext.User.CanWrite()"/>.
+                            <FluentNumberField @bind-Value="DistributionInfo.VersionRevision" Disabled="!authContext.User.CanWrite()"/>
+                        </div>
+                        <FluentTextField Label="友好版本名称" @bind-Value="DistributionInfo.FriendlyVersion" Disabled="!authContext.User.CanWrite()"/>
+                        <FluentTextField Label="友好版本名称（短）" @bind-Value="DistributionInfo.FriendlyVersionShort" Disabled="!authContext.User.CanWrite()"/>
+                        <p class="fluent-input-label text-start items-end">升级所需最低版本号</p>
+                        <div class="flex items-end">
+                            <FluentNumberField @bind-Value="DistributionInfo.MinVersionMajor" Disabled="!authContext.User.CanWrite()"/>.
+                            <FluentNumberField @bind-Value="DistributionInfo.MinVersionMinor" Disabled="!authContext.User.CanWrite()"/>.
+                            <FluentNumberField @bind-Value="DistributionInfo.MinVersionBuild" Disabled="!authContext.User.CanWrite()"/>.
+                            <FluentNumberField @bind-Value="DistributionInfo.MinVersionRevision" Disabled="!authContext.User.CanWrite()"/>
+                        </div>
+                        
+                        @if (authContext.User.CanWrite())
+                        {
+                            <div class="col-span-2 flex">
+                                <FluentButton
+                                    Loading="isLoading"
+                                    Class="self-start"
+                                    Appearance="Appearance.Accent"
+                                    OnClick="SaveDataAsync">保存</FluentButton>
+                            </div>
+                        }
+                    </div>
+                </FluentTab>
+                <FluentTab Label="子频道">
+                    <div>
+                        <FluentPaginator State="@paginationState"/>
+                        <FluentDataGrid Items="@GetDbContext().DistributionSubChannels.Where(x => x.DistributionInfo == DistributionInfo)"
+                                        @ref="dataGridRef"
+                                        Pagination="@paginationState">
 
-                    <PropertyColumn Property="@(p => p.Os)" Sortable="true" Title="操作系统"/>
-                    <PropertyColumn Property="@(p => p.Arch)" Sortable="true" Title="架构"/>
-                    <PropertyColumn Property="@(p => p.BuildType)" Sortable="true" Title="构建类型"/>
-                    <PropertyColumn Property="@(p => p.Package)" Sortable="true" Title="打包类型"/>
-                    <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
-                                    IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
-                    <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
-                    <TemplateColumn Title="操作">
-                        <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
-                        <FluentButton @onclick="@(_ => BeginEditItem(context))">编辑</FluentButton>
-                    </TemplateColumn>
-                </FluentDataGrid>
-                <FluentPaginator State="@paginationState"/>
-            </div>
-        </FluentTab>
-        <FluentTab Label="发行日志">
-            <div class="flex flex-col gap-4" style="height: 100%">
-                <div class="grow">
-                    <FluentTextArea Id="changelog-editor" @bind-Value="DistributionInfo.ChangeLog"/>
-                </div>
-                <FluentButton
-                    Loading="isLoading"
-                    Class="self-start"
-                    Appearance="Appearance.Accent"
-                    OnClick="SaveDataAsync">保存</FluentButton>
-            </div>
+                            <PropertyColumn Property="@(p => p.Os)" Sortable="true" Title="操作系统"/>
+                            <PropertyColumn Property="@(p => p.Arch)" Sortable="true" Title="架构"/>
+                            <PropertyColumn Property="@(p => p.BuildType)" Sortable="true" Title="构建类型"/>
+                            <PropertyColumn Property="@(p => p.Package)" Sortable="true" Title="打包类型"/>
+                            <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
+                                            IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
+                            <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
+                            @if (authContext.User.CanWrite())
+                            {
+                                <TemplateColumn Title="操作">
+                                    <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
+                                </TemplateColumn>
+                            }
+                        </FluentDataGrid>
+                        <FluentPaginator State="@paginationState"/>
+                    </div>
+                </FluentTab>
+                <FluentTab Label="发行日志">
+                    <div class="flex flex-col gap-4" style="height: 100%">
+                        <div class="grow">
+                            <FluentTextArea Id="changelog-editor" @bind-Value="DistributionInfo.ChangeLog"
+                                            ReadOnly="!authContext.User.CanWrite()"/>
+                        </div>
+                        @if (authContext.User.CanWrite())
+                        {
+                            <FluentButton
+                                Loading="isLoading"
+                                Class="self-start"
+                                Appearance="Appearance.Accent"
+                                OnClick="SaveDataAsync">保存</FluentButton>
+                        }
+                    </div>
 
-        </FluentTab>
-        <FluentTab Label="发行通道">
-            <div class="flex flex-col gap-4" style="height: 100%">
-                <div class="grow">
-                    <FluentPaginator State="@channelsPaginationState"/>
-                    <FluentDataGrid Items="@UiDbContext.DistributionChannels" Pagination="@channelsPaginationState"
-                                    TGridItem="DistributionChannel" ShowHover="true">
-                        <SelectColumn TGridItem="DistributionChannel"
-                                      SelectMode="@DataGridSelectMode.Multiple"
-                                      SelectFromEntireRow="@true"
-                                      Width="40px"
-                                      SelectedItems="@SelectedChannels"
-                                      SelectedItemsChanged="channels => SelectedChannels = channels as IList<DistributionChannel> ?? SelectedChannels"/>
-                        <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
-                        <PropertyColumn Property="@(p => p.Description)" Sortable="true" Title="描述"/>
-                        <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
-                                        IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
-                        <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
-                    </FluentDataGrid>
-                    <FluentPaginator State="@channelsPaginationState"/>
-                </div>
-                <FluentButton
-                    Loading="isLoading"
-                    Class="self-start"
-                    Appearance="Appearance.Accent"
-                    OnClick="SaveDataAsync">保存</FluentButton>
-            </div>
-        </FluentTab>
-    </FluentTabs>
+                </FluentTab>
+                <FluentTab Label="发行通道">
+                    <div class="flex flex-col gap-4" style="height: 100%">
+                        <div class="grow">
+                            <FluentPaginator State="@channelsPaginationState"/>
+                            <FluentDataGrid Items="@UiDbContext.DistributionChannels" Pagination="@channelsPaginationState"
+                                            TGridItem="DistributionChannel" ShowHover="true">
+                                <SelectColumn TGridItem="DistributionChannel"
+                                              SelectMode="@DataGridSelectMode.Multiple"
+                                              SelectFromEntireRow="@true"
+                                              Width="40px"
+                                              SelectedItems="@SelectedChannels"
+                                              SelectedItemsChanged="channels => { if (authContext.User.CanWrite()) SelectedChannels = channels as IList<DistributionChannel> ?? SelectedChannels; }"/>
+                                <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
+                                <PropertyColumn Property="@(p => p.Description)" Sortable="true" Title="描述"/>
+                                <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
+                                                IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
+                                <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
+                            </FluentDataGrid>
+                            <FluentPaginator State="@channelsPaginationState"/>
+                        </div>
+                        @if (authContext.User.CanWrite())
+                        {
+                            <FluentButton
+                                Loading="isLoading"
+                                Class="self-start"
+                                Appearance="Appearance.Accent"
+
+                                OnClick="SaveDataAsync">保存</FluentButton>
+                        }
+                    </div>
+                </FluentTab>
+            </FluentTabs>
+        </Authorized>
+    </AuthorizeView>
 }
 else if (IsNotFound)
 {

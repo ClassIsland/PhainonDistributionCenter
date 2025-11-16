@@ -87,6 +87,7 @@ builder.Services.AddAuthentication(options =>
                 var user = await github.User.Current();
                 // 3. 使用 Octokit 获取用户组织
                 var orgs = await github.Organization.GetAllForCurrent();
+                var teams = await github.Organization.Team.GetAllForCurrent();
 
                 var targetOrg = builder.Configuration["GitHub:Organization"];
                 if (string.IsNullOrEmpty(targetOrg))
@@ -94,10 +95,19 @@ builder.Services.AddAuthentication(options =>
                     context.Fail("Target GitHub organization is not configured.");
                     return;
                 }
+                var writePermTeam = builder.Configuration["GitHub:WritePermTeam"];
+                if (string.IsNullOrEmpty(writePermTeam))
+                {
+                    context.Fail("Target GitHub team is not configured.");
+                    return;
+                }
                 
                 // 4. 检查成员资格
                 var isMember = orgs?.Any(o => o.Login.Equals(targetOrg, StringComparison.OrdinalIgnoreCase)) ?? false;
-
+                var canWrite = teams?.Any(x =>
+                    x.Name.Equals(writePermTeam, StringComparison.OrdinalIgnoreCase) &&
+                    x.Organization.Login.Equals(targetOrg, StringComparison.OrdinalIgnoreCase)) ?? false;
+                
                 if (!string.IsNullOrEmpty(user.AvatarUrl))
                 {
                     var avatarClaim = new Claim("urn:github:avatar_url", user.AvatarUrl, ClaimValueTypes.String,
@@ -108,6 +118,11 @@ builder.Services.AddAuthentication(options =>
                 {
                     var orgClaim = new Claim("urn:github:org", targetOrg, ClaimValueTypes.String, context.Options.ClaimsIssuer);
                     context.Identity?.AddClaim(orgClaim);
+                    if (canWrite)
+                    {
+                        context.Identity?.AddClaim(new Claim("urn:github:team", writePermTeam, ClaimValueTypes.String, context.Options.ClaimsIssuer));
+                        context.Identity?.AddClaim(new Claim("urn:pdc:write", "true", ClaimValueTypes.Boolean, context.Options.ClaimsIssuer));
+                    }
                 }
                 else
                 {
@@ -129,6 +144,13 @@ builder.Services.AddAuthorizationBuilder()
     {
         policy.AddAuthenticationSchemes(GitHubAuthenticationDefaults.AuthenticationScheme);
         policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
+        policy.RequireClaim("urn:github:org", builder.Configuration["GitHub:Organization"] ?? "");
+    })
+    .AddPolicy(Policies.CanWritePolicyName, policy =>
+    {
+        policy.AddAuthenticationSchemes(GitHubAuthenticationDefaults.AuthenticationScheme);
+        policy.AddAuthenticationSchemes(CookieAuthenticationDefaults.AuthenticationScheme);
+        policy.RequireClaim("urn:pdc:write", "true");
         policy.RequireClaim("urn:github:org", builder.Configuration["GitHub:Organization"] ?? "");
     });
 builder.Services.AddCascadingAuthenticationState();

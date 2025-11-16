@@ -3,6 +3,7 @@
 @using Microsoft.AspNetCore.Authorization
 @using Microsoft.AspNetCore.Components.Authorization
 @using PhainonDistributionCenter.Entities
+@using PhainonDistributionCenter.Extensions
 @using PhainonDistributionCenter.Security
 @using PhainonDistributionCenter.Services
 
@@ -21,49 +22,62 @@
 
 <p>管理外部应用用于读写本应用的访问令牌。</p>
 
-<FluentButton Appearance="Appearance.Accent"
-              @onclick="ButtonAddItemOnClick">
-    创建令牌
-</FluentButton>
+<AuthorizeView >
+    <Authorized Context="authContext">
+        @if (authContext.User.CanWrite())
+        {
+            <FluentButton Appearance="Appearance.Accent"
+                          @onclick="ButtonAddItemOnClick">
+                创建令牌
+            </FluentButton>
+        }
 
-<div class="content">
-    <FluentMessageBar Title="已创建访问令牌" Intent="@MessageIntent.Success" Style="color: var(--fill-color)"
-                      Visible="_isTokenVisible">
-        请复制以下令牌内容，并妥善保管。这是您唯一能看到此令牌的机会。<br/>
-        <code>@(_token)</code>
-    </FluentMessageBar>
+        <div class="content">
+            <FluentMessageBar Title="已创建访问令牌" Intent="@MessageIntent.Success" Style="color: var(--fill-color)"
+                              Visible="_isTokenVisible">
+                请复制以下令牌内容，并妥善保管。这是您唯一能看到此令牌的机会。<br/>
+                <code>@(_token)</code>
+            </FluentMessageBar>
 
-    <FluentPaginator State="@_paginationState"/>
-    <FluentDataGrid Items="@DbContext.AccessTokens" Pagination="@_paginationState" @ref="@_dataGridRef">
-        <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
-        <TemplateColumn Sortable="false" Title="已启用" Width="100px">
-            <FluentCheckbox Disabled Value="context.IsActive"/>
-        </TemplateColumn>  
-        <PropertyColumn Property="@(p => p.CreatorName)" Sortable="true" Title="创建者" Width="*"/>
-        <PropertyColumn Property="@(p => p.ExpireTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="失效时间"/>
-        <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
-                        IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
-        <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
-        <TemplateColumn Title="操作">
-            <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
-            <FluentButton @onclick="@(_ => BeginEditItem(context))">编辑</FluentButton>
-        </TemplateColumn>
-    </FluentDataGrid>
-    <FluentPaginator State="@_paginationState"/>
+            <FluentPaginator State="@_paginationState"/>
+            <FluentDataGrid Items="@DbContext.AccessTokens" Pagination="@_paginationState" @ref="@_dataGridRef">
+                <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
+                <TemplateColumn Sortable="false" Title="已启用" Width="100px">
+                    <FluentCheckbox Disabled Value="context.IsActive"/>
+                </TemplateColumn>
+                <PropertyColumn Property="@(p => p.CreatorName)" Sortable="true" Title="创建者" Width="*"/>
+                <PropertyColumn Property="@(p => p.ExpireTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="失效时间"/>
+                <PropertyColumn Property="@(p => p.CreatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="创建时间"
+                                IsDefaultSortColumn InitialSortDirection="SortDirection.Descending"/>
+                <PropertyColumn Property="@(p => p.UpdatedTime)" Format="yyyy-MM-dd HH:mm" Sortable="true" Title="修改时间"/>
+                @if (authContext.User.CanWrite())
+                {
+                    <TemplateColumn Title="操作">
+                        <FluentButton @onclick="@(_ => DeleteItem(context))">删除</FluentButton>
+                        <FluentButton @onclick="@(_ => BeginEditItem(context))">编辑</FluentButton>
+                    </TemplateColumn>
+                }
+            </FluentDataGrid>
+            <FluentPaginator State="@_paginationState"/>
 
-</div>
+        </div>
 
-<FluentDialog @bind-Hidden="@_isEditingDialogHidden" >
-    <h4>@(_isCreating ? "新建" : "编辑")访问令牌</h4>
-    <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom: 2em">
-        <FluentTextField Label="名称" @bind-Value="_editingInfo.Name" Required Style="width: 100%"/>
-        <FluentCheckbox Label="已启用" @bind-Value="_editingInfo.IsActive" Style="width: 100%"/>
-    </FluentStack>
-    <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="ButtonEditingDialogSaveOnClick"
-                  Loading="@_isLoading">保存</FluentButton>
-    <FluentButton @onclick="ButtonEditingDialogCancelOnClick">取消</FluentButton>
-        
-</FluentDialog>
+        @if (authContext.User.CanWrite())
+        {
+            <FluentDialog @bind-Hidden="@_isEditingDialogHidden">
+                <h4>@(_isCreating ? "新建" : "编辑")访问令牌</h4>
+                <FluentStack Orientation="Orientation.Vertical" Style="margin-bottom: 2em">
+                    <FluentTextField Label="名称" @bind-Value="_editingInfo.Name" Required Style="width: 100%"/>
+                    <FluentCheckbox Label="已启用" @bind-Value="_editingInfo.IsActive" Style="width: 100%"/>
+                </FluentStack>
+                <FluentButton Appearance="Appearance.Accent" Autofocus="true" @onclick="ButtonEditingDialogSaveOnClick"
+                              Loading="@_isLoading">保存</FluentButton>
+                <FluentButton @onclick="ButtonEditingDialogCancelOnClick">取消</FluentButton>
+
+            </FluentDialog>
+        }
+    </Authorized>
+    </AuthorizeView>
 
 <style scoped>
     

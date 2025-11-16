@@ -5,7 +5,7 @@
 
 @inject OrganizationSettingsService OrganizationSettingsService;
 @inject IToastService ToastService;
-@attribute [Authorize(Policy = Policies.IsOrgMemberPolicyName)]
+@attribute [Authorize(Policy = Policies.CanWritePolicyName)]
 
 @rendermode InteractiveServer
 
