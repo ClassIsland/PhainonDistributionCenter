@@ -59,7 +59,7 @@
     };
 
     private Collection<MemoryCacheInfo> _cacheInfos = [];
-    private FluentDataGrid<MemoryCacheInfo> _dataGridRef;
+    private FluentDataGrid<MemoryCacheInfo>? _dataGridRef;
 
     private IQueryable<MemoryCacheInfo> CacheInfosQueryable => _cacheInfos.AsQueryable();
 
@@ -93,7 +93,11 @@
             DistributionCacheService.MemoryCache.GetCurrentStatistics(),
             DistributionCacheService.CacheSizeLimit));
         
-        await _dataGridRef.RefreshDataAsync();
+        var t = _dataGridRef?.RefreshDataAsync();
+        if (t != null)
+        {
+            await t;
+        }
     }
 
     private async Task ClearCache(MemoryCacheInfo info)
