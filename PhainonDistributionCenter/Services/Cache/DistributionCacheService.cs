@@ -15,6 +15,7 @@ public class DistributionCacheService(ILoggerFactory loggerFactory)
     }, loggerFactory);
 
     public static readonly string MetadataCacheKey = "metadata"; 
+    public static readonly string WebLatestRequestCacheKey = "web"; 
 
     public MemoryCacheEntryOptions DefaultEntryOptions { get; } = new MemoryCacheEntryOptions()
         .SetSlidingExpiration(TimeSpan.FromHours(24))
@@ -23,21 +24,12 @@ public class DistributionCacheService(ILoggerFactory loggerFactory)
     public MemoryCacheEntryOptions LargeEntryOptions { get; } = new MemoryCacheEntryOptions()
         .SetSlidingExpiration(TimeSpan.FromHours(12))
         .SetSize(24);
-    
-    private volatile LatestDistributionInfoWebResponse? _webRequestCache;
-
-    public  LatestDistributionInfoWebResponse? WebRequestCache
-    {
-        get => _webRequestCache;
-        set => _webRequestCache = value;
-    }
 
     public void SetMemoryCache(object key, object? value, bool large = false) =>
         MemoryCache.Set(key, value, large ? LargeEntryOptions : DefaultEntryOptions);
 
     public void InvalidateCache()
     {
-        WebRequestCache = null;
         MemoryCache.Clear();
     }
 }

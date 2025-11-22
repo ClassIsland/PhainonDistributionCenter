@@ -26,9 +26,10 @@ public class DistributionsService(
 
     public async Task<LatestDistributionInfoWebResponse> GetWebLatestDistributionInfo()
     {
-        if (DistributionCacheService.WebRequestCache != null)
+        if (DistributionCacheService.MemoryCache.TryGetValue(DistributionCacheService.WebLatestRequestCacheKey, out var o) 
+            && o is LatestDistributionInfoWebResponse cachedRsp)
         {
-            return DistributionCacheService.WebRequestCache;
+            return cachedRsp;
         }
         
         var channels = await DbContext.DistributionChannels
@@ -58,7 +59,7 @@ public class DistributionsService(
             Channels = channelsRsp,
             DefaultChannel = channels.FirstOrDefault(x => x.IsDefault)?.Id ?? Guid.Empty
         };
-        DistributionCacheService.WebRequestCache = rsp;
+        DistributionCacheService.SetMemoryCache(DistributionCacheService.WebLatestRequestCacheKey, rsp);
         return rsp;
     }
 
