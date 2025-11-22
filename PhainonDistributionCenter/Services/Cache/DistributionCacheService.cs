@@ -5,10 +5,13 @@ namespace PhainonDistributionCenter.Services.Cache;
 
 public class DistributionCacheService(ILoggerFactory loggerFactory)
 {
+    public const long CacheSizeLimit = 1024; 
+    
     public MemoryCache MemoryCache { get; } = new MemoryCache(new MemoryCacheOptions()
     {
-        SizeLimit = 1024,
-        CompactionPercentage = .25
+        SizeLimit = CacheSizeLimit,
+        CompactionPercentage = .25,
+        TrackStatistics = true
     }, loggerFactory);
 
     public static readonly string MetadataCacheKey = "metadata"; 

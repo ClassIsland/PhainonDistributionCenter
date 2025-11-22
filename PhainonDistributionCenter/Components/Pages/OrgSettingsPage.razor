@@ -1,10 +1,15 @@
 @page "/OrgSettings"
+@using System.Collections.ObjectModel
 @using Microsoft.AspNetCore.Authorization
+@using Microsoft.Extensions.Caching.Memory
+@using PhainonDistributionCenter.Models
 @using PhainonDistributionCenter.Security
 @using PhainonDistributionCenter.Services
+@using PhainonDistributionCenter.Services.Cache
 
 @inject OrganizationSettingsService OrganizationSettingsService;
 @inject IToastService ToastService;
+@inject DistributionCacheService DistributionCacheService;
 @attribute [Authorize(Policy = Policies.CanWritePolicyName)]
 
 @rendermode InteractiveServer
@@ -15,22 +20,54 @@
 
 <p>管理此应用的各个设置。</p>
 
-<div class="flex flex-col gap-2 items-start">
-    <FluentTextField Label="默认最低版本" @bind-Value='_defaultMinVersion'></FluentTextField>
+<FluentTabs Size="TabSize.Medium" Id="main-tab">
+    <FluentTab Label="基本">
 
-    <div>
-        <FluentButton Appearance="Appearance.Accent"
-                      @onclick="@(async _ => await SaveAsync())">保存</FluentButton>
-    </div>
-</div>
+        <div class="flex flex-col gap-2 items-start">
+            <FluentTextField Label="默认最低版本" @bind-Value='_defaultMinVersion'></FluentTextField>
 
+            <div>
+                <FluentButton Appearance="Appearance.Accent"
+                              @onclick="@(async _ => await SaveAsync())">保存</FluentButton>
+            </div>
+        </div>
+    </FluentTab>    
+    <FluentTab Label="缓存">
+        <FluentPaginator State="@_paginationState"/>
+        <FluentDataGrid Items="@CacheInfosQueryable" Pagination="@_paginationState" @ref="@_dataGridRef">
+            <PropertyColumn Property="@(p => p.Name)" Sortable="true" Title="名称"/>
+            <PropertyColumn Property="@(p => p.Statistics.CurrentEntryCount)" Sortable="true" Title="包含条目"/>
+            <PropertyColumn Property="@(p => p.Statistics.CurrentEstimatedSize)" Sortable="true" Title="已用空间"/>
+            <PropertyColumn Property="@(p => p.SizeLimit)" Sortable="true" Title="空间上限"/>
+            <PropertyColumn Property="@(p => p.Statistics.TotalHits)" Sortable="true" Title="Hits"/>
+            <PropertyColumn Property="@(p => p.Statistics.TotalMisses)" Sortable="true" Title="Misses"/>
+            
+            <TemplateColumn Title="操作">
+                <FluentButton @onclick="@(_ => ClearCache(context))">清空</FluentButton>
+                <FluentButton @onclick="@(_ => CompactCache(context))">压缩</FluentButton>
+            </TemplateColumn>
+        </FluentDataGrid>
+        <FluentPaginator State="@_paginationState"/>
+    </FluentTab>   
+</FluentTabs>
 @code {
     private string _defaultMinVersion = "0.0.0.0";
+    
+    private PaginationState _paginationState = new()
+    {
+        ItemsPerPage = 25
+    };
+
+    private Collection<MemoryCacheInfo> _cacheInfos = [];
+    private FluentDataGrid<MemoryCacheInfo> _dataGridRef;
+
+    private IQueryable<MemoryCacheInfo> CacheInfosQueryable => _cacheInfos.AsQueryable();
 
     protected override async Task OnInitializedAsync()
     {
         var general = await OrganizationSettingsService.GetSettingsByCategory("general");
         _defaultMinVersion = general.GetValueOrDefault("MinVersion") ?? "0.0.0.0";
+        await InitCacheInfo();
         await base.OnInitializedAsync();
     }
 
@@ -46,5 +83,30 @@
         {
             ToastService.ShowError("保存设置时发生内部错误。");
         }
+    }
+
+    private async Task InitCacheInfo()
+    {
+        _cacheInfos.Clear();
+        _cacheInfos.Add(new MemoryCacheInfo("分发服务缓存",
+            DistributionCacheService.MemoryCache,
+            DistributionCacheService.MemoryCache.GetCurrentStatistics(),
+            DistributionCacheService.CacheSizeLimit));
+        
+        await _dataGridRef.RefreshDataAsync();
+    }
+
+    private async Task ClearCache(MemoryCacheInfo info)
+    {
+        info.MemoryCache.Clear();
+        await InitCacheInfo();
+        ToastService.ShowSuccess("操作成功完成。");
+    }
+    
+    private async Task CompactCache(MemoryCacheInfo info)
+    {
+        info.MemoryCache.Compact(.5);
+        await InitCacheInfo();
+        ToastService.ShowSuccess("操作成功完成。");
     }
 }
