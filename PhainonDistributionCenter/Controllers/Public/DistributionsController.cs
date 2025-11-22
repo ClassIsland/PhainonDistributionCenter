@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PhainonDistributionCenter.Services;
 using PhainonDistributionCenter.Shared.Models.Api.Responses;
 using PhainonDistributionCenter.Shared.Models.Api.Responses.Distribution;
 using PhainonDistributionCenter.Shared.Models.Client;
@@ -9,27 +10,33 @@ namespace PhainonDistributionCenter.Controllers.Public;
 
 [ApiController]
 [Route("/api/v1/public/distributions")]
-public class DistributionsController(MainDbContext dbContext, ILogger<DistributionsController> logger) : ControllerBase
+public class DistributionsController(MainDbContext dbContext, ILogger<DistributionsController> logger, DistributionsService distributionsService) : ControllerBase
 {
     public MainDbContext DbContext { get; } = dbContext;
     public ILogger<DistributionsController> Logger { get; } = logger;
+    private DistributionsService DistributionsService { get; } = distributionsService;
+
+    [HttpGet("web")]
+    public async Task<IActionResult> GetDistributionInfoMinWeb()
+    {
+        return Ok(new Result<LatestDistributionInfoWebResponse>(StatusCodes.Success, await DistributionsService.GetWebLatestDistributionInfo())); 
+    }
+    
+    [HttpGet("web/{versionId:Guid}/{subChannelId}")]
+    public async Task<IActionResult> GetDistributionInfoWeb([FromRoute] Guid versionId, string subChannelId)
+    {
+        var response = await DistributionsService.GetWebDistributionInfo(versionId, subChannelId);
+        if (response == null)
+        {
+            return NotFound(new Result(StatusCodes.DistributionNotFound, $"找不到分发信息 {versionId}/{subChannelId} "));
+        }
+        return Ok(new Result<DistributionInfoWebResponse>(StatusCodes.Success, response));
+    }
 
     [HttpGet("metadata")]
     public async Task<IActionResult> GetMetadata()
     {
-        var metadata = new DistributionMetadata()
-        {
-            Channels = await DbContext.DistributionChannels
-                .Where(x => x.IsEnabled)
-                .Select(x => x)
-                .ToDictionaryAsync(x => x.Id, x => new DistributionMetadata.DistributionChannel()
-                {
-                    Name = x.Name,
-                    Description = x.Description
-                }),
-            DefaultChannelId = (await DbContext.DistributionChannels
-                .FirstOrDefaultAsync(x => x.IsDefault && x.IsEnabled))?.Id ?? Guid.Empty
-        };
+        var metadata = await DistributionsService.GetMetadata();
         return Ok(new Result<DistributionMetadata>(StatusCodes.Success, metadata));
     }
 
@@ -40,20 +47,7 @@ public class DistributionsController(MainDbContext dbContext, ILogger<Distributi
         {
             return BadRequest(new Result(StatusCodes.DistributionInvalidClientVersionCode, $"客户端版本 {appVersion} 无效。"));
         }
-        var latest = await DbContext.DistributionInfos
-            .Include(x => x.Channels)
-            .Where(x => x.IsEnabled 
-                        && x.Channels.Any(y => y.Id == channelId) 
-                        && x.MinVersionMajor <= version.Major
-                        && x.MinVersionMinor <= version.Minor
-                        && x.MinVersionBuild <= version.Build
-                        && x.MinVersionRevision <= version.Revision)
-            .OrderByDescending(x => x.VersionMajor)
-            .ThenByDescending(x => x.VersionMinor)
-            .ThenByDescending(x => x.VersionBuild)
-            .ThenByDescending(x => x.VersionRevision)
-            .ThenByDescending(x => x.CreatedTime)
-            .FirstOrDefaultAsync();
+        var latest = await DistributionsService.GetLatestDistributionInfoByChannel(channelId, version);
         if (latest == null)
         {
             return NotFound(new Result(StatusCodes.NoDistributionsAvailable, $"找不到频道 {channelId}/ 上符合要求的最新发行版"));
@@ -69,20 +63,12 @@ public class DistributionsController(MainDbContext dbContext, ILogger<Distributi
     [HttpGet("{id:guid}/{subChannelId}")]
     public async Task<IActionResult> GetDistributionInfoClient([FromRoute] Guid id, [FromRoute] string subChannelId)
     {
-        var info = await DbContext.DistributionInfos
-            .Include(x => x.SubChannels)
-            .ThenInclude(x => x.FileMapInfo)
-            .Where(x => x.Id == id && x.IsEnabled &&
-                        x.SubChannels.Any(y =>
-                            y.Os + "_" + y.Arch + "_" + y.BuildType + "_" + y.Package == subChannelId))
-            .Include(x => x.VersionInfo)
-            .FirstOrDefaultAsync();
-        if (info == null)
+        var infos = await DistributionsService.GetSubChannelInfo(id, subChannelId);
+        if (infos == null)
         {
             return NotFound(new Result(StatusCodes.DistributionNotFound, $"找不到分发信息 {id}/{subChannelId} "));
         }
-        
-        var subChannelInfo = info.SubChannels.First(y => $"{y.Os}_{y.Arch}_{y.BuildType}_{y.Package}" == subChannelId);
+        var (info, subChannelInfo) = infos.Value;
         
         return Ok(new Result<DistributionInfoClient>(StatusCodes.Success, new DistributionInfoClient
         {

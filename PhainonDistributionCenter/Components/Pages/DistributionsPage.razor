@@ -2,6 +2,7 @@
 @inject IDialogService DialogService;
 @inject ILogger<VersionsPage> Logger;
 @inject IToastService ToastService;
+@inject DistributionCacheService DistributionCacheService;
 
 @rendermode InteractiveServer
 @attribute [Authorize(Policy = Policies.IsOrgMemberPolicyName)]
@@ -13,6 +14,7 @@
 @using PhainonDistributionCenter.Entities
 @using PhainonDistributionCenter.Extensions
 @using PhainonDistributionCenter.Security
+@using PhainonDistributionCenter.Services.Cache
 
 <PageTitle>发行版</PageTitle>
 <h2>发行版</h2>
@@ -118,6 +120,7 @@
             DbContext.DistributionInfos.Remove(item);
             await DbContext.SaveChangesAsync();
             await dataGridRef.RefreshDataAsync();
+            DistributionCacheService.InvalidateCache();
             ToastService.ShowSuccess($"已删除发行版 {item.Version}");
         }
         catch (Exception e)

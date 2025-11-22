@@ -6,10 +6,12 @@
 @using PhainonDistributionCenter.Entities
 @using PhainonDistributionCenter.Extensions
 @using PhainonDistributionCenter.Security
+@using PhainonDistributionCenter.Services.Cache
 @inject MainDbContext DbContext;
 @inject IDialogService DialogService;
 @inject ILogger<VersionsPage> Logger;
 @inject IToastService ToastService;
+@inject DistributionCacheService DistributionCacheService;
 @rendermode InteractiveServer
 @attribute [Authorize(Policy = Policies.IsOrgMemberPolicyName)]
 
@@ -115,6 +117,7 @@
             DbContext.VersionInfos.Remove(item);
             await DbContext.SaveChangesAsync();
             await dataGridRef.RefreshDataAsync();
+            DistributionCacheService.InvalidateCache();
             ToastService.ShowSuccess($"已删除大版本 {item.Version}");
         }
         catch (Exception e)
@@ -136,6 +139,7 @@
             editingInfo.UpdatedTime = DateTimeOffset.UtcNow;
             await DbContext.SaveChangesAsync();
             await dataGridRef.RefreshDataAsync();
+            DistributionCacheService.InvalidateCache();
             ToastService.ShowSuccess($"已保存大版本 {editingInfo.Version}");
 
         }

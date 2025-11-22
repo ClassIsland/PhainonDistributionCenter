@@ -13,6 +13,7 @@ using PhainonDistributionCenter.Components;
 using PhainonDistributionCenter.Security;
 using PhainonDistributionCenter.Security.AuthenticationHandlers;
 using PhainonDistributionCenter.Services;
+using PhainonDistributionCenter.Services.Cache;
 
 var builder = WebApplication.CreateBuilder(args);
 var migrateMode = builder.Configuration["migrate"] == "true";
@@ -159,6 +160,8 @@ builder.Services.AddScoped<FileRepoProcessingService>();
 builder.Services.AddScoped<GpgSignatureService>();
 builder.Services.AddScoped<AccessTokenService>();
 builder.Services.AddScoped<OrganizationSettingsService>();
+builder.Services.AddScoped<DistributionsService>();
+builder.Services.AddSingleton<DistributionCacheService>();
 
 var app = builder.Build();
 
