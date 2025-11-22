@@ -116,7 +116,7 @@ public class DistributionsService(
         var subChannelInfo = info.SubChannels.First(y => $"{y.Os}_{y.Arch}_{y.BuildType}_{y.Package}" == subChannelId);
 
         var r = (info, subChannelInfo);
-        DistributionCacheService.SetMemoryCache(key, r);
+        DistributionCacheService.SetMemoryCache(key, r, true);
         return r;
     }
 
