@@ -6,11 +6,13 @@
 @using PhainonDistributionCenter.Entities
 @using PhainonDistributionCenter.Extensions
 @using PhainonDistributionCenter.Security
+@using PhainonDistributionCenter.Services.Cache
 @inject NavigationManager NavigationManager;
 @inject ILogger<DistributionDetailsPage> Logger;
 @inject IDialogService DialogService;
 @inject IToastService ToastService;
 @inject IDbContextFactory<MainDbContext> DbContextFactory;
+@inject DistributionCacheService DistributionCacheService;
 @attribute [Authorize(Policy = Policies.IsOrgMemberPolicyName)]
 
 @rendermode InteractiveServer
@@ -291,6 +293,7 @@ fluent-tab-panel {
                 DistributionInfo.Channels.Add(channel);
             }
             await dbContext.SaveChangesAsync();
+            DistributionCacheService.InvalidateCache();
             ToastService.ShowSuccess($"保存成功。");
         }
         catch (Exception e)
