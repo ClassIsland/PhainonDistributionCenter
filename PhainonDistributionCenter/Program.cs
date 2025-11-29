@@ -15,7 +15,8 @@ using PhainonDistributionCenter.Security.AuthenticationHandlers;
 using PhainonDistributionCenter.Services;
 using PhainonDistributionCenter.Services.Cache;
 
-var builder = WebApplication.CreateBuilder(args);
+var builder = WebApplication
+    .CreateBuilder(args);
 var migrateMode = builder.Configuration["migrate"] == "true";
 // Add services to the container.
 
@@ -163,6 +164,12 @@ builder.Services.AddScoped<OrganizationSettingsService>();
 builder.Services.AddScoped<DistributionsService>();
 builder.Services.AddSingleton<DistributionCacheService>();
 
+
+builder.WebHost.UseSentry(o =>
+{
+    o.Dsn = "https://4cb4555138312008b55f73a3c0e55107@todayeatsentry.classisland.tech:21815/10";
+});
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -184,13 +191,16 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+app.MapControllers();
+app.MapDefaultControllerRoute();
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
 app.MapStaticAssets();
+app.UseSentryTracing();
+
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseAntiforgery();
-app.MapRazorComponents<App>()
-    .AddInteractiveServerRenderMode();
-app.MapDefaultControllerRoute();
 
 if (app.Environment.IsDevelopment())
 {
@@ -201,7 +211,6 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-app.MapControllers();
 var logger = app.Services.GetRequiredService<ILogger<Program>>();
 
 using (var scope = app.Services.CreateScope())

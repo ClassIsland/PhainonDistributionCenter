@@ -26,7 +26,7 @@ public class DistributionsService(
 
     public async Task<LatestDistributionInfoWebResponse> GetWebLatestDistributionInfo()
     {
-        if (DistributionCacheService.MemoryCache.TryGetValue(DistributionCacheService.WebLatestRequestCacheKey, out var o) 
+        if (DistributionCacheService.TryGetValue(DistributionCacheService.WebLatestRequestCacheKey, out var o) 
             && o is LatestDistributionInfoWebResponse cachedRsp)
         {
             return cachedRsp;
@@ -66,7 +66,7 @@ public class DistributionsService(
     public async Task<DistributionInfo?> GetLatestDistributionInfoByChannel(Guid channelId, Version? minVersion = null)
     {
         var key = new LatestDistributionCacheKey(channelId, minVersion);
-        if (DistributionCacheService.MemoryCache.TryGetValue(key, out var o) 
+        if (DistributionCacheService.TryGetValue(key, out var o) 
             && o is DistributionInfo cachedRsp)
         {
             return cachedRsp;
@@ -96,7 +96,7 @@ public class DistributionsService(
     public async Task<(DistributionInfo, DistributionSubChannel)?> GetSubChannelInfo(Guid id, string subChannelId)
     {
         var key = new SubChannelCacheKey(id, subChannelId);
-        if (DistributionCacheService.MemoryCache.TryGetValue(key, out var o) 
+        if (DistributionCacheService.TryGetValue(key, out var o) 
             && o is (DistributionInfo, DistributionSubChannel))
         {
             return ((DistributionInfo, DistributionSubChannel))o;
@@ -124,7 +124,7 @@ public class DistributionsService(
     public async Task<DistributionInfoWebResponse?> GetWebDistributionInfo(Guid id, string subChannelId)
     {
         var key = new DistributionCacheKey(id, subChannelId, ResponseType.Web);
-        if (DistributionCacheService.MemoryCache.TryGetValue(key, out var o) 
+        if (DistributionCacheService.TryGetValue(key, out var o) 
             && o is DistributionInfoWebResponse cachedRsp)
         {
             return cachedRsp;
@@ -163,7 +163,7 @@ public class DistributionsService(
 
     public async Task<DistributionMetadata> GetMetadata()
     {
-        if (DistributionCacheService.MemoryCache.TryGetValue(DistributionCacheService.MetadataCacheKey, out var o) 
+        if (DistributionCacheService.TryGetValue(DistributionCacheService.MetadataCacheKey, out var o) 
             && o is DistributionMetadata cachedRsp)
         {
             return cachedRsp;

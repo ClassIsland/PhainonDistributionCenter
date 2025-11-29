@@ -1,3 +1,4 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Extensions.Caching.Memory;
 using PhainonDistributionCenter.Shared.Models.Api.Responses.Distribution;
 
@@ -25,8 +26,25 @@ public class DistributionCacheService(ILoggerFactory loggerFactory)
         .SetSlidingExpiration(TimeSpan.FromHours(12))
         .SetSize(24);
 
-    public void SetMemoryCache(object key, object? value, bool large = false) =>
+    public void SetMemoryCache(object key, object? value, bool large = false)
+    {
+         var cacheSpan = SentrySdk.GetSpan()?.StartChild("cache.put");
+        // Set the key you're going to use to add to the cache
+        cacheSpan?.SetExtra("cache.key", key);
         MemoryCache.Set(key, value, large ? LargeEntryOptions : DefaultEntryOptions);
+        cacheSpan?.Finish();
+    }
+
+    public bool TryGetValue(object key, [NotNullWhen(true)] out object? o)
+    {
+        var cacheSpan = SentrySdk.GetSpan()?.StartChild("cache.get");
+        // Set the key you're going to use to retrieve from the cache
+        cacheSpan?.SetExtra("cache.key", key);
+        var hit = MemoryCache.TryGetValue(key, out o);
+        cacheSpan?.SetExtra("cache.hit", hit);
+        cacheSpan?.Finish();
+        return hit;
+    }
 
     public void InvalidateCache()
     {
