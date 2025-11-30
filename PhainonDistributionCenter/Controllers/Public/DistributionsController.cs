@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhainonDistributionCenter.Services;
@@ -9,6 +10,7 @@ using StatusCodes = PhainonDistributionCenter.Shared.Enums.Api.StatusCodes;
 namespace PhainonDistributionCenter.Controllers.Public;
 
 [ApiController]
+[EnableCors("PublicApiPolicy")] 
 [Route("/api/v1/public/distributions")]
 public class DistributionsController(MainDbContext dbContext, ILogger<DistributionsController> logger, DistributionsService distributionsService) : ControllerBase
 {

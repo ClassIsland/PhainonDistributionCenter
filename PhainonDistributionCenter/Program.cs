@@ -157,6 +157,16 @@ builder.Services.AddAuthorizationBuilder()
     });
 builder.Services.AddCascadingAuthenticationState();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("PublicApiPolicy", policy =>
+    {
+        policy.AllowAnyOrigin()   // 允许任何来源
+            .AllowAnyHeader()   // 允许任何 Header (解决 sentry-trace 问题)
+            .AllowAnyMethod();  // 允许 GET, POST, OPTIONS 等
+    });
+});
+
 builder.Services.AddScoped<FileRepoProcessingService>();
 builder.Services.AddScoped<GpgSignatureService>();
 builder.Services.AddScoped<AccessTokenService>();
@@ -191,6 +201,12 @@ if (!app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.UseRouting();
+app.UseCors();
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseAntiforgery();
+
 app.MapControllers();
 app.MapDefaultControllerRoute();
 app.MapRazorComponents<App>()
@@ -198,9 +214,6 @@ app.MapRazorComponents<App>()
 app.MapStaticAssets();
 app.UseSentryTracing();
 
-app.UseAuthentication();
-app.UseAuthorization();
-app.UseAntiforgery();
 
 if (app.Environment.IsDevelopment())
 {
