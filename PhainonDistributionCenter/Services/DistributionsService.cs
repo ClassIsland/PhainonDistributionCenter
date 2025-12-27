@@ -76,10 +76,10 @@ public class DistributionsService(
             .Where(x => x.IsEnabled 
                         && x.Channels.Any(y => y.Id == channelId) 
                         && (minVersion == null || 
-                            (x.MinVersionMajor <= minVersion.Major
-                             && x.MinVersionMinor <= minVersion.Minor
-                             && x.MinVersionBuild <= minVersion.Build
-                             && x.MinVersionRevision <= minVersion.Revision)))
+                                (x.MinVersionMajor != minVersion.Major ? x.MinVersionMajor < minVersion.Major :
+                                x.MinVersionMinor != minVersion.Minor ? x.MinVersionMinor < minVersion.Minor :
+                                x.MinVersionBuild != minVersion.Build ? x.MinVersionBuild < minVersion.Build :
+                                x.MinVersionRevision <= minVersion.Revision)))
             .OrderByDescending(x => x.VersionMajor)
             .ThenByDescending(x => x.VersionMinor)
             .ThenByDescending(x => x.VersionBuild)
