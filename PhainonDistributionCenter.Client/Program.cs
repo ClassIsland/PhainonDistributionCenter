@@ -27,6 +27,7 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Net.Mime;
 using System.Security.Cryptography;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
@@ -195,6 +196,7 @@ publishAppCommand.SetAction(async result =>
     };
     var repo = new FileRepo();
     var repoPath = Path.Combine(root.FullName, "repo");
+    var fileMaps = new Dictionary<string, FileMap>();
     if (!Directory.Exists(repoPath))
     {
         Directory.CreateDirectory(repoPath);
@@ -283,7 +285,29 @@ publishAppCommand.SetAction(async result =>
         var fileMapJson = reqChannel.FileMap = JsonSerializer.Serialize(fileMap);
         reqChannel.FileMapSignature = DetachedSignatureProcessor.CreateSignature(fileMapJson, signingKey, signingKeyPs);
         request.SubChannels.Add(reqChannel);
+        fileMaps[channel.Name] = fileMap;
     }
+    
+    Console.WriteLine("Generating change logs");
+    var changeLog = File.ReadAllText(VariableStringHelpers.ExpandString(config.AppChangeLogPath, config.Variables));
+    var hashesSb = new StringBuilder();
+    hashesSb.AppendLine("| 文件名 | SHA512 |");
+    hashesSb.AppendLine("| --- | --- |");
+    foreach (var subChannel in subChannels)
+    {
+        if (!fileMaps.TryGetValue(subChannel.Name, out var fileMap))
+        {
+            continue;
+        }
+        hashesSb.AppendLine($"| [{subChannel.Name}]({fileMap.ArchiveUrl}) | {Convert.ToHexString(fileMap.ArchiveSha512)} |");
+    }
+    var hashesText = hashesSb.ToString();
+    config.Variables["changeLog"] = changeLog;
+    config.Variables["hashes"] = hashesText;
+    var finalChangeLog = VariableStringHelpers.ExpandString(config.AppChangeLogTemplate, config.Variables);
+    request.ChangeLog = finalChangeLog;
+    File.WriteAllText(Path.Combine(root.FullName, "ChangeLogs.md"), finalChangeLog);
+    
     File.WriteAllText(Path.Combine(root.FullName, "request.json"), JsonSerializer.Serialize(request));
     Console.WriteLine($"Request dumped request to {Path.Combine(root.FullName, "request.json")}");
     File.WriteAllText(Path.Combine(root.FullName, "repo.json"), JsonSerializer.Serialize(repo));
@@ -345,6 +369,7 @@ publishAppCommand.SetAction(async result =>
         var rsp = await client.PutObjectAsync(putRequest, cancellationToken);
     });
 
+    Console.WriteLine("Syncing file repo");
     var rsp2 = await httpClient.PostAsJsonAsync("api/v1/fileMaps/upload", repoDetermined);
     rsp2.EnsureSuccessStatusCode();
     
@@ -367,6 +392,7 @@ publishAppCommand.SetAction(async result =>
         Console.WriteLine($"[SC/{channel.Name}] SUCCESSFULLY Uploaded {channel.FullPath}");
     });
 
+    Console.WriteLine("Creating distribution info");
     var rsp3 = await httpClient.PostAsJsonAsync($"api/v1/distribution/{primaryVersion}/{version}", request);
     rsp3.EnsureSuccessStatusCode();
     Console.WriteLine("SUCCESSFULLY created distribution info");
@@ -412,6 +438,8 @@ Configuration LoadConfiguration(ParseResult result)
         Console.WriteLine($"Set variable from env: {name}={value}");
         config.Variables[name] = value;
     }
+
+    config.Variables["thisFileDir"] = fileInfo.DirectoryName ?? throw new ArgumentException($"配置文件 {fileInfo.Name} 位于无效的目录中");
     
     return config;
 }

@@ -41,4 +41,14 @@ public class Configuration
     /// </summary>
     public string ArchiveBucketKeyRoot { get; set; } = "";
 
+    /// <summary>
+    /// 应用更新日志目录
+    /// </summary>
+    public string AppChangeLogPath { get; set; } = "";
+
+    /// <summary>
+    /// 应用更新日志模板
+    /// </summary>
+    public string AppChangeLogTemplate { get; set; } = "";
+
 }
