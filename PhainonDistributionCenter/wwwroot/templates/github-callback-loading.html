@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-cmn-Hans" id="htmlRoot" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible"/>
+    <meta content="webkit" name="renderer"/>
+    <meta
+            content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=0"
+            name="viewport"
+    />
+    <link href="/favicon.ico" rel="icon"/>
+    <meta name="robots" content="noindex">
+    <title>PhainonDistributionCenter</title>
+</head>
+<body>
+<div id="app">
+    <style>
+        p, h1 {
+            margin: 0;
+        }
+        
+        #logo {
+            margin: auto;
+        }
+
+        .loading-wrap {
+            display: flex;
+            justify-items: center;
+
+        }
+
+        .first-loading-wrap {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        body {
+            margin: 0;
+            background: #f6f8fa;
+            color: #111111;
+        }
+        @media (prefers-color-scheme: dark) {
+            body {
+                background: #101014;
+                color: #fafafa;
+            }
+        }
+        
+        h1 {
+            font-size: 20px;
+            font-weight: bold;
+        }
+        
+        p {
+            font-size: 14px;
+        }
+
+        .circle-loader {
+            margin-bottom: 8px;
+            border: 3px solid #00bfff55;
+            border-top: 3px solid #00bfff;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            min-width: 24px;
+            min-height: 24px;
+            max-width: 24px;
+            max-height: 24px;
+            box-sizing: border-box;
+            animation: spin 1s cubic-bezier(0.75, 0.1, 0.25, 0.9) infinite;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+    <div class="first-loading-wrap">
+        <div class="circle-loader"></div>
+        
+        <h1>正在认证…</h1>
+        <p>这可能需要一点时间，请坐和放宽。</p>
+    </div>
+</div>
+<script>
+    const continueUrl = decodeURIComponent("{{encodedContinueUrl}}");
+    if (!continueUrl.startsWith("{{")) {
+        window.setTimeout(() => {
+            window.location.replace(continueUrl);
+        }, 120);
+    }
+</script>
+</body>
+</html>

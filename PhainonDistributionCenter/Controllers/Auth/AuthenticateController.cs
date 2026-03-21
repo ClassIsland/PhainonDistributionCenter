@@ -11,10 +11,11 @@ public class AuthenticateController : Controller
     [HttpGet("login/github")]
     public IActionResult LoginGitHub([FromQuery] string? redirect = null)
     {
-        return Challenge(new AuthenticationProperties { RedirectUri = redirect ?? "/" },
+        var targetRedirect = NormalizeLocalRedirect(redirect);
+        return Challenge(new AuthenticationProperties { RedirectUri = targetRedirect },
             GitHubAuthenticationDefaults.AuthenticationScheme);
     }
-    
+
     [HttpGet("logout")]
     public IActionResult Logout()
     {
@@ -23,5 +24,22 @@ public class AuthenticateController : Controller
             RedirectUri = "/Account/LoggedOut",
             AllowRefresh = true
         }, CookieAuthenticationDefaults.AuthenticationScheme);
+    }
+
+    private static string NormalizeLocalRedirect(string? redirect)
+    {
+        if (string.IsNullOrWhiteSpace(redirect))
+        {
+            return "/";
+        }
+
+        if (Uri.TryCreate(redirect, UriKind.Relative, out _) &&
+            redirect.StartsWith('/') &&
+            !redirect.StartsWith("//", StringComparison.Ordinal))
+        {
+            return redirect;
+        }
+
+        return "/";
     }
 }

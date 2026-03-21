@@ -10,6 +10,7 @@ using Microsoft.FluentUI.AspNetCore.Components;
 using Octokit;
 using PhainonDistributionCenter;
 using PhainonDistributionCenter.Components;
+using PhainonDistributionCenter.Middleware;
 using PhainonDistributionCenter.Security;
 using PhainonDistributionCenter.Security.AuthenticationHandlers;
 using PhainonDistributionCenter.Services;
@@ -201,6 +202,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 app.UseCors();
+app.UseGitHubCallbackLoadingPage();
 
 app.UseAuthentication();
 app.UseAuthorization();

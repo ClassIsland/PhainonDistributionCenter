@@ -1,4 +1,5 @@
 @page "/Account/Login"
+@using Microsoft.AspNetCore.Components
 
 <PageTitle>登录</PageTitle>
 
@@ -7,7 +8,7 @@
     <h1>登录</h1>
     <p>要继续使用本应用，请使用以下方式登录</p>
     
-    <FluentAnchor Href="/auth/login/github"
+    <FluentAnchor Href="@GitHubLoginHref"
                   Appearance="Appearance.Outline"
                   IconStart="@(new Icons.Regular.Size20.PersonKey())">使用 GitHub 继续</FluentAnchor>
 </div>
@@ -16,5 +17,35 @@
     
 </style>
 @code {
-   
+    [SupplyParameterFromQuery(Name = "ReturnUrl")]
+    public string? ReturnUrl { get; set; }
+
+    [SupplyParameterFromQuery(Name = "redirect")]
+    public string? Redirect { get; set; }
+
+    private string GitHubLoginHref
+    {
+        get
+        {
+            var target = NormalizeLocalRedirect(ReturnUrl ?? Redirect);
+            return $"/auth/login/github?redirect={Uri.EscapeDataString(target)}";
+        }
+    }
+
+    private static string NormalizeLocalRedirect(string? redirect)
+    {
+        if (string.IsNullOrWhiteSpace(redirect))
+        {
+            return "/";
+        }
+
+        if (Uri.TryCreate(redirect, UriKind.Relative, out _) &&
+            redirect.StartsWith('/') &&
+            !redirect.StartsWith("//", StringComparison.Ordinal))
+        {
+            return redirect;
+        }
+
+        return "/";
+    }
 }
