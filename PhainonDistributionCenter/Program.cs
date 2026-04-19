@@ -176,10 +176,7 @@ builder.Services.AddScoped<DistributionsService>();
 builder.Services.AddSingleton<DistributionCacheService>();
 
 
-builder.WebHost.UseSentry(o =>
-{
-    o.Dsn = "https://4cb4555138312008b55f73a3c0e55107@todayeatsentry.classisland.tech:21815/10";
-});
+builder.WebHost.UseSentry();
 
 var app = builder.Build();
 
@@ -202,6 +199,7 @@ app.UseHttpsRedirection();
 
 app.UseRouting();
 app.UseCors();
+app.UseSentryTracing();
 app.UseGitHubCallbackLoadingPage();
 
 app.UseAuthentication();
@@ -213,7 +211,6 @@ app.MapDefaultControllerRoute();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode();
 app.MapStaticAssets();
-app.UseSentryTracing();
 
 
 if (app.Environment.IsDevelopment())
