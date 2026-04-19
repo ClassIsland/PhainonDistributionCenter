@@ -16,9 +16,9 @@ public class FileReposController(FileRepoProcessingService fileRepoProcessingSer
     private FileRepoProcessingService FileRepoProcessingService { get; } = fileRepoProcessingService;
 
     [HttpPost("diff")]
-    public IActionResult GetFileRepoDiff([FromBody] FileRepo body)
+    public async Task<IActionResult> GetFileRepoDiff([FromBody] FileRepo body)
     {
-        var result = FileRepoProcessingService.GetFileRepoDiff(body);
+        var result = await FileRepoProcessingService.GetFileRepoDiffAsync(body);
         return Ok(new Result<IList<byte[]>>(StatusCodes.Success, result));
     }
     
