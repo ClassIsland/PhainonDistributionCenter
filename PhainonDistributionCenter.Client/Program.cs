@@ -111,6 +111,7 @@ generateComponentCommand.SetAction(result =>
     
     Console.WriteLine($"{fileMap.Components.Count} components processed");
     File.WriteAllText(Path.Combine(root.FullName, "files.json"), JsonSerializer.Serialize(fileMap));
+    File.WriteAllText(Path.Combine(root.FullName, "files.uvars.json"), JsonSerializer.Serialize(config.Variables));
 });
 
 var primaryVersionArg = new Argument<string>("primaryVersion");
