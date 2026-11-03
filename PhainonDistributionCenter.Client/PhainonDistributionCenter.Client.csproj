@@ -9,6 +9,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\PhainonDistributionCenter.Shared\PhainonDistributionCenter.Shared.csproj" />
+      <InternalsVisibleTo Include="PhainonDistributionCenter.Tests" />
     </ItemGroup>
 
     <ItemGroup>

@@ -34,7 +34,6 @@ using System.Text.RegularExpressions;
 using Amazon;
 using Amazon.Runtime;
 using Amazon.S3;
-using Amazon.S3.Model;
 using Microsoft.Extensions.FileSystemGlobbing;
 using Microsoft.Extensions.FileSystemGlobbing.Abstractions;
 using PgpCore;
@@ -347,8 +346,11 @@ publishAppCommand.SetAction(async result =>
         s3SecretKey);
     using var client = new AmazonS3Client(new AmazonS3Config{
         DefaultAWSCredentials = awsCredential,
-        ServiceURL = s3Endpoint
+        ServiceURL = s3Endpoint,
+        // S3FileUploader owns retries so SDK retries cannot multiply the attempt limit.
+        MaxErrorRetry = 0
     });
+    var uploader = new S3FileUploader(client);
 
     await Parallel.ForEachAsync(repoDetermined.Items, new ParallelOptions()
     {
@@ -360,14 +362,9 @@ publishAppCommand.SetAction(async result =>
         var dirPath = Path.Combine(repoPath, sha512Hex[..2]);
         var compressedPath = Path.Combine(dirPath, sha512Hex);
         Console.WriteLine($"Uploading {file.FileName} ({compressedPath})");
-        var putRequest = new PutObjectRequest()
-        {
-            BucketName = s3Bucket,
-            Key = VariableStringHelpers.ExpandString(config.BucketKeyRoot, config.Variables) +
-                  $"{sha512Hex[..2]}/{sha512Hex}",
-            FilePath = compressedPath
-        };
-        var rsp = await client.PutObjectAsync(putRequest, cancellationToken);
+        var key = VariableStringHelpers.ExpandString(config.BucketKeyRoot, config.Variables) +
+                  $"{sha512Hex[..2]}/{sha512Hex}";
+        await uploader.UploadAsync(s3Bucket, key, compressedPath, cancellationToken);
     });
 
     Console.WriteLine("Syncing file repo");
@@ -383,13 +380,8 @@ publishAppCommand.SetAction(async result =>
     }, async (channel, cancellationToken) =>
     {
         Console.WriteLine($"[SC/{channel.Name}] Uploading {channel.FullPath}");
-        var putRequest = new PutObjectRequest()
-        {
-            BucketName = s3Bucket,
-            Key = VariableStringHelpers.ExpandString(config.ArchiveBucketKeyRoot, config.Variables) + Path.GetFileName(channel.FullPath),
-            FilePath = channel.FullPath
-        };
-        var rsp = await client.PutObjectAsync(putRequest, cancellationToken);
+        var key = VariableStringHelpers.ExpandString(config.ArchiveBucketKeyRoot, config.Variables) + Path.GetFileName(channel.FullPath);
+        await uploader.UploadAsync(s3Bucket, key, channel.FullPath, cancellationToken);
         Console.WriteLine($"[SC/{channel.Name}] SUCCESSFULLY Uploaded {channel.FullPath}");
     });
 
