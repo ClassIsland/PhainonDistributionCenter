@@ -8,6 +8,7 @@ namespace PhainonDistributionCenter;
 
 public class MainDbContext(DbContextOptions<MainDbContext> options) : DbContext(options)
 {
+    public DbSet<HourlyDownloadStatistic> HourlyDownloadStatistics { get; set; }
     public DbSet<DistributionChannel> DistributionChannels { get; set; }
     public DbSet<VersionInfo> VersionInfos { get; set; }
     public DbSet<DistributionInfo> DistributionInfos { get; set; }
@@ -28,6 +29,8 @@ public class MainDbContext(DbContextOptions<MainDbContext> options) : DbContext(
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<HourlyDownloadStatistic>()
+            .HasKey(x => new { x.HourUtc, x.DistributionId, x.Version, x.SubChannel, x.Source, x.RegionCode });
         modelBuilder.Entity<DistributionChannel>()
             .HasMany(x => x.AssociatedDistributions)
             .WithMany(x => x.Channels);

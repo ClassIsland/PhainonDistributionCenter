@@ -1,7 +1,10 @@
 using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using PhainonDistributionCenter.Enums;
+using PhainonDistributionCenter.Models.Statistics;
 using PhainonDistributionCenter.Services;
+using PhainonDistributionCenter.Services.Statistics;
 using PhainonDistributionCenter.Shared.Models.Api.Responses;
 using PhainonDistributionCenter.Shared.Models.Api.Responses.Distribution;
 using PhainonDistributionCenter.Shared.Models.Client;
@@ -12,7 +15,8 @@ namespace PhainonDistributionCenter.Controllers.Public;
 [ApiController]
 [EnableCors("PublicApiPolicy")] 
 [Route("/api/v1/public/distributions")]
-public class DistributionsController(MainDbContext dbContext, ILogger<DistributionsController> logger, DistributionsService distributionsService) : ControllerBase
+public class DistributionsController(MainDbContext dbContext, ILogger<DistributionsController> logger,
+    DistributionsService distributionsService, DownloadEventQueue downloadQueue, TimeProvider timeProvider) : ControllerBase
 {
     public MainDbContext DbContext { get; } = dbContext;
     public ILogger<DistributionsController> Logger { get; } = logger;
@@ -27,12 +31,16 @@ public class DistributionsController(MainDbContext dbContext, ILogger<Distributi
     [HttpGet("web/{versionId:Guid}/{subChannelId}")]
     public async Task<IActionResult> GetDistributionInfoWeb([FromRoute] Guid versionId, string subChannelId)
     {
+        var requestedAt = timeProvider.GetUtcNow();
         var response = await DistributionsService.GetWebDistributionInfo(versionId, subChannelId);
         if (response == null)
         {
             return NotFound(new Result(StatusCodes.DistributionNotFound, $"找不到分发信息 {versionId}/{subChannelId} "));
         }
-        return Ok(new Result<DistributionInfoWebResponse>(StatusCodes.Success, response));
+        var result = Ok(new Result<DistributionInfoWebResponse>(StatusCodes.Success, response));
+        downloadQueue.TryRecord(new DownloadEvent(requestedAt, versionId, response.Version, subChannelId,
+            DownloadSource.Web, HttpContext.Connection.RemoteIpAddress?.ToString()));
+        return result;
     }
 
     [HttpGet("metadata")]
@@ -65,6 +73,7 @@ public class DistributionsController(MainDbContext dbContext, ILogger<Distributi
     [HttpGet("{id:guid}/{subChannelId}")]
     public async Task<IActionResult> GetDistributionInfoClient([FromRoute] Guid id, [FromRoute] string subChannelId)
     {
+        var requestedAt = timeProvider.GetUtcNow();
         var infos = await DistributionsService.GetSubChannelInfo(id, subChannelId);
         if (infos == null)
         {
@@ -72,7 +81,7 @@ public class DistributionsController(MainDbContext dbContext, ILogger<Distributi
         }
         var (info, subChannelInfo) = infos.Value;
         
-        return Ok(new Result<DistributionInfoClient>(StatusCodes.Success, new DistributionInfoClient
+        var result = Ok(new Result<DistributionInfoClient>(StatusCodes.Success, new DistributionInfoClient
         {
             FriendlyVersion = info.FriendlyVersion,
             FriendlyVersionShort = info.FriendlyVersionShort,
@@ -81,6 +90,9 @@ public class DistributionsController(MainDbContext dbContext, ILogger<Distributi
             SubChannel = $"{subChannelInfo.Os}_{subChannelInfo.Arch}_{subChannelInfo.BuildType}_{subChannelInfo.Package}",
             FileMapJson = subChannelInfo.FileMapInfo.ContentJson,
             FileMapSignature = subChannelInfo.FileMapInfo.PgpSignature
-        })); 
+        }));
+        downloadQueue.TryRecord(new DownloadEvent(requestedAt, id, info.Version, subChannelInfo.ToString(),
+            DownloadSource.Client, HttpContext.Connection.RemoteIpAddress?.ToString()));
+        return result;
     }
 }

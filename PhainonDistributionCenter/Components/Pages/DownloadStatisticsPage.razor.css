@@ -1,0 +1,14 @@
+.statistics-page { min-width: 0; }
+.statistics-page ::deep .filters,
+.statistics-page ::deep .summary,
+.statistics-page ::deep .trend,
+.statistics-page ::deep .detail-section { margin: 20px 0; }
+.statistics-page ::deep .filters { overflow: visible; }
+.statistics-page ::deep .filters fluent-button { margin-top: 16px; }
+.statistics-page ::deep .summary fluent-card { display: flex; flex-direction: column; gap: 10px; height: 100%; }
+.statistics-page ::deep h3 { margin-top: 0; }
+svg { display: block; width: 100%; max-height: 300px; }
+.hour-values { max-height: 320px; overflow: auto; }
+.table-scroll { overflow: auto; }
+.statistics-page ::deep table { font-variant-numeric: tabular-nums; }
+.table-scroll ::deep td { white-space: nowrap; }

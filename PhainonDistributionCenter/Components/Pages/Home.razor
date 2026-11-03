@@ -3,7 +3,10 @@
 @using Microsoft.AspNetCore.Components.Authorization
 @using Microsoft.EntityFrameworkCore
 @using PhainonDistributionCenter.Security
+@using PhainonDistributionCenter.Services.Statistics
 @inject MainDbContext DbContext;
+@inject DownloadStatisticsQueryService DownloadStatistics
+@inject ILogger<Home> Logger
 
 @inject AuthenticationStateProvider AuthenticationStateProvider
 
@@ -47,7 +50,8 @@
                     <FluentIcon Value="@(new Icons.Regular.Size20.ArrowDownload())"></FluentIcon>
                     <span>总下载次数</span>
                 </div>
-                <span class="accent-number">0</span>
+                <span class="accent-number">@(_downloadTotal?.ToString("N0") ?? "—")</span>
+                <FluentAnchor Href="/DownloadStatistics" Appearance="Appearance.Hypertext">查看下载量统计</FluentAnchor>
             </div>
         </FluentCard> 
         <FluentCard>
@@ -93,7 +97,11 @@
 </style>
 
 @code {
+    private long? _downloadTotal;
 
-    
-
+    protected override async Task OnInitializedAsync()
+    {
+        try { _downloadTotal = await DownloadStatistics.GetTotalAsync(); }
+        catch (Exception ex) { Logger.LogError(ex, "加载累计下载次数失败"); }
+    }
 }

@@ -1,0 +1,4 @@
+.distribution-panel { min-width: 0; height: 100%; }
+.distribution-panel ::deep fluent-card { height: 100%; }
+.distribution-panel ::deep h3 { margin: 0 0 12px; }
+.distribution-list { overflow: auto; max-height: 340px; font-variant-numeric: tabular-nums; }

@@ -310,6 +310,42 @@ namespace PhainonDistributionCenter.Migrations
                     b.ToTable("PublicKeys");
                 });
 
+            modelBuilder.Entity("PhainonDistributionCenter.Entities.HourlyDownloadStatistic", b =>
+                {
+                    b.Property<DateTime>("HourUtc")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("DistributionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Version")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<string>("SubChannel")
+                        .HasMaxLength(67)
+                        .HasColumnType("character varying(67)");
+
+                    b.Property<int>("Source")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("RegionCode")
+                        .HasMaxLength(32)
+                        .HasColumnType("character varying(32)");
+
+                    b.Property<long>("Count")
+                        .HasColumnType("bigint");
+
+                    b.Property<string>("RegionName")
+                        .IsRequired()
+                        .HasMaxLength(160)
+                        .HasColumnType("character varying(160)");
+
+                    b.HasKey("HourUtc", "DistributionId", "Version", "SubChannel", "Source", "RegionCode");
+
+                    b.ToTable("HourlyDownloadStatistics");
+                });
+
             modelBuilder.Entity("PhainonDistributionCenter.Entities.OrganizationSettings", b =>
                 {
                     b.Property<string>("Key")

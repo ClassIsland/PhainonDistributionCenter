@@ -15,6 +15,7 @@ using PhainonDistributionCenter.Security;
 using PhainonDistributionCenter.Security.AuthenticationHandlers;
 using PhainonDistributionCenter.Services;
 using PhainonDistributionCenter.Services.Cache;
+using PhainonDistributionCenter.Services.Statistics;
 
 var builder = WebApplication
     .CreateBuilder(args);
@@ -174,6 +175,12 @@ builder.Services.AddScoped<AccessTokenService>();
 builder.Services.AddScoped<OrganizationSettingsService>();
 builder.Services.AddScoped<DistributionsService>();
 builder.Services.AddSingleton<DistributionCacheService>();
+builder.Services.AddSingleton(TimeProvider.System);
+builder.Services.AddSingleton<DownloadEventQueue>();
+builder.Services.AddSingleton<IDownloadRegionResolver, DownloadRegionResolver>();
+builder.Services.AddSingleton<IDownloadStatisticsWriter, DownloadStatisticsWriter>();
+builder.Services.AddHostedService<DownloadStatisticsWorker>();
+builder.Services.AddScoped<DownloadStatisticsQueryService>();
 
 
 builder.WebHost.UseSentry();

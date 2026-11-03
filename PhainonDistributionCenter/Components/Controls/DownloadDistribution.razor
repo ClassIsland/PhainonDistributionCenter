@@ -1,0 +1,33 @@
+@using System.Globalization
+@using PhainonDistributionCenter.Models.Statistics
+
+<section class="distribution-panel" aria-label="@Title">
+    <FluentCard>
+        <FluentLabel Typo="Typography.H3">@Title</FluentLabel>
+        <div class="distribution-list">
+            <FluentDataGrid Items="@Items.AsQueryable()" DisplayMode="DataGridDisplayMode.Table" aria-label="@Title">
+                <ChildContent>
+                    <PropertyColumn Property="@(item => item.Name)" Title="@Dimension" />
+                    <PropertyColumn Property="@(item => item.Count)" Title="下载次数" Format="N0" />
+                    <TemplateColumn Title="占比">
+                        <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" HorizontalGap="6" Width="max-content">
+                            <FluentProgress Min="0" Max="1000" Value="@((int)decimal.Round(Share(context.Count) * 1000))" Width="70px"
+                                            aria-label="@(context.Name + "下载占比")" aria-valuetext="@Share(context.Count).ToString("P1", CultureInfo.CurrentCulture)" />
+                            <FluentLabel>@Share(context.Count).ToString("P1", CultureInfo.CurrentCulture)</FluentLabel>
+                        </FluentStack>
+                    </TemplateColumn>
+                </ChildContent>
+                <EmptyContent><FluentLabel>暂无数据</FluentLabel></EmptyContent>
+            </FluentDataGrid>
+        </div>
+    </FluentCard>
+</section>
+
+@code {
+    [Parameter, EditorRequired] public string Title { get; set; } = "";
+    [Parameter, EditorRequired] public string Dimension { get; set; } = "";
+    [Parameter, EditorRequired] public IReadOnlyList<DownloadCount> Items { get; set; } = [];
+    [Parameter] public long Total { get; set; }
+
+    private decimal Share(long count) => Total > 0 ? (decimal)count / Total : 0;
+}

@@ -1,0 +1,303 @@
+@page "/DownloadStatistics"
+@using System.Globalization
+@using Microsoft.AspNetCore.Authorization
+@using PhainonDistributionCenter.Components.Controls
+@using PhainonDistributionCenter.Entities
+@using PhainonDistributionCenter.Enums
+@using PhainonDistributionCenter.Models.Statistics
+@using PhainonDistributionCenter.Security
+@using PhainonDistributionCenter.Services.Statistics
+@attribute [Authorize(Policy = Policies.IsOrgMemberPolicyName)]
+@rendermode InteractiveServer
+@implements IDisposable
+@inject DownloadStatisticsQueryService Statistics
+@inject IDownloadRegionResolver RegionResolver
+@inject TimeProvider Clock
+@inject ILogger<DownloadStatisticsPage> Logger
+
+<PageTitle>下载量统计</PageTitle>
+<div class="statistics-page">
+    <FluentLabel Typo="Typography.H2">下载量统计</FluentLabel>
+    <FluentLabel>每次成功获取详细下载信息计为一次下载。数据异步更新，所有时间均为北京时间（UTC+8）。</FluentLabel>
+    @if (!RegionResolver.IsAvailable)
+    {
+        <FluentMessageBar Intent="MessageIntent.Warning" AllowDismiss="false">部分或全部地域解析暂不可用，无法解析的下载仍计入总量，地域归入“未知来源”。</FluentMessageBar>
+    }
+
+    <form @onsubmit="ApplyAsync" @onsubmit:preventDefault>
+        <FluentCard Class="filters" AreaRestricted="false" aria-label="统计筛选">
+            <FluentLabel Typo="Typography.H3">统计筛选</FluentLabel>
+            <FluentGrid Spacing="4">
+                <FluentGridItem xs="12" sm="6" lg="3">
+                    <FluentDatePicker Label="开始日期（含）" @bind-Value="_startDate" Disabled="@_loading" Required Style="width: 100%" />
+                </FluentGridItem>
+                <FluentGridItem xs="12" sm="6" lg="3">
+                    <FluentSelect TOption="string" Label="开始小时" @bind-Value="_startHour" Disabled="@_loading" Width="100%">
+                        @foreach (var hour in Enumerable.Range(0, 24))
+                        {
+                            <FluentOption TOption="string" Value="@hour.ToString(CultureInfo.InvariantCulture)">@($"{hour:00}:00")</FluentOption>
+                        }
+                    </FluentSelect>
+                </FluentGridItem>
+                <FluentGridItem xs="12" sm="6" lg="3">
+                    <FluentDatePicker Label="结束日期（不含）" @bind-Value="_endDate" Disabled="@_loading" Required Style="width: 100%" />
+                </FluentGridItem>
+                <FluentGridItem xs="12" sm="6" lg="3">
+                    <FluentSelect TOption="string" Label="结束小时" @bind-Value="_endHour" Disabled="@_loading" Width="100%">
+                        @foreach (var hour in Enumerable.Range(0, 24))
+                        {
+                            <FluentOption TOption="string" Value="@hour.ToString(CultureInfo.InvariantCulture)">@($"{hour:00}:00")</FluentOption>
+                        }
+                    </FluentSelect>
+                </FluentGridItem>
+                <FluentGridItem xs="12" sm="6" lg="3">
+                    <FluentSelect TOption="string" Label="发行版本" @bind-Value="_version" Disabled="@_loading" Width="100%">
+                        <FluentOption TOption="string" Value="">全部版本</FluentOption>
+                        @foreach (var version in _options.Versions) { <FluentOption TOption="string" Value="@version">@version</FluentOption> }
+                    </FluentSelect>
+                </FluentGridItem>
+                <FluentGridItem xs="12" sm="6" lg="3">
+                    <FluentSelect TOption="string" Label="子频道" @bind-Value="_subChannel" Disabled="@_loading" Width="100%">
+                        <FluentOption TOption="string" Value="">全部子频道</FluentOption>
+                        @foreach (var channel in _options.SubChannels) { <FluentOption TOption="string" Value="@channel">@channel</FluentOption> }
+                    </FluentSelect>
+                </FluentGridItem>
+                <FluentGridItem xs="12" sm="6" lg="3">
+                    <FluentSelect TOption="string" Label="下载来源" @bind-Value="_source" Disabled="@_loading" Width="100%">
+                        <FluentOption TOption="string" Value="">全部来源</FluentOption>
+                        <FluentOption TOption="string" Value="Client">客户端</FluentOption>
+                        <FluentOption TOption="string" Value="Web">网页</FluentOption>
+                    </FluentSelect>
+                </FluentGridItem>
+                <FluentGridItem xs="12" sm="6" lg="3">
+                    <FluentSelect TOption="string" Label="来源地域" @bind-Value="_region" Disabled="@_loading" Width="100%">
+                        <FluentOption TOption="string" Value="">全部地域</FluentOption>
+                        @foreach (var region in _options.Regions) { <FluentOption TOption="string" Value="@region.Code">@region.Name</FluentOption> }
+                    </FluentSelect>
+                </FluentGridItem>
+            </FluentGrid>
+            <FluentButton Type="ButtonType.Submit" Appearance="Appearance.Accent" Disabled="@_loading" Loading="@_loading">查询 / 刷新</FluentButton>
+        </FluentCard>
+    </form>
+
+    @if (_loading)
+    {
+        <FluentStack Orientation="Orientation.Horizontal" VerticalAlignment="VerticalAlignment.Center" role="status" aria-live="polite">
+            <FluentProgressRing Width="20px" />
+            <FluentLabel>正在加载统计数据…</FluentLabel>
+        </FluentStack>
+    }
+    @if (_error != null)
+    {
+        <FluentMessageBar Intent="MessageIntent.Error" AllowDismiss="false" role="alert">@_error</FluentMessageBar>
+    }
+    @if (_report is { } report)
+    {
+        <FluentGrid Spacing="4" Class="summary" aria-label="下载概览">
+            <FluentGridItem xs="12" sm="4">
+                <FluentCard>
+                    <FluentLabel>下载总量</FluentLabel>
+                    <FluentLabel Typo="Typography.H2" Color="Color.Accent">@report.Total.ToString("N0")</FluentLabel>
+                    <FluentLabel>所选范围与筛选条件</FluentLabel>
+                </FluentCard>
+            </FluentGridItem>
+            <FluentGridItem xs="12" sm="4">
+                <FluentCard>
+                    <FluentLabel>客户端下载</FluentLabel>
+                    <FluentLabel Typo="Typography.H2" Color="Color.Accent">@report.ClientCount.ToString("N0")</FluentLabel>
+                    <FluentLabel>占比 @Percent(report.ClientCount)</FluentLabel>
+                </FluentCard>
+            </FluentGridItem>
+            <FluentGridItem xs="12" sm="4">
+                <FluentCard>
+                    <FluentLabel>网页下载</FluentLabel>
+                    <FluentLabel Typo="Typography.H2" Color="Color.Accent">@report.WebCount.ToString("N0")</FluentLabel>
+                    <FluentLabel>占比 @Percent(report.WebCount)</FluentLabel>
+                </FluentCard>
+            </FluentGridItem>
+        </FluentGrid>
+        @if (report.Total == 0)
+        {
+            <FluentMessageBar Intent="MessageIntent.Info" AllowDismiss="false">所选范围内暂无下载数据，请调整筛选条件或稍后刷新。</FluentMessageBar>
+        }
+        <FluentCard Class="trend" aria-label="每小时下载趋势">
+            <FluentLabel Typo="Typography.H3">每小时下载趋势</FluentLabel>
+            <svg viewBox="0 0 1000 250" role="img" aria-labelledby="download-trend-title download-trend-description">
+                <title id="download-trend-title">每小时下载次数</title>
+                <desc id="download-trend-description">@TrendDescription</desc>
+                <line x1="40" y1="210" x2="960" y2="210" stroke="currentColor" opacity="0.4" />
+                <polyline points="@TrendPoints" fill="none" stroke="var(--accent-fill-rest)" stroke-width="3" />
+                @if (report.Hours.Count == 1)
+                {
+                    <circle cx="40" cy="@(report.Hours[0].Count > 0 ? 40 : 210)" r="4" fill="var(--accent-fill-rest)" />
+                }
+                <text x="40" y="20" fill="currentColor">峰值 @report.Hours.Max(x => x.Count).ToString("N0")</text>
+                <text x="40" y="240" fill="currentColor">@DownloadStatisticsTime.ToBeijing(report.Hours[0].HourUtc).ToString("MM-dd HH:mm")</text>
+                <text x="960" y="240" text-anchor="end" fill="currentColor">@DownloadStatisticsTime.ToBeijing(report.Hours[^1].HourUtc).ToString("MM-dd HH:mm")</text>
+            </svg>
+            <FluentAccordion>
+                <FluentAccordionItem Heading="@($"查看每小时数值（{report.Hours.Count} 小时）")">
+                    <div class="hour-values">
+                        <FluentDataGrid Items="@report.Hours.AsQueryable()" DisplayMode="DataGridDisplayMode.Table" aria-label="每小时下载数值表">
+                            <PropertyColumn Property="@(hour => DownloadStatisticsTime.ToBeijing(hour.HourUtc))" Title="小时（北京时间）" Format="yyyy-MM-dd HH:mm" />
+                            <PropertyColumn Property="@(hour => hour.Count)" Title="下载次数" Format="N0" />
+                        </FluentDataGrid>
+                    </div>
+                </FluentAccordionItem>
+            </FluentAccordion>
+        </FluentCard>
+        <FluentGrid Spacing="4" Class="distributions">
+            <FluentGridItem xs="12" lg="4"><DownloadDistribution Title="版本分布" Dimension="发行版本" Items="report.Versions" Total="report.Total" /></FluentGridItem>
+            <FluentGridItem xs="12" lg="4"><DownloadDistribution Title="子频道分布" Dimension="子频道" Items="report.SubChannels" Total="report.Total" /></FluentGridItem>
+            <FluentGridItem xs="12" lg="4"><DownloadDistribution Title="地域分布" Dimension="来源地域" Items="report.Regions" Total="report.Total" /></FluentGridItem>
+        </FluentGrid>
+        <FluentCard Class="detail-section" aria-label="小时交叉统计明细">
+            <FluentLabel Typo="Typography.H3">小时交叉统计明细</FluentLabel>
+            <div class="table-scroll">
+                <FluentDataGrid @key="_pagination" TGridItem="HourlyDownloadStatistic" ItemsProvider="GetDetailsAsync" Pagination="_pagination" DisplayMode="DataGridDisplayMode.Table" aria-label="下载统计明细表">
+                    <ChildContent>
+                        <PropertyColumn Property="@(row => DownloadStatisticsTime.ToBeijing(row.HourUtc))" Title="小时（北京时间）" Format="yyyy-MM-dd HH:mm" />
+                        <PropertyColumn Property="@(row => row.Version)" Title="发行版本" />
+                        <PropertyColumn Property="@(row => row.SubChannel)" Title="子频道" />
+                        <PropertyColumn Property="@(row => row.Source == DownloadSource.Client ? "客户端" : "网页")" Title="下载来源" />
+                        <PropertyColumn Property="@(row => row.RegionName)" Title="地域" />
+                        <PropertyColumn Property="@(row => row.Count)" Title="下载次数" Format="N0" />
+                    </ChildContent>
+                    <EmptyContent><FluentLabel>暂无数据</FluentLabel></EmptyContent>
+                </FluentDataGrid>
+            </div>
+            <FluentPaginator State="_pagination" Disabled="@_loading">
+                <SummaryTemplate>共 @_pagination.TotalItemCount 条</SummaryTemplate>
+                <PaginationTextTemplate>第 @(_pagination.CurrentPageIndex + 1) / @(Math.Max(1, (_pagination.LastPageIndex ?? 0) + 1)) 页</PaginationTextTemplate>
+            </FluentPaginator>
+        </FluentCard>
+    }
+</div>
+@code {
+    private readonly CancellationTokenSource _lifetime = new();
+    private DownloadStatisticsOptions _options = new([], [], []);
+    private DownloadStatisticsReport? _report;
+    private DownloadStatisticsFilter? _activeFilter;
+    private DateTime? _startDate, _endDate;
+    private string _startHour = "0", _endHour = "0";
+    private PaginationState _pagination = new() { ItemsPerPage = DownloadStatisticsReport.PageSize };
+    private string _version = "", _subChannel = "", _source = "", _region = "";
+    private string? _error;
+    private bool _loading;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var end = DownloadStatisticsTime.ToBeijing(DownloadStatisticsTime.ToUtcHour(Clock.GetUtcNow()).AddHours(1));
+        _endDate = end.Date;
+        _startDate = end.AddDays(-7).Date;
+        _startHour = _endHour = end.Hour.ToString(CultureInfo.InvariantCulture);
+        await ApplyAsync();
+    }
+
+    private async Task ApplyAsync()
+    {
+        if (_loading) return;
+        try
+        {
+            if (_startDate is not { } startDate || _endDate is not { } endDate ||
+                !int.TryParse(_startHour, NumberStyles.None, CultureInfo.InvariantCulture, out var startHour) || startHour is < 0 or > 23 ||
+                !int.TryParse(_endHour, NumberStyles.None, CultureInfo.InvariantCulture, out var endHour) || endHour is < 0 or > 23)
+                throw new ArgumentException("请填写有效的开始和结束时间。");
+            var start = startDate.Date.AddHours(startHour);
+            var end = endDate.Date.AddHours(endHour);
+            DownloadSource? source = null;
+            if (!string.IsNullOrEmpty(_source))
+            {
+                if (!Enum.TryParse<DownloadSource>(_source, out var parsed) || !Enum.IsDefined(parsed))
+                    throw new ArgumentException("请选择有效的下载来源。");
+                source = parsed;
+            }
+            var filter = new DownloadStatisticsFilter(DownloadStatisticsTime.BeijingToUtc(start),
+                DownloadStatisticsTime.BeijingToUtc(end), _version, _subChannel, source, _region);
+            await LoadAsync(filter);
+        }
+        catch (ArgumentException)
+        {
+            _error = "请填写有效的整小时时间范围和下载来源。";
+            _report = null;
+            _activeFilter = null;
+        }
+    }
+
+    private async ValueTask<GridItemsProviderResult<HourlyDownloadStatistic>> GetDetailsAsync(GridItemsProviderRequest<HourlyDownloadStatistic> request)
+    {
+        if (_activeFilter is not { } filter || _report is not { } report)
+            return GridItemsProviderResult.From(Array.Empty<HourlyDownloadStatistic>(), 0);
+
+        var page = request.StartIndex / DownloadStatisticsReport.PageSize;
+        if (page == report.PageIndex)
+            return GridItemsProviderResult.From(report.Details, report.TotalRows);
+
+        using var cancellation = CancellationTokenSource.CreateLinkedTokenSource(_lifetime.Token, request.CancellationToken);
+        _loading = true;
+        _error = null;
+        await InvokeAsync(StateHasChanged);
+        try
+        {
+            var nextReport = await Statistics.GetAsync(filter, page, cancellation.Token);
+            cancellation.Token.ThrowIfCancellationRequested();
+            _report = nextReport;
+            return GridItemsProviderResult.From(nextReport.Details, nextReport.TotalRows);
+        }
+        catch (OperationCanceledException) when (cancellation.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "加载下载量统计明细失败");
+            _error = "加载统计明细失败，请稍后点击查询 / 刷新重试。";
+            return GridItemsProviderResult.From(Array.Empty<HourlyDownloadStatistic>(), report.TotalRows);
+        }
+        finally
+        {
+            _loading = false;
+            if (!_lifetime.IsCancellationRequested) await InvokeAsync(StateHasChanged);
+        }
+    }
+
+    private async Task LoadAsync(DownloadStatisticsFilter filter)
+    {
+        if (_loading) return;
+        _loading = true;
+        _error = null;
+        _report = null;
+        try
+        {
+            _options = await Statistics.GetOptionsAsync(_lifetime.Token);
+            _report = await Statistics.GetAsync(filter, 0, _lifetime.Token);
+            _activeFilter = filter;
+            _pagination = new() { ItemsPerPage = DownloadStatisticsReport.PageSize };
+        }
+        catch (OperationCanceledException) when (_lifetime.IsCancellationRequested) { }
+        catch (ArgumentException ex) { _error = ex.Message; }
+        catch (Exception ex)
+        {
+            Logger.LogError(ex, "加载下载量统计失败");
+            _error = "加载统计数据失败，请稍后点击查询 / 刷新重试。";
+        }
+        finally { _loading = false; }
+    }
+
+    private string Percent(long count) => (_report?.Total > 0 ? (decimal)count / _report.Total : 0).ToString("P1");
+    private string TrendDescription => _report == null ? "暂无数据" :
+        $"{_report.Hours.Count} 个小时，下载总量 {_report.Total}，每小时最高 {_report.Hours.Max(x => x.Count)}；完整数值见下方每小时数值表。";
+    private string TrendPoints
+    {
+        get
+        {
+            if (_report == null) return "";
+            var max = Math.Max(1, _report.Hours.Max(x => x.Count));
+            return string.Join(" ", _report.Hours.Select((hour, index) => FormattableString.Invariant(
+                $"{40 + index * 920d / Math.Max(1, _report.Hours.Count - 1):0.##},{210 - hour.Count * 170d / max:0.##}")));
+        }
+    }
+
+    public void Dispose() { _lifetime.Cancel(); _lifetime.Dispose(); }
+}
+
