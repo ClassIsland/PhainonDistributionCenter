@@ -18,6 +18,9 @@
  * S3_AccessKey - 顾名思义
  * S3_SecretKey - 顾名思义
  * S3_Region - 可用区
+ * 可选上传设置：
+ * PDC_MaxParallelism - 最大并行上传数，默认为 16，必须大于 0
+ * PDC_MaxRetries - 每个文件最大重试数，默认为 5，0 表示不重试；重试间隔最多 256 秒
  */
 
 using System.Collections;
@@ -126,6 +129,7 @@ var publishAppCommand = new Command("Publish", "发布应用到分发服务")
 };
 publishAppCommand.SetAction(async result =>
 {
+    var uploadSettings = UploadSettings.FromEnvironment();
     var config = LoadConfiguration(result);
     var endpoint = GetRequiredValueFromEnvironment("PDC_Endpoint");
     var token = GetRequiredValueFromEnvironment("PDC_Token");
@@ -350,11 +354,11 @@ publishAppCommand.SetAction(async result =>
         // S3FileUploader owns retries so SDK retries cannot multiply the attempt limit.
         MaxErrorRetry = 0
     });
-    var uploader = new S3FileUploader(client);
+    var uploader = new S3FileUploader(client, maxRetries: uploadSettings.MaxRetries);
 
     await Parallel.ForEachAsync(repoDetermined.Items, new ParallelOptions()
     {
-        MaxDegreeOfParallelism = 16
+        MaxDegreeOfParallelism = uploadSettings.MaxParallelism
     }, async (pair, cancellationToken) =>
     {
         var (_, file) = pair;
@@ -376,7 +380,7 @@ publishAppCommand.SetAction(async result =>
     Console.WriteLine("Uploading subchannel packages...");
     await Parallel.ForEachAsync(subChannels, new ParallelOptions()
     {
-        MaxDegreeOfParallelism = 16
+        MaxDegreeOfParallelism = uploadSettings.MaxParallelism
     }, async (channel, cancellationToken) =>
     {
         Console.WriteLine($"[SC/{channel.Name}] Uploading {channel.FullPath}");

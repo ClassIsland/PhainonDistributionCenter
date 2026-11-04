@@ -70,6 +70,38 @@ public class S3FileUploaderTests
         Assert.Equal(attempts, client.Requests.Distinct().Count());
     }
 
+    [Theory]
+    [InlineData(0)]
+    [InlineData(2)]
+    [InlineData(40)]
+    public async Task ConfiguredRetryLimitCapsAttemptsAndDelay(int maxRetries)
+    {
+        var error = ServiceError(HttpStatusCode.ServiceUnavailable);
+        using var client = new StubS3Client((_, _) => Task.FromException<PutObjectResponse>(error));
+        var waits = new List<TimeSpan>();
+        var messages = new List<string>();
+        var uploader = new S3FileUploader(client,
+            (wait, _) => { waits.Add(wait); return Task.CompletedTask; }, messages.Add, maxRetries);
+
+        var thrown = await Assert.ThrowsAsync<AmazonS3Exception>(() =>
+            uploader.UploadAsync("bucket", "key", "file.zip"));
+
+        Assert.Same(error, thrown);
+        Assert.Equal(maxRetries + 1, client.Requests.Count);
+        Assert.Equal(Enumerable.Range(0, maxRetries).Select(retry =>
+                retry >= 8 ? 256 : (int)Math.Pow(2, retry)),
+            waits.Select(wait => (int)wait.TotalSeconds));
+        Assert.Contains($"after {maxRetries} retries", messages[^1]);
+    }
+
+    [Fact]
+    public void NegativeRetryLimitIsRejected()
+    {
+        using var client = new StubS3Client((_, _) => Task.FromResult(new PutObjectResponse()));
+
+        Assert.Throws<ArgumentOutOfRangeException>(() => new S3FileUploader(client, maxRetries: -1));
+    }
+
     public static IEnumerable<object[]> TransientErrors()
     {
         yield return [ServiceError(HttpStatusCode.RequestTimeout)];

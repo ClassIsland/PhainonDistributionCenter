@@ -9,9 +9,12 @@ namespace PhainonDistributionCenter.Client.Helpers;
 internal sealed class S3FileUploader(
     IAmazonS3 client,
     Func<TimeSpan, CancellationToken, Task>? delay = null,
-    Action<string>? log = null)
+    Action<string>? log = null,
+    int maxRetries = UploadSettings.DefaultMaxRetries)
 {
-    private const int MaxRetries = 5;
+    private readonly int _maxRetries = maxRetries >= 0
+        ? maxRetries
+        : throw new ArgumentOutOfRangeException(nameof(maxRetries));
     private readonly Func<TimeSpan, CancellationToken, Task> _delay = delay ?? Task.Delay;
     private readonly Action<string> _log = log ?? Console.Error.WriteLine;
 
@@ -36,15 +39,15 @@ internal sealed class S3FileUploader(
             }
             catch (Exception exception) when (!cancellationToken.IsCancellationRequested && IsRetryable(exception))
             {
-                if (retry == MaxRetries)
+                if (retry == _maxRetries)
                 {
-                    _log($"Upload failed for {filePath} after {MaxRetries} retries: {exception.Message}");
+                    _log($"Upload failed for {filePath} after {_maxRetries} retries: {exception.Message}");
                     throw;
                 }
 
-                var wait = TimeSpan.FromSeconds(1 << retry);
+                var wait = TimeSpan.FromSeconds(1 << Math.Min(retry, 8));
                 _log($"Upload failed for {filePath}: {exception.Message}. " +
-                     $"Retry {retry + 1}/{MaxRetries} in {wait.TotalSeconds} seconds.");
+                     $"Retry {retry + 1}/{_maxRetries} in {wait.TotalSeconds} seconds.");
                 await _delay(wait, cancellationToken);
             }
         }
